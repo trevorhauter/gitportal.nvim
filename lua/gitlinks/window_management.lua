@@ -1,13 +1,13 @@
 local M = {}
 
 -- Function to create a floating window with "Hello World!" message
-function M.open_hello_world_window()
+function M.open_hello_world_window(message)
   local buf = vim.api.nvim_create_buf(false, true)  -- Create a new empty buffer
   local width = 100
   local height = 1
 
   -- Set the content of the buffer
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "Hello World!" })
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { message })
 
   -- Get the current editor size
   local opts = {
