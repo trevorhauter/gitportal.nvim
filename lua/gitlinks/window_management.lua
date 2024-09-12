@@ -1,7 +1,7 @@
 local M = {}
 
 -- Function to create a floating window with "Hello World!" message
-function M.open_hello_world_window(message)
+function M.open_window(message)
   local buf = vim.api.nvim_create_buf(false, true)  -- Create a new empty buffer
   local width = 100
   local height = 1

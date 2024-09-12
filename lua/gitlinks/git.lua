@@ -1,6 +1,6 @@
 local M = {}
 
-function M.getGitPath()
+function M.get_git_path()
   -- Gets a path of the file relative the the base git directory.
   -- Get the full path of the current file
   local current_file_path = vim.api.nvim_buf_get_name(0)
