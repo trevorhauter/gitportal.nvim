@@ -1,3 +1,5 @@
+local cli_utils = require("gitlinks.cli_utils")
+
 local M = {}
 
 
@@ -17,23 +19,16 @@ function M.get_base_git_directory()
 end
 
 
-local function get_git_remotes()
-  -- Get the git remotes which we can use for the base github url (and maybe other hosts...?)
-  local output = vim.fn.system("git remote -v")
-  if vim.v.shell_error ~= 0 then
-      -- Handle errors if the command fails
-      vim.notify("Failed to run git remote -v", vim.log.levels.ERROR)
-      return nil
-  end
-  return output
-end
+--local function get_git_branch_name()
+  --git rev-parse --abbrev-ref HEAD
+--end
 
 
 function M.get_base_github_url()
   -- Get the base github url for a repo... 
   -- Takes the messy output of git remote -v and returns just the base url! For this repo it would be...
   -- https://github.com/trevorhauter/gitportal.nvim.git
-  local remote_output = get_git_remotes()
+  local remote_output = cli_utils.run_command("git remote -v")
   local url
 
   if remote_output then
