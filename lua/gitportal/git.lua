@@ -29,13 +29,9 @@ function M.get_base_github_url()
   -- Get the base github url for a repo... 
   -- Takes the messy output of git remote -v and returns just the base url! For this repo it would be...
   -- https://github.com/trevorhauter/gitportal.nvim.git
-  local remote_output = cli_utils.run_command("git remote -v")
-  local url
-
-  if remote_output then
-    url = remote_output:match("https://github%.com/[%w%-]+/[%w%-]+")
-    -- Trim .git off of the end of the url...
-    url = url:gsub("%.git$", "")
+  local url = cli_utils.run_command("git config --get remote.origin.url")
+  if url then
+    url = url:gsub("%.git\n$", "")
   else
     url = "FAILED"
   end
