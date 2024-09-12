@@ -9,7 +9,7 @@ end, {})
 
 
 vim.api.nvim_create_user_command('Hey', function()
-  window_management.open_window(git_helpers.get_git_remotes())
+  window_management.open_window(git_helpers.get_base_github_url())
 end, {})
 
 

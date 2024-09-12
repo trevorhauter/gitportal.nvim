@@ -17,15 +17,32 @@ function M.get_base_git_directory()
 end
 
 
-function M.get_git_remotes()
-    -- Get the git remotes which we can use for the base github url (and maybe other hosts...?)
-    local output = vim.fn.system("git remote -v")
-    if vim.v.shell_error ~= 0 then
-        -- Handle errors if the command fails
-        vim.notify("Failed to run git remote -v", vim.log.levels.ERROR)
-        return nil
-    end
-    return output:gsub("\n", "")
+local function get_git_remotes()
+  -- Get the git remotes which we can use for the base github url (and maybe other hosts...?)
+  local output = vim.fn.system("git remote -v")
+  if vim.v.shell_error ~= 0 then
+      -- Handle errors if the command fails
+      vim.notify("Failed to run git remote -v", vim.log.levels.ERROR)
+      return nil
+  end
+  return output
+end
+
+
+function M.get_base_github_url()
+  -- Get the base github url for a repo... 
+  -- For example, the base github url for https://github.com/trevorhauter/gitportal.nvim would be
+  -- https://github.com/trevorhauter/
+  local remote_output = get_git_remotes()
+  local url
+
+  if remote_output then
+    url = remote_output:match("https://github%.com/[%w%-]+/")
+  else
+    url = "FAILED"
+  end
+
+  return url
 end
 
 
