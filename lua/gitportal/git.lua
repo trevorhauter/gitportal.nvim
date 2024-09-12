@@ -1,4 +1,5 @@
-local cli_utils = require("gitlinks.cli_utils")
+local cli_utils = require("gitportal.cli_utils")
+
 
 local M = {}
 

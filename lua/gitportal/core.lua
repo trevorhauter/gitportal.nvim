@@ -1,5 +1,5 @@
-local window_management = require('gitlinks.window_management')
-local git_helpers = require('gitlinks.git')
+local window_management = require('gitportal.window_management')
+local git_helpers = require('gitportal.git')
 
 
 -- Map the function to a command for testing
