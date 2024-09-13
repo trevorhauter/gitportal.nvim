@@ -1,4 +1,4 @@
-local window_management = require('gitportal.window_management')
+local window_management = require('gitportal.ui')
 local git_helpers = require('gitportal.git')
 
 
