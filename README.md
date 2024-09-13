@@ -6,4 +6,4 @@ This is a plugin that will
 - Allow you to take a github link and automatically switch to the branch, commit, and open the file and any lines referenced in the URL
 
 ## Where are we at now?
-- Currently functionality exists to generate github links for files inside neovim, this can be done with the command `gp_link`!
+- Currently functionality exists to generate github links for files inside neovim, this can be done with the command `Gplink`!
