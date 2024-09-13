@@ -33,6 +33,14 @@ function M.open_window(message)
   vim.api.nvim_set_option_value('buftype', 'nofile', {buf = buf})  -- Prevents saving the buffer
   vim.api.nvim_set_option_value('bufhidden', 'wipe', {buf = buf})  -- Automatically removes the buffer when closed
   vim.api.nvim_set_option_value('modifiable', false, {buf = buf})  -- Prevents editing the buffer
+
+  vim.api.nvim_create_autocmd("WinLeave", {
+    buffer = buf,
+    once = true,  -- Ensures the autocommand is triggered only once
+    callback = function()
+      vim.api.nvim_win_close(win, true)
+    end
+  })
 end
 
 
