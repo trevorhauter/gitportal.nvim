@@ -18,10 +18,16 @@
 #### A coworker shares a file with you 
 - `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the url
 
+## ꩜ Supported git web hosts
+- [GitHub](https://github.com/)
+
+NOTE: Support for additional hosts will be added after release.
+
+
 ## ꩜ Where are we at now?
 If you would like to test this plugin, here are the features available right now...
 - Generate a shareable permalink for any file hosted by GitHub using the command `Gplink`
-    - NOTE: GitHub is currently the only supported host, and, line ranges are not currently respected 
+    - NOTE: Line ranges are currently not respected. 
 
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
