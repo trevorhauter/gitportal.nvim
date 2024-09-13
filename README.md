@@ -1,14 +1,35 @@
 <div align="center">
-    <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
+
+# gitportal.nvim
+#### Bridging the gap between your favorite git host and neovim.
+
+
+<img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
 
 # 🚧 UNDER CONSTRUCTION 🚧
-# gitportal.nvim
-## The plan...
-This is a plugin that will
-- Allow you to generate a github link for any file you are in to make it easy to share with coworkers
-- Allow you to take a github link and automatically switch to the branch, commit, and open the file and any lines referenced in the URL
-- Add support for other git hosts
+#### This plugin is not complete. You can track my progress here with this [milestone](https://github.com/trevorhauter/gitportal.nvim/milestone/1). 
+#### Current expected release date: October 31, 2024.
 
-## Where are we at now?
-- Currently functionality exists to generate github links for files inside neovim, this can be done with the command `Gplink`!
+## ꩜ Use cases
+#### You want to quickly share a file with a coworker 
+- `gitportal` will generate a shareable permalink - optionally with line ranges - allowing you to easily share this file
+
+#### A coworker shares a file with you 
+- `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the url
+
+## ꩜ Where are we at now?
+If you would like to test this plugin, here are the features available right now...
+- Generate a shareable permalink for any file hosted by GitHub using the command `Gplink`
+    - NOTE: GitHub is currently the only supported host, and, line ranges are not currently respected 
+
+## ꩜ Installation
+- [lazy.nvim](https://github.com/folke/lazy.nvim)
+```
+{
+  'trevorhauter/gitportal.nvim',
+  config = function()
+    require('gitportal')
+  end,
+}
+```
