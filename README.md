@@ -9,7 +9,7 @@
 
 # 🚧 UNDER CONSTRUCTION 🚧
 #### This plugin is not complete. You can track my progress here with this [milestone](https://github.com/trevorhauter/gitportal.nvim/milestone/1). 
-#### Current expected release date: October 31, 2024.
+#### Current expected release date: October 1st, 2024.
 
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
