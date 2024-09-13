@@ -25,7 +25,9 @@ NOTE: Support for additional hosts will be added after release.
 
 
 ## ꩜ Where are we at now?
-If you would like to test this plugin, here are the features available right now...
+WARNING: If you use this plugin before release, it is likely you will run into bugs. If you do, please open a github issue and I will do my best to resolve it ASAP.
+
+### Features currently available
 - Generate a shareable permalink for any file hosted by GitHub using the command `Gplink`
     - NOTE: Line ranges are currently not respected.
     - There is [1 known bug for this](https://github.com/trevorhauter/gitportal.nvim/issues/8) (Will be resolved before Sep 16, 2024)
