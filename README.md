@@ -1,4 +1,8 @@
-# 👷 UNDER CONSTRUCTION 🚧
+<div align="center">
+    <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
+</div>
+
+# 🚧 UNDER CONSTRUCTION 🚧
 # gitportal.nvim
 ## The plan...
 This is a plugin that will
