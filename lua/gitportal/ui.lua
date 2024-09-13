@@ -22,17 +22,17 @@ function M.open_window(message)
   }
 
   -- Create the floating window
-  vim.api.nvim_open_win(buf, true, opts)
+  local win = vim.api.nvim_open_win(buf, true, opts)
 
   -- Set a keybinding to close the window when any of the follow keys ar pressed
   local closingKeys = {'<Esc>', '<CR>', '<Leader>', 'q'}
   for _, key in ipairs(closingKeys) do
-        vim.api.nvim_buf_set_keymap(buf, 'n', key, ':close<CR>', { nowait = true, noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', key, ':close<CR>', { nowait = true, noremap = true, silent = true })
   end
   -- Optionally, disable other mappings like normal mode movement in the floating window
-  vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')  -- Prevents saving the buffer
-  vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')  -- Automatically removes the buffer when closed
-  vim.api.nvim_buf_set_option(buf, 'modifiable', false)  -- Prevents editing the buffer
+  vim.api.nvim_set_option_value('buftype', 'nofile', {buf = buf})  -- Prevents saving the buffer
+  vim.api.nvim_set_option_value('bufhidden', 'wipe', {buf = buf})  -- Automatically removes the buffer when closed
+  vim.api.nvim_set_option_value('modifiable', false, {buf = buf})  -- Prevents editing the buffer
 end
 
 
