@@ -27,7 +27,8 @@ NOTE: Support for additional hosts will be added after release.
 ## ꩜ Where are we at now?
 If you would like to test this plugin, here are the features available right now...
 - Generate a shareable permalink for any file hosted by GitHub using the command `Gplink`
-    - NOTE: Line ranges are currently not respected. 
+    - NOTE: Line ranges are currently not respected.
+    - There is [1 known bug for this](https://github.com/trevorhauter/gitportal.nvim/issues/8) (Will be resolved before Sep 16, 2024)
 
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
