@@ -37,6 +37,7 @@ local function get_base_github_url()
   local url = cli_utils.run_command("git config --get remote.origin.url")
   if url then
     url = url:gsub("%.git\n$", "")
+    url = url:gsub("git@github.com:", "https://github.com/")
   else
     url = "FAILED"
   end
