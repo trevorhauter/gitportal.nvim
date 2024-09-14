@@ -13,7 +13,7 @@
 
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
-- `gitportal` will generate a shareable permalink - optionally with line ranges - allowing you to easily share this file
+- `gitportal` will automatically open your current file in github
 
 #### A coworker shares a file with you 
 - `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the url
