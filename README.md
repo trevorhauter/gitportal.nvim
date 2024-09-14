@@ -33,10 +33,5 @@ WARNING: If you use this plugin before release, it is likely you will run into b
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```
-{
-  'trevorhauter/gitportal.nvim',
-  config = function()
-    require('gitportal')
-  end,
-}
+{ 'trevorhauter/gitportal.nvim' }
 ```
