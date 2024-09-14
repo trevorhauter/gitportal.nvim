@@ -1,4 +1,3 @@
-local ui = require('gitportal.ui')
 local cli = require('gitportal.cli')
 local git_helpers = require('gitportal.git')
 
