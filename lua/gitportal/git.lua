@@ -21,9 +21,15 @@ end
 
 local function get_git_branch_name()
   local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
+
+  if branch_name == "HEAD\n" then
+    branch_name = cli.run_command("git rev-parse HEAD")
+  end
+
   if branch_name then
     branch_name = branch_name:gsub("\n", "")
   else
+    -- TODO: Raise an error here...
     branch_name = "FAILED"
   end
 
