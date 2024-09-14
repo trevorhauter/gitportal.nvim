@@ -1,4 +1,4 @@
-local cli_utils = require("gitportal.cli_utils")
+local cli = require("gitportal.cli")
 
 
 local M = {}
@@ -20,7 +20,7 @@ end
 
 
 local function get_git_branch_name()
-  local branch_name = cli_utils.run_command("git rev-parse --abbrev-ref HEAD")
+  local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
   if branch_name then
     branch_name = branch_name:gsub("\n", "")
   else
@@ -34,7 +34,7 @@ end
 local function get_base_github_url()
   -- Get the base github url for a repo... 
   -- Ex: https://github.com/trevorhauter/gitportal.nvim
-  local url = cli_utils.run_command("git config --get remote.origin.url")
+  local url = cli.run_command("git config --get remote.origin.url")
   if url then
     url = url:gsub("%.git\n$", "")
     url = url:gsub("git@github.com:", "https://github.com/")
@@ -49,11 +49,11 @@ end
 function M.get_git_url_for_current_file()
   -- Creates a url for the current file in github.
   -- formula for url is 
-  -- https://github.com/trevorhauter/gitportal.nvim/blob/initial_setup/lua/gitportal/cli_utils.lua
+  -- https://github.com/trevorhauter/gitportal.nvim/blob/initial_setup/lua/gitportal/cli.lua
   -- remote url: https://github.com/trevorhauter/gitportal.nvim
   -- blob: blob
   -- branch_name: initial_setup
-  -- file_path: lua/gitportal/cli_utils.lua (Note doesn't include base dir, i.e. gitportal.nvim)
+  -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
   local branch_name = get_git_branch_name()
   local base_git_directory = get_git_file_path()
