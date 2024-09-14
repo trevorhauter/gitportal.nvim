@@ -24,9 +24,10 @@
 NOTE: Support for additional hosts will be added after release.
 
 ## ꩜ Features currently available
-- Generate and automatically open shareable permalink for any file hosted by GitHub using the command `Gplink`
-    - NOTE: Line ranges are currently not respected.
-
+- Automatically open your current file in GitHub
+```lua
+:lua require("gitportal.core").open_file() -- NOTE: Line ranges are not currently respected.
+```
 WARNING: If you use this plugin before release, it is likely you will run into bugs. If you do, please open a github issue and I will do my best to resolve it ASAP.
 
 ## ꩜ Installation
