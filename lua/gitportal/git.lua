@@ -67,9 +67,12 @@ function M.get_git_url_for_current_file()
 
   local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. base_git_directory
 
-  local start_line, end_line = vi_utils.get_visual_selection_lines()
-  if start_line and end_line then
-    permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
+  if vim.fn.mode() ~= "n" then
+    local start_line, end_line = vi_utils.get_visual_selection_lines()
+    if start_line and end_line then
+      permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
+    end
+
   end
 
   return permalink
