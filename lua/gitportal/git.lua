@@ -1,4 +1,5 @@
 local cli = require("gitportal.cli")
+local vi_utils = require("gitportal.vi_utils")
 
 
 local M = {}
@@ -63,7 +64,15 @@ function M.get_git_url_for_current_file()
   local remote_url = get_base_github_url()
   local branch_name = get_git_branch_name()
   local base_git_directory = get_git_file_path()
-  return remote_url .. "/blob/" .. branch_name .. "/" .. base_git_directory
+
+  local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. base_git_directory
+
+  local start_line, end_line = vi_utils.get_visual_selection_lines()
+  if start_line and end_line then
+    permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
+  end
+
+  return permalink
 end
 
 
