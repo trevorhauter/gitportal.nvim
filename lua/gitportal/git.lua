@@ -99,15 +99,14 @@ function M.open_file_from_git_url(url)
 -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
 -- BLOB url on a commit
 -- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  local repo, branch_or_commit, filepath = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
+  local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
 
   -- First, ensure we are in the same repo as the link
-  local current_location = cli.run_command("pwd")
+  local current_location = vim.api.nvim_buf_get_name(0)
   if current_location == nil then
     print("ERROR! Couldn't find current file location.")
     return nil
   else
-    current_location = current_location:gsub("\n", "")
     if string.find(current_location, repo, 0, true) == nil then
       print("ERROR! Couldn't find '" .. repo .. "' in '" .. current_location .. "'")
       return nil
@@ -115,8 +114,24 @@ function M.open_file_from_git_url(url)
   end
 
   -- Checkout the branch of commit!
-  cli.run_command("git checkout " .. branch_or_commit)
-  --print("repo " .. repo .. " Branch/commit " .. branch .. " filepath " .. filepath)
+  --cli.run_command("git checkout " .. branch_or_commit)
+
+  -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
+  -- Find the position of the repo_name in the path
+  local start_pos, end_pos = string.find(current_location, repo, 0, true)
+
+  local absolute_file_path
+  if start_pos then
+    -- Slice the string to include everything up to and including the repo_name
+    absolute_file_path = current_location:sub(1, end_pos) .. "/" .. file_path
+  end
+
+  if absolute_file_path == nil then
+    print("ERROR! File path could not be determined!")
+  else
+    vim.cmd("edit " .. absolute_file_path)
+  end
+
 end
 
 
