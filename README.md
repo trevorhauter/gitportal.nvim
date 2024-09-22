@@ -40,9 +40,15 @@ Here is how I have gitportal currently set up
 ```lua
 local gitportal = require("gitportal.core")
 
--- In normal mode, `open_file()` opens the current file in your browser on the correct branch/commit.
-vim.keymap.set("n", "<leader>gp", function() gitportal.open_file() end)
+-- In normal mode, `open_file_in_browser()` opens the current file in your browser on the correct branch/commit.
+vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
--- In visual mode, `open_file()` behaves the same but it also includes the selected line(s) in the permalink.
-vim.keymap.set("v", "<leader>gp", function() gitportal.open_file() end)
+-- In visual mode, `open_file_in_browser()` behaves the same but it also includes the selected line(s) in the permalink.
+vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
+
+-- open_file_in_neovim accepts a github link, switches to the correct branch/commit, and opens the specified file.
+vim.keymap.set('n', '<leader>ig', function()
+    gitportal.open_file_in_neovim(vim.fn.input("Github link > "));
+end) 
+
 ```
