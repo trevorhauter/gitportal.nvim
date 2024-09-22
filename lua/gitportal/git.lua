@@ -63,9 +63,23 @@ function M.get_git_url_for_current_file()
   -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
   local branch_name = get_git_branch_name()
-  local base_git_directory = get_git_file_path()
+  local git_path = get_git_file_path()
 
-  local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. base_git_directory
+  -- Checks to see if the file exists in version control
+  local file_exists = cli.run_command("git ls-tree -r HEAD~1 " .. git_path)
+  if file_exists == "" then
+    print("Not a valid git file!")
+    return nil
+  end
+
+  -- If the file does exist, make sure the branch exists on the remote host too
+  local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
+  if branch_exists == "" then
+    print("The specified branch has not been pushed to the remote repository!")
+    return nil
+  end
+
+  local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" then
     local start_line, end_line = vi_utils.get_visual_selection_lines()
