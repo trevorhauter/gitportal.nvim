@@ -93,4 +93,25 @@ function M.get_git_url_for_current_file()
 end
 
 
+function M.open_file_from_git_url(url)
+-- So far we expect two kinds of urls 
+-- BLOB url on a branch
+-- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
+-- BLOB url on a commit
+-- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
+  local repo, branch, filepath = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
+
+  -- First, ensure we are in the same repo as the link
+  local current_location = cli.run_command("pwd")
+  if current_location == nil then
+    print("ERROR! Couldn't find current file location.")
+  else
+    if string.find(current_location, repo) == nil then
+      print("ERROR! Not currently inside the correct git repo.")
+    end
+  end
+  --print("repo " .. repo .. " Branch/commit " .. branch .. " filepath " .. filepath)
+end
+
+
 return M

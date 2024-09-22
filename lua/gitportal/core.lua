@@ -12,9 +12,9 @@ function M.open_file_in_browser()
 end
 
 
-function M.open_file_in_neovim(link)
-  if link ~= nil then
-    git_helpers.open_file_from_git_url(link)
+function M.open_file_in_neovim(url)
+  if url ~= nil then
+    git_helpers.open_file_from_git_url(url)
   end
 end
 
