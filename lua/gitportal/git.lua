@@ -99,17 +99,23 @@ function M.open_file_from_git_url(url)
 -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
 -- BLOB url on a commit
 -- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  local repo, branch, filepath = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
+  local repo, branch_or_commit, filepath = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
 
   -- First, ensure we are in the same repo as the link
   local current_location = cli.run_command("pwd")
   if current_location == nil then
     print("ERROR! Couldn't find current file location.")
+    return nil
   else
-    if string.find(current_location, repo) == nil then
-      print("ERROR! Not currently inside the correct git repo.")
+    current_location = current_location:gsub("\n", "")
+    if string.find(current_location, repo, 0, true) == nil then
+      print("ERROR! Couldn't find '" .. repo .. "' in '" .. current_location .. "'")
+      return nil
     end
   end
+
+  -- Checkout the branch of commit!
+  cli.run_command("git checkout " .. branch_or_commit)
   --print("repo " .. repo .. " Branch/commit " .. branch .. " filepath " .. filepath)
 end
 
