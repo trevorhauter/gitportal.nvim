@@ -72,6 +72,13 @@ function M.get_git_url_for_current_file()
     return nil
   end
 
+  -- If the file does exist, make sure the branch exists on the remote host too
+  local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
+  if branch_exists == "" then
+    print("The specified branch has not been pushed to the remote repository!")
+    return nil
+  end
+
   local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" then
