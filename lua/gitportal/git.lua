@@ -99,7 +99,7 @@ function M.open_file_from_git_url(url)
 -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
 -- BLOB url on a commit
 -- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/(.+)")
+  local repo, branch_or_commit, file_path, start_line, end_line = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)(#L(%d+)%-?(%d+)?)?")
 
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
@@ -114,7 +114,7 @@ function M.open_file_from_git_url(url)
   end
 
   -- Checkout the branch of commit!
-  --cli.run_command("git checkout " .. branch_or_commit)
+  cli.run_command("git checkout " .. branch_or_commit)
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
   -- Find the position of the repo_name in the path
@@ -130,6 +130,17 @@ function M.open_file_from_git_url(url)
     print("ERROR! File path could not be determined!")
   else
     vim.cmd("edit " .. absolute_file_path)
+  end
+
+  if start_line ~= nil or end_line ~= nil then
+    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer number 
+    if start_line ~= nil then
+      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", start_line, 0, -1)
+    end
+    if end_line ~= nil then
+      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", end_line, 0, -1)
+    end
+
   end
 
 end
