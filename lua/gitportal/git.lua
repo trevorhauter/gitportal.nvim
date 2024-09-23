@@ -147,14 +147,30 @@ function M.open_file_from_git_url(url)
       end_line = start_line
     end
 
-    -- The lines are 0 indexed
-    start_line = tonumber(start_line) - 1
+    -- The lines are 0 indexed. 
+    -- Subtract 2 from the start line because the highlight doesn't start until the following line
+    start_line = tonumber(start_line) - 2
     end_line = tonumber(end_line) - 1
     -- Highlight all of the lines in the desired range
-    for i = start_line, end_line do
-      --print(start_line, end_line)
-      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", i, 0, -1)
-    end
+    local ns_id = vim.api.nvim_create_namespace("temporary_highlight")
+
+    -- Enter the user into visual mode
+    vim.api.nvim_feedkeys("v", "n", true)
+    -- Function to set the highlight
+    -- Highlight a range (e.g., lines 2 to 4)
+    vim.highlight.range(bufnr, ns_id, "Visual", {start_line, 0}, {end_line, -1}, "v")
+
+    -- Clear the highlight when leaving visual mode
+    local auto_cmd_id
+    auto_cmd_id = vim.api.nvim_create_autocmd("ModeChanged", {
+        callback = function()
+            if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
+                vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
+                -- Remove the autocommand to avoid future calls
+                vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
+            end
+        end,
+    })
 
     -- set the users cursor pos. it's not 0 indexed.
     vim.api.nvim_win_set_cursor(0, {end_line + 1, 0})
