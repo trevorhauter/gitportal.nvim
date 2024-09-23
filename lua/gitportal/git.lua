@@ -99,8 +99,17 @@ function M.open_file_from_git_url(url)
 -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
 -- BLOB url on a commit
 -- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  local repo, branch_or_commit, file_path, start_line, end_line = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)(#L(%d+)%-?(%d+)?)?")
-
+  -- TODO: Break this out into testable func.
+  local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)")
+  -- check for line numbers
+  local start_line
+  local end_line
+  if string.find(url, "#", 0, true) ~= nil then
+    start_line = url:match("#L(%d+)")
+    if string.find(url, "-", 0, true) ~= nil then
+      end_line = url:match("%-L(%d+)$")
+    end
+  end
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
   if current_location == nil then
@@ -134,13 +143,21 @@ function M.open_file_from_git_url(url)
 
   if start_line ~= nil or end_line ~= nil then
     local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer number 
-    if start_line ~= nil then
-      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", start_line, 0, -1)
-    end
-    if end_line ~= nil then
-      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", end_line, 0, -1)
+    if end_line == nil then
+      end_line = start_line
     end
 
+    -- The lines are 0 indexed
+    start_line = tonumber(start_line) - 1
+    end_line = tonumber(end_line) - 1
+    -- Highlight all of the lines in the desired range
+    for i = start_line, end_line do
+      --print(start_line, end_line)
+      vim.api.nvim_buf_add_highlight(bufnr, -1, "Visual", i, 0, -1)
+    end
+
+    -- set the users cursor pos. it's not 0 indexed.
+    vim.api.nvim_win_set_cursor(0, {end_line + 1, 0})
   end
 
 end
