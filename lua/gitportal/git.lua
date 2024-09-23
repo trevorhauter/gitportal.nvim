@@ -65,13 +65,6 @@ function M.get_git_url_for_current_file()
   local branch_name = get_git_branch_name()
   local git_path = get_git_file_path()
 
-  -- Checks to see if the file exists in version control
-  local file_exists = cli.run_command("git ls-tree -r HEAD~1 " .. git_path)
-  if file_exists == "" then
-    print("Not a valid git file!")
-    return nil
-  end
-
   -- If the file does exist, make sure the branch exists on the remote host too
   local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
   if branch_exists == "" then
