@@ -93,4 +93,90 @@ function M.get_git_url_for_current_file()
 end
 
 
+function M.open_file_from_git_url(url)
+-- So far we expect two kinds of urls 
+-- BLOB url on a branch
+-- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
+-- BLOB url on a commit
+-- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
+  -- TODO: Break this out into testable func.
+  local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)")
+  -- check for line numbers
+  local start_line
+  local end_line
+  if string.find(url, "#", 0, true) ~= nil then
+    start_line = url:match("#L(%d+)")
+    if string.find(url, "-", 0, true) ~= nil then
+      end_line = url:match("%-L(%d+)$")
+    end
+  end
+  -- First, ensure we are in the same repo as the link
+  local current_location = vim.api.nvim_buf_get_name(0)
+  if current_location == nil then
+    print("ERROR! Couldn't find current file location.")
+    return nil
+  else
+    if string.find(current_location, repo, 0, true) == nil then
+      print("ERROR! Couldn't find '" .. repo .. "' in '" .. current_location .. "'")
+      return nil
+    end
+  end
+
+  -- Checkout the branch of commit!
+  cli.run_command("git checkout " .. branch_or_commit)
+
+  -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
+  -- Find the position of the repo_name in the path
+  local start_pos, end_pos = string.find(current_location, repo, 0, true)
+
+  local absolute_file_path
+  if start_pos then
+    -- Slice the string to include everything up to and including the repo_name
+    absolute_file_path = current_location:sub(1, end_pos) .. "/" .. file_path
+  end
+
+  if absolute_file_path == nil then
+    print("ERROR! File path could not be determined!")
+  else
+    vim.cmd("edit " .. absolute_file_path)
+  end
+
+  if start_line ~= nil or end_line ~= nil then
+    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer number 
+    if end_line == nil then
+      end_line = start_line
+    end
+
+    -- The lines are 0 indexed. 
+    -- Subtract 2 from the start line because the highlight doesn't start until the following line
+    start_line = tonumber(start_line) - 2
+    end_line = tonumber(end_line) - 1
+    -- Highlight all of the lines in the desired range
+    local ns_id = vim.api.nvim_create_namespace("temporary_highlight")
+
+    -- Enter the user into visual mode
+    vim.api.nvim_feedkeys("v", "n", true)
+    -- Function to set the highlight
+    -- Highlight a range (e.g., lines 2 to 4)
+    vim.highlight.range(bufnr, ns_id, "Visual", {start_line, 0}, {end_line, -1}, "v")
+
+    -- Clear the highlight when leaving visual mode
+    local auto_cmd_id
+    auto_cmd_id = vim.api.nvim_create_autocmd("ModeChanged", {
+        callback = function()
+            if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
+                vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
+                -- Remove the autocommand to avoid future calls
+                vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
+            end
+        end,
+    })
+
+    -- set the users cursor pos. it's not 0 indexed.
+    vim.api.nvim_win_set_cursor(0, {end_line + 1, 0})
+  end
+
+end
+
+
 return M
