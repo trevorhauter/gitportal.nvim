@@ -1,5 +1,6 @@
 local cli = require("gitportal.cli")
 local vi_utils = require("gitportal.vi_utils")
+local url_utils = require("gitportal.url_utils")
 
 
 local M = {}
@@ -87,22 +88,7 @@ end
 
 
 function M.open_file_from_git_url(url)
--- So far we expect two kinds of urls 
--- BLOB url on a branch
--- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
--- BLOB url on a commit
--- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  -- TODO: Break this out into testable func.
-  local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)")
-  -- check for line numbers
-  local start_line
-  local end_line
-  if string.find(url, "#", 0, true) ~= nil then
-    start_line = url:match("#L(%d+)")
-    if string.find(url, "-", 0, true) ~= nil then
-      end_line = url:match("%-L(%d+)$")
-    end
-  end
+  local repo, branch_or_commit, file_path, start_line, end_line = url_utils.parse_githost_url(url)
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
   if current_location == nil then
