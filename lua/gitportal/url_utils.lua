@@ -11,12 +11,25 @@ function M.parse_githost_url(url)
   -- check for line numbers
   local start_line = nil
   local end_line = nil
+
   if string.find(url, "#", 0, true) ~= nil then
     start_line = url:match("#L(%d+)")
     if string.find(url, "-", 0, true) ~= nil then
       end_line = url:match("%-L(%d+)$")
     end
   end
+
+  if start_line ~= nil then
+    if end_line == nil then
+      end_line = start_line
+    end
+    -- The lines are 0 indexed. 
+    -- Subtract 2 from the start line because the highlight doesn't start until the following line
+    start_line = tonumber(start_line) - 2
+    end_line = tonumber(end_line) - 1
+
+  end
+
   return {
       repo = repo,
       branch_or_commit = branch_or_commit,

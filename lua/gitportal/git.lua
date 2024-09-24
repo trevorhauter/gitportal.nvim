@@ -88,30 +88,30 @@ end
 
 
 function M.open_file_from_git_url(url)
-  local repo, branch_or_commit, file_path, start_line, end_line = url_utils.parse_githost_url(url)
+  local parsed_url = url_utils.parse_githost_url(url)
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
   if current_location == nil then
     print("ERROR! Couldn't find current file location.")
     return nil
   else
-    if string.find(current_location, repo, 0, true) == nil then
-      print("ERROR! Couldn't find '" .. repo .. "' in '" .. current_location .. "'")
+    if string.find(current_location, parsed_url.repo, 0, true) == nil then
+      print("ERROR! Couldn't find '" .. parsed_url.repo .. "' in '" .. current_location .. "'")
       return nil
     end
   end
 
   -- Checkout the branch of commit!
-  cli.run_command("git checkout " .. branch_or_commit)
+  cli.run_command("git checkout " .. parsed_url.branch_or_commit)
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
   -- Find the position of the repo_name in the path
-  local start_pos, end_pos = string.find(current_location, repo, 0, true)
+  local start_pos, end_pos = string.find(current_location, parsed_url.repo, 0, true)
 
   local absolute_file_path
   if start_pos then
     -- Slice the string to include everything up to and including the repo_name
-    absolute_file_path = current_location:sub(1, end_pos) .. "/" .. file_path
+    absolute_file_path = current_location:sub(1, end_pos) .. "/" .. parsed_url.file_path
   end
 
   if absolute_file_path == nil then
@@ -120,16 +120,9 @@ function M.open_file_from_git_url(url)
     vim.cmd("edit " .. absolute_file_path)
   end
 
-  if start_line ~= nil or end_line ~= nil then
-    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer number 
-    if end_line == nil then
-      end_line = start_line
-    end
-
-    -- The lines are 0 indexed. 
-    -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    start_line = tonumber(start_line) - 2
-    end_line = tonumber(end_line) - 1
+  if parsed_url.start_line ~= nil then
+    -- Get the current buffer number
+    local bufnr = vim.api.nvim_get_current_buf()
     -- Highlight all of the lines in the desired range
     local ns_id = vim.api.nvim_create_namespace("temporary_highlight")
 
@@ -137,7 +130,7 @@ function M.open_file_from_git_url(url)
     vim.api.nvim_feedkeys("v", "n", true)
     -- Function to set the highlight
     -- Highlight a range (e.g., lines 2 to 4)
-    vim.highlight.range(bufnr, ns_id, "Visual", {start_line, 0}, {end_line, -1}, "v")
+    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line, 0}, {parsed_url.end_line, -1}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
@@ -152,7 +145,7 @@ function M.open_file_from_git_url(url)
     })
 
     -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {end_line + 1, 0})
+    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line + 1, 0})
   end
 
 end
