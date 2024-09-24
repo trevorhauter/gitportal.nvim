@@ -32,7 +32,7 @@ NOTE: Support for additional hosts will be added after release.
 ## ꩜ Basic setup
 Here is how I have gitportal currently set up
 ```lua
-local gitportal = require("gitportal.core")
+local gitportal = require("gitportal")
 
 -- In normal mode, `open_file_in_browser()` opens the current file in your browser on the correct branch/commit.
 vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
@@ -41,8 +41,5 @@ vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() en
 vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
 -- open_file_in_neovim accepts a github link, switches to the correct branch/commit, and opens the specified file.
-vim.keymap.set('n', '<leader>ig', function()
-    gitportal.open_file_in_neovim(vim.fn.input("Github link > "));
-end) 
-
+vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
 ```

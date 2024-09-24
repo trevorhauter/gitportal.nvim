@@ -1,1 +1,1 @@
-require("gitportal.core")
+return require("gitportal.core")
