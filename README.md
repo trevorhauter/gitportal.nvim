@@ -18,11 +18,6 @@
 #### A coworker shares a file with you 
 - `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the permalink.
 
-## ꩜ Supported git web hosts
-- [GitHub](https://github.com/)
-
-NOTE: Support for additional hosts will be added after release.
-
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -43,3 +38,9 @@ vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() en
 -- open_file_in_neovim accepts a github link, switches to the correct branch/commit, and opens the specified file.
 vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
 ```
+
+## ꩜ Supported git web hosts
+- [GitHub](https://github.com/)
+
+NOTE: Support for additional hosts will be added after release.
+
