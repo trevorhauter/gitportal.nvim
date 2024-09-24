@@ -23,10 +23,8 @@ function M.parse_githost_url(url)
     if end_line == nil then
       end_line = start_line
     end
-    -- The lines are 0 indexed. 
-    -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    start_line = tonumber(start_line) - 2
-    end_line = tonumber(end_line) - 1
+    start_line = tonumber(start_line)
+    end_line = tonumber(end_line)
 
   end
 

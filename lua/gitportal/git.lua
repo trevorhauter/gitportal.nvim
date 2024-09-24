@@ -128,9 +128,9 @@ function M.open_file_from_git_url(url)
 
     -- Enter the user into visual mode
     vim.api.nvim_feedkeys("v", "n", true)
-    -- Function to set the highlight
-    -- Highlight a range (e.g., lines 2 to 4)
-    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line, 0}, {parsed_url.end_line, -1}, "v")
+    -- The lines are 0 indexed. 
+    -- Subtract 2 from the start line because the highlight doesn't start until the following line
+    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line - 2, 0}, {parsed_url.end_line - 1, -1}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
@@ -145,7 +145,7 @@ function M.open_file_from_git_url(url)
     })
 
     -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line + 1, 0})
+    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line, 0})
   end
 
 end
