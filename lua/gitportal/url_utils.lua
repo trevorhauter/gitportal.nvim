@@ -1,12 +1,7 @@
 local M = {}
 
 function M.parse_githost_url(url)
--- So far we expect two kinds of urls 
--- BLOB url on a branch
--- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua
--- BLOB url on a commit
--- https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua
-  -- TODO: Break this out into testable func.
+  -- Given a githost URL, parse all of the info we care about out of it!
   local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)")
   -- check for line numbers
   local start_line = nil
