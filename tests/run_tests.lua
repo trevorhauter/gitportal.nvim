@@ -1,4 +1,5 @@
-require('tests.test_link_parsing')
+require('tests.test_url_utils')
+require('tests.test_git')
 
 
 local lu = require('tests.luaunit')

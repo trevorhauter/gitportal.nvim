@@ -1,6 +1,6 @@
-local cli = require("gitportal.cli")
-local vi_utils = require("gitportal.vi_utils")
-local url_utils = require("gitportal.url_utils")
+local cli = require("lua.gitportal.cli")
+local vi_utils = require("lua.gitportal.vi_utils")
+local url_utils = require("lua.gitportal.url_utils")
 
 
 local M = {}
