@@ -49,3 +49,9 @@ vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end
 
 NOTE: Support for additional hosts will be added after release.
 
+## ꩜ Comparison against other popular git browsing plugins
+
+Feature                                                 | gitportal.nvim              | vim-fugitive       | vim-rhubarb        | gitlinker.nvim       
+--------------------------------------------------------|-----------------------------|--------------------|--------------------|----------------------
+Open current file in browser, with optional line ranges | :white_check_mark:          | :white_check_mark: | :white_check_mark: | :white_check_mark:   
+Open permalinks in neovim, with respect to line range, branch, or commit|:white_check_mark:| :x:           | :x:                | :x:                  
