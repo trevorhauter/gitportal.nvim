@@ -24,6 +24,11 @@
 { 'trevorhauter/gitportal.nvim' }
 ```
 
+- [packer.nvim](https://github.com/wbthomason/packer.nvim)
+```lua
+use { 'trevorhauter/gitportal.nvim' }
+```
+
 ## ꩜ Basic setup
 Here is how I have gitportal currently set up
 ```lua
