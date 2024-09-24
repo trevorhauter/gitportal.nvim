@@ -1,1 +1,1 @@
-return require("lua.gitportal.core")
+return require("gitportal.core")

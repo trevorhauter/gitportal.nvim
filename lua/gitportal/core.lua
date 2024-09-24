@@ -1,5 +1,5 @@
-local cli = require('lua.gitportal.cli')
-local git_helpers = require('lua.gitportal.git')
+local cli = require('gitportal.cli')
+local git_helpers = require('gitportal.git')
 
 local M = {}
 

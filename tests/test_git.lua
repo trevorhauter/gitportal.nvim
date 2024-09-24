@@ -1,5 +1,5 @@
 local lu = require("tests.luaunit")
-local git = require("lua.gitportal.git")
+local git = require("gitportal.git")
 
 TestGit = {}
 
