@@ -128,6 +128,8 @@ function M.open_file_from_git_url(url)
 
   if absolute_file_path == nil then
     print("ERROR! File path could not be determined!")
+  else
+      vim.cmd("edit " .. absolute_file_path)
   end
 
   if parsed_url.start_line ~= nil then
@@ -137,19 +139,16 @@ function M.open_file_from_git_url(url)
     if buftype == "nofile" then
       -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
       -- line highlighting
-      vim.api.nvim_create_autocmd({"BufEnter", "BufReadPost"}, {
+      local auto_cmd_id
+      auto_cmd_id = vim.api.nvim_create_autocmd({"BufEnter", "BufReadPost"}, {
         callback = function()
           -- Once the buffer is loaded, call the highlight function
-          vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+          vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line, auto_cmd_id)
         end,
-        once = true,  -- This ensures the autocmd only triggers once
       })
-      vim.cmd("edit " .. absolute_file_path)
-
     else
       -- buftype is... normal... so we can just highlight like normal!
-      vim.cmd("edit " .. absolute_file_path)
-      vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+      vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line, nil)
     end
 
   end
