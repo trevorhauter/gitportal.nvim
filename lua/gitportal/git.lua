@@ -111,7 +111,10 @@ function M.open_file_from_git_url(url)
   end
 
   -- Checkout the branch of commit!
-  cli.run_command("git checkout " .. parsed_url.branch_or_commit)
+  local output = cli.run_command("git checkout " .. parsed_url.branch_or_commit)
+  if output == nil then
+    vim.notify("Failed to switch branches! (Could their be unstashed work?)", vim.log.levels.ERROR)
+  end
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
   -- Find the position of the repo_name in the path
@@ -139,7 +142,19 @@ function M.open_file_from_git_url(url)
     vim.api.nvim_feedkeys("v", "n", true)
     -- The lines are 0 indexed. 
     -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line - 2, 0}, {parsed_url.end_line - 1, -1}, "v")
+    if parsed_url.start_line > 1 then
+      parsed_url.start_line = parsed_url.start_line - 2
+    else
+      parsed_url.start_line = 0
+    end
+
+    if parsed_url.end_line > 1 then
+      parsed_url.end_line = parsed_url.end_line - 1
+    else
+      parsed_url.end_line = 1
+    end
+
+    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line, 0}, {parsed_url.end_line, -1}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
@@ -154,7 +169,7 @@ function M.open_file_from_git_url(url)
     })
 
     -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line, 0})
+    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line + 1, 0})
   end
 
 end
