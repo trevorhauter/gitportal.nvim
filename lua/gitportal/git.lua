@@ -149,12 +149,7 @@ function M.open_file_from_git_url(url)
       start_line_y = 0
     end
 
-    local end_line_x = 0
-    if start_line_y ~= end_line_y - 1 or vim.api.nvim_buf_line_count(0) == end_line_y then
-      end_line_x = -1
-    end
-
-    vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, end_line_x}, "v")
+    vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, 0}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
