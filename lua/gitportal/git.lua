@@ -2,20 +2,28 @@ local cli = require("gitportal.cli")
 local vi_utils = require("gitportal.vi_utils")
 local url_utils = require("gitportal.url_utils")
 
+local git_root_patterns = { ".git" }
 
 local M = {}
 
 
+local function get_git_root_dir()
+  -- Get the git root dir
+  return vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
+end
+
+
+local function get_git_base_directory()
+  -- Gets the name of the base directory for the git repo
+  return get_git_root_dir():match("([^/]+)$")
+end
+
+
 local function get_git_file_path()
   -- Gets a path of the file relative the the base git directory.
-
   -- Get the full path of the current file
   local current_file_path = vim.api.nvim_buf_get_name(0)
-
-  local git_root_patterns = { ".git" }
-  -- Get the git root dir
-  local git_root_dir = vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
-
+  local git_root_dir = get_git_root_dir()
   local git_path = current_file_path:sub(#git_root_dir + 2) -- Have to add one so we don't repeat last char
   return git_path
 end
@@ -96,13 +104,17 @@ function M.open_file_from_git_url(url)
     return nil
   else
     if string.find(current_location, parsed_url.repo, 0, true) == nil then
-      print("ERROR! Couldn't find '" .. parsed_url.repo .. "' in '" .. current_location .. "'")
-      return nil
+      -- If we run into this issue, it's possible that the folder containing the repo and the
+      -- repo name are different. So infer the repo name from the relative git path
+      parsed_url.repo = get_git_base_directory()
     end
   end
 
   -- Checkout the branch of commit!
-  cli.run_command("git checkout " .. parsed_url.branch_or_commit)
+  local output = cli.run_command("git checkout " .. parsed_url.branch_or_commit)
+  if output == nil then
+    vim.notify("Failed to switch branches! (Could there be unstashed work?)", vim.log.levels.ERROR)
+  end
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
   -- Find the position of the repo_name in the path
@@ -130,7 +142,14 @@ function M.open_file_from_git_url(url)
     vim.api.nvim_feedkeys("v", "n", true)
     -- The lines are 0 indexed. 
     -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    vim.highlight.range(bufnr, ns_id, "Visual", {parsed_url.start_line - 2, 0}, {parsed_url.end_line - 1, -1}, "v")
+    local start_line_y = parsed_url.start_line - 1
+    local end_line_y = parsed_url.end_line
+
+    if start_line_y < 0 then
+      start_line_y = 0
+    end
+
+    vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, 0}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
@@ -145,7 +164,7 @@ function M.open_file_from_git_url(url)
     })
 
     -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {parsed_url.end_line, 0})
+    vim.api.nvim_win_set_cursor(0, {end_line_y, 0})
   end
 
 end

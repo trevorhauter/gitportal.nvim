@@ -1,5 +1,5 @@
 local lu = require('tests.luaunit')
-local url_utils = require("lua.gitportal.url_utils")
+local url_utils = require("gitportal.url_utils")
 
 TestParseGithostUrl = {}
 
