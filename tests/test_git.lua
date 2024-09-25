@@ -2,6 +2,7 @@ local lu = require("tests.luaunit")
 local git = require("gitportal.git")
 
 TestGit = {}
+-- TODO: Actually add git tests here
 
   function TestGit:setUp()
     -- Backup the function that will be mocked
