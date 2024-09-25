@@ -113,7 +113,7 @@ function M.open_file_from_git_url(url)
   -- Checkout the branch of commit!
   local output = cli.run_command("git checkout " .. parsed_url.branch_or_commit)
   if output == nil then
-    vim.notify("Failed to switch branches! (Could their be unstashed work?)", vim.log.levels.ERROR)
+    vim.notify("Failed to switch branches! (Could there be unstashed work?)", vim.log.levels.ERROR)
   end
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
