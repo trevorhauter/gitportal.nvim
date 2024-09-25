@@ -40,7 +40,6 @@ function M.highlight_line_range(start_line, end_line)
       callback = function()
           if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
               vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
-              -- Remove the autocommand to avoid future calls
               vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
           end
       end,
