@@ -142,18 +142,19 @@ function M.open_file_from_git_url(url)
     vim.api.nvim_feedkeys("v", "n", true)
     -- The lines are 0 indexed. 
     -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    local start_line = parsed_url.start_line - 2
-    local end_line = parsed_url.end_line - 1
+    local start_line_y = parsed_url.start_line - 1
+    local end_line_y = parsed_url.end_line
 
-    if start_line < 0 then
-      start_line = 0
+    if start_line_y < 0 then
+      start_line_y = 0
     end
 
-    if end_line < 1 then
-      end_line = 1
+    local end_line_x = 0
+    if start_line_y ~= end_line_y - 1 or vim.api.nvim_buf_line_count(0) == end_line_y then
+      end_line_x = -1
     end
 
-    vim.highlight.range(bufnr, ns_id, "Visual", {start_line, 0}, {end_line, -1}, "v")
+    vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, end_line_x}, "v")
 
     -- Clear the highlight when leaving visual mode
     local auto_cmd_id
@@ -168,7 +169,7 @@ function M.open_file_from_git_url(url)
     })
 
     -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {end_line + 1, 0})
+    vim.api.nvim_win_set_cursor(0, {end_line_y, 0})
   end
 
 end
