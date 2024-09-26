@@ -15,14 +15,22 @@ function M.get_visual_selection_lines()
 end
 
 
+function M.open_file(file_name)
+  vim.cmd("edit " .. file_name)
+end
+
+
+function M.enter_visual_mode()
+  vim.api.nvim_feedkeys("v", "n", true)
+end
+
+
 function M.highlight_line_range(start_line, end_line)
-  -- Get the current buffer number
+  -- Given a visual line range, highlight the lines!
   local bufnr = vim.api.nvim_get_current_buf()
-  -- Highlight all of the lines in the desired range
   local ns_id = vim.api.nvim_create_namespace("temporary_highlight")
 
-    -- The lines are 0 indexed. 
-  -- Subtract 2 from the start line because the highlight doesn't start until the following line
+  -- The lines are 0 indexed. 
   local start_line_y = start_line - 1
   local end_line_y = end_line
 
@@ -32,13 +40,13 @@ function M.highlight_line_range(start_line, end_line)
 
   vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, 0}, "v")
 
-  -- Clear the highlight when leaving visual mode
+  -- Create an auto command that clears the highlight when leaving visual mode
   local auto_cmd_id
   auto_cmd_id = vim.api.nvim_create_autocmd("ModeChanged", {
       callback = function()
           if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
-              vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
-              vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
+              vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1) -- Remove the created namespace
+              vim.api.nvim_del_autocmd(auto_cmd_id)  -- Remove the created autocommand
           end
       end,
   })

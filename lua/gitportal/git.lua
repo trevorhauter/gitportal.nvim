@@ -1,5 +1,5 @@
 local cli = require("gitportal.cli")
-local vi_utils = require("gitportal.vi_utils")
+local nv_utils = require("gitportal.nv_utils")
 local url_utils = require("gitportal.url_utils")
 
 local git_root_patterns = { ".git" }
@@ -84,7 +84,7 @@ function M.get_git_url_for_current_file()
   local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" then
-    local start_line, end_line = vi_utils.get_visual_selection_lines()
+    local start_line, end_line = nv_utils.get_visual_selection_lines()
     if start_line and end_line then
       permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
     end
@@ -141,18 +141,19 @@ function M.open_file_from_git_url(url)
         callback = function()
           vim.defer_fn(function()
             -- Once the buffer is loaded, call the highlight function
-            vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
-            vim.api.nvim_feedkeys("v", "n", true)
-          end, 100)  -- 100ms delay, you can adjust this
+            nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+            nv_utils.enter_visual_mode()
+          end, 100)  -- 100ms delay to give the file time to load
         end,
         once=true
       })
-      vim.cmd("edit " .. absolute_file_path)
+      nv_utils.open_file(absolute_file_path)
     else
-      vim.cmd("edit " .. absolute_file_path)
-      -- buftype is... normal... so we can just highlight like normal!
-      vi_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
-      vim.api.nvim_feedkeys("v", "n", true)
+      -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
+      -- normal
+      nv_utils.open_file(absolute_file_path)
+      nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+      nv_utils.enter_visual_mode()
     end
 
   end
