@@ -15,7 +15,7 @@ function M.get_visual_selection_lines()
 end
 
 
-function M.highlight_line_range(start_line, end_line, parent_auto_cmd_id)
+function M.highlight_line_range(start_line, end_line)
   -- Get the current buffer number
   local bufnr = vim.api.nvim_get_current_buf()
   -- Highlight all of the lines in the desired range
@@ -39,18 +39,12 @@ function M.highlight_line_range(start_line, end_line, parent_auto_cmd_id)
           if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
               vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
               vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
-              if parent_auto_cmd_id ~= nil then
-                vim.api.nvim_del_autocmd(parent_auto_cmd_id)
-              end
           end
       end,
   })
 
   -- set the users cursor pos. it's not 0 indexed.
   vim.api.nvim_win_set_cursor(0, {end_line_y, 0})
-  -- Enter the user into visual mode
-  vim.api.nvim_feedkeys("v", "n", true)
-
 end
 
 return M
