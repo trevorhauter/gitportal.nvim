@@ -137,16 +137,7 @@ function M.open_file_from_git_url(url)
     if buftype == "nofile" then
       -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
       -- line highlighting
-      vim.api.nvim_create_autocmd("BufReadPost", {
-        callback = function()
-          vim.defer_fn(function()
-            -- Once the buffer is loaded, call the highlight function
-            nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
-            nv_utils.enter_visual_mode()
-          end, 100)  -- 100ms delay to give the file time to load
-        end,
-        once=true
-      })
+      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
       nv_utils.open_file(absolute_file_path)
     else
       -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
