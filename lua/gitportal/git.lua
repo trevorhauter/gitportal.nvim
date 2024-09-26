@@ -1,5 +1,5 @@
 local cli = require("gitportal.cli")
-local vi_utils = require("gitportal.vi_utils")
+local nv_utils = require("gitportal.nv_utils")
 local url_utils = require("gitportal.url_utils")
 
 local git_root_patterns = { ".git" }
@@ -84,7 +84,7 @@ function M.get_git_url_for_current_file()
   local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" then
-    local start_line, end_line = vi_utils.get_visual_selection_lines()
+    local start_line, end_line = nv_utils.get_visual_selection_lines()
     if start_line and end_line then
       permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
     end
@@ -128,45 +128,35 @@ function M.open_file_from_git_url(url)
 
   if absolute_file_path == nil then
     print("ERROR! File path could not be determined!")
-  else
-    vim.cmd("edit " .. absolute_file_path)
   end
 
   if parsed_url.start_line ~= nil then
-    -- Get the current buffer number
     local bufnr = vim.api.nvim_get_current_buf()
-    -- Highlight all of the lines in the desired range
-    local ns_id = vim.api.nvim_create_namespace("temporary_highlight")
+    local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
 
-    -- Enter the user into visual mode
-    vim.api.nvim_feedkeys("v", "n", true)
-    -- The lines are 0 indexed. 
-    -- Subtract 2 from the start line because the highlight doesn't start until the following line
-    local start_line_y = parsed_url.start_line - 1
-    local end_line_y = parsed_url.end_line
-
-    if start_line_y < 0 then
-      start_line_y = 0
+    if buftype == "nofile" then
+      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
+      -- line highlighting
+      vim.api.nvim_create_autocmd("BufReadPost", {
+        callback = function()
+          vim.defer_fn(function()
+            -- Once the buffer is loaded, call the highlight function
+            nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+            nv_utils.enter_visual_mode()
+          end, 100)  -- 100ms delay to give the file time to load
+        end,
+        once=true
+      })
+      nv_utils.open_file(absolute_file_path)
+    else
+      -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
+      -- normal
+      nv_utils.open_file(absolute_file_path)
+      nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
+      nv_utils.enter_visual_mode()
     end
 
-    vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, 0}, "v")
-
-    -- Clear the highlight when leaving visual mode
-    local auto_cmd_id
-    auto_cmd_id = vim.api.nvim_create_autocmd("ModeChanged", {
-        callback = function()
-            if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
-                vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1)
-                -- Remove the autocommand to avoid future calls
-                vim.api.nvim_del_autocmd(auto_cmd_id)  -- Use the autocommand ID to delete
-            end
-        end,
-    })
-
-    -- set the users cursor pos. it's not 0 indexed.
-    vim.api.nvim_win_set_cursor(0, {end_line_y, 0})
   end
-
 end
 
 
