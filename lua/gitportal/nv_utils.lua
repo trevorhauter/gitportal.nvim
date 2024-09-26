@@ -33,12 +33,19 @@ function M.highlight_line_range(start_line, end_line)
   -- The lines are 0 indexed. 
   local start_line_y = start_line - 1
   local end_line_y = end_line
+  local end_line_x
 
   if start_line_y < 0 then
     start_line_y = 0
   end
 
-  vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, 0}, "v")
+  if vim.api.nvim_buf_line_count(0) == end_line_y then
+    end_line_x = -1
+  else
+    end_line_x = 0
+  end
+
+  vim.highlight.range(bufnr, ns_id, "Visual", {start_line_y, 0}, {end_line_y, end_line_x}, "v")
 
   -- Create an auto command that clears the highlight when leaving visual mode
   local auto_cmd_id
