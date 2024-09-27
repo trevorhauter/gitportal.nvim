@@ -20,6 +20,15 @@ function M.open_file(file_name)
 end
 
 
+function M.user_in_visual_mode()
+  if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
+    return false
+  else
+    return true
+  end
+end
+
+
 function M.enter_visual_mode()
   vim.api.nvim_feedkeys("v", "n", true)
 end
@@ -51,7 +60,7 @@ function M.highlight_line_range(start_line, end_line)
   local auto_cmd_id
   auto_cmd_id = vim.api.nvim_create_autocmd("ModeChanged", {
       callback = function()
-          if vim.fn.mode() ~= "v" and vim.fn.mode() ~= "V" then
+          if M.user_in_visual_mode() == false then
               vim.api.nvim_buf_clear_namespace(bufnr, ns_id, 0, -1) -- Remove the created namespace
               vim.api.nvim_del_autocmd(auto_cmd_id)  -- Remove the created autocommand
           end
