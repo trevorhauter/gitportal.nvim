@@ -16,9 +16,10 @@ end
 function M.branch_or_commit_exists(branch_or_commit)
   -- Check to see if a branch or a commit exists in a given repo
   local result = cli.run_command("git cat-file -t " .. branch_or_commit)
-  if result == "commit" then
+  if result == "commit\n" then
     return true
   else
+    cli.log_error(result)
     return false
   end
 
@@ -50,8 +51,7 @@ function M.get_branch_or_commit()
   if branch_name then
     branch_name = branch_name:gsub("\n", "")
   else
-    -- TODO: Raise an error here...
-    branch_name = "FAILED"
+    return nil 
   end
 
   return branch_name
@@ -86,8 +86,6 @@ function M.get_git_url_for_current_file()
   local git_path = M.get_git_file_path()
 
   -- If the file does exist, make sure the branch or commit exists on the remote host too
-  -- 64ad8be39a26d41c81a30513dc2b7f9816f7f7ae
-
   if M.branch_or_commit_exists(branch_or_commit) ~= true then
     cli.log_error("The specified branch/commit could not be found on the remote repository!")
     return nil
