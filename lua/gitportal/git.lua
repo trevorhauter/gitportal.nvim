@@ -19,7 +19,7 @@ function M.get_git_base_directory()
 end
 
 
-local function get_git_file_path()
+function M.get_git_file_path()
   -- Gets a path of the file relative the the base git directory.
   -- Get the full path of the current file
   local current_file_path = vim.api.nvim_buf_get_name(0)
@@ -72,7 +72,7 @@ function M.get_git_url_for_current_file()
   -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
   local branch_name = get_git_branch_name()
-  local git_path = get_git_file_path()
+  local git_path = M.get_git_file_path()
 
   -- If the file does exist, make sure the branch exists on the remote host too
   local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
