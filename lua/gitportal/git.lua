@@ -73,6 +73,23 @@ local function get_base_github_url()
 end
 
 
+function M.create_url_params(start_line, end_line)
+  -- Given a start and end line, generate a line range for the end of a github url
+  -- if applicable 
+  if start_line and end_line then
+
+    if start_line == end_line then
+      return "#L" .. start_line
+    else
+      return "#L" .. start_line .. "-L" .. end_line
+    end
+
+  end
+
+  return ""
+end
+
+
 function M.get_git_url_for_current_file()
   -- Creates a url for the current file in github. General formula follows...
   --[[
@@ -97,14 +114,7 @@ function M.get_git_url_for_current_file()
 
   if vim.fn.mode() ~= "n" then
     local start_line, end_line = nv_utils.get_visual_selection_lines()
-    if start_line and end_line then
-      if start_line == end_line then
-        permalink = permalink .. "#L" .. start_line
-      else
-        permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
-      end
-    end
-
+    permalink = permalink .. M.create_url_params(start_line, end_line)
   end
 
   return permalink
@@ -115,15 +125,11 @@ function M.open_file_from_git_url(url)
   local parsed_url = url_utils.parse_githost_url(url)
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
-  if current_location == nil then
-    print("ERROR! Couldn't find current file location.")
-    return nil
-  else
-    if string.find(current_location, parsed_url.repo, 0, true) == nil then
-      -- If we run into this issue, it's possible that the folder containing the repo and the
-      -- repo name are different. So infer the repo name from the relative git path
-      parsed_url.repo = M.get_git_base_directory()
-    end
+
+  if string.find(current_location, parsed_url.repo, 0, true) == nil then
+    -- If we run into this issue, it's possible that the folder containing the repo and the
+    -- repo name are different. So infer the repo name from the relative git path
+    parsed_url.repo = M.get_git_base_directory()
   end
 
   -- Checkout the branch of commit!
@@ -147,8 +153,7 @@ function M.open_file_from_git_url(url)
   end
 
   if parsed_url.start_line ~= nil then
-    local bufnr = vim.api.nvim_get_current_buf()
-    local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+    local buftype = nv_utils.get_current_buf_type()
 
     if buftype == "nofile" then
       -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
