@@ -1,6 +1,12 @@
 -- These are utils that do vim things like find what lines are highlighted in visual mode
 local M = {}
 
+
+function M.get_current_buf_type()
+    local bufnr = vim.api.nvim_get_current_buf()
+    return vim.api.nvim_buf_get_option(bufnr, "buftype")
+end
+
 function M.get_visual_selection_lines()
   -- Get the start and end line numbers of the current visual selection
   local start_line = vim.fn.line("v") -- Get visual start line

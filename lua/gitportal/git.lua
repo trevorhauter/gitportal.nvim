@@ -157,8 +157,7 @@ function M.open_file_from_git_url(url)
   end
 
   if parsed_url.start_line ~= nil then
-    local bufnr = vim.api.nvim_get_current_buf()
-    local buftype = vim.api.nvim_buf_get_option(bufnr, "buftype")
+    local buftype = nv_utils.get_current_buf_type()
 
     if buftype == "nofile" then
       -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
