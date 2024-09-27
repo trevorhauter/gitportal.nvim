@@ -73,6 +73,23 @@ local function get_base_github_url()
 end
 
 
+function M.create_line_range_for_url(start_line, end_line)
+  -- Given a start and end line, generate a line range for the end of a github url
+  -- if applicable 
+  if start_line and end_line then
+
+    if start_line == end_line then
+      return "#L" .. start_line
+    else
+      return "#L" .. start_line .. "-L" .. end_line
+    end
+
+  end
+
+  return ""
+end
+
+
 function M.get_git_url_for_current_file()
   -- Creates a url for the current file in github. General formula follows...
   --[[
@@ -97,14 +114,7 @@ function M.get_git_url_for_current_file()
 
   if vim.fn.mode() ~= "n" then
     local start_line, end_line = nv_utils.get_visual_selection_lines()
-    if start_line and end_line then
-      if start_line == end_line then
-        permalink = permalink .. "#L" .. start_line
-      else
-        permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
-      end
-    end
-
+    permalink = permalink .. M.create_line_range_for_url(start_line, end_line)
   end
 
   return permalink
