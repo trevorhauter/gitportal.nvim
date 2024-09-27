@@ -74,13 +74,15 @@ end
 
 
 function M.get_git_url_for_current_file()
-  -- Creates a url for the current file in github.
-  -- formula for url is 
-  -- https://github.com/trevorhauter/gitportal.nvim/blob/initial_setup/lua/gitportal/cli.lua
-  -- remote url: https://github.com/trevorhauter/gitportal.nvim
-  -- blob: blob
-  -- branch_name: initial_setup
-  -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
+  -- Creates a url for the current file in github. General formula follows...
+  --[[
+    Example url: https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua#L1-L2
+    remote url: https://github.com/trevorhauter/gitportal.nvim
+    blob: blob
+    branch_or_commit: main | 7b6d66e0098678af63189b96f0d6f12e8ee961c3
+    file_path: lua/gitportal/cli.lua
+    Line highlights: #L1 | #L1-L2
+  --]]
   local remote_url = get_base_github_url()
   local branch_or_commit = M.get_branch_or_commit()
   local git_path = M.get_git_file_path()
