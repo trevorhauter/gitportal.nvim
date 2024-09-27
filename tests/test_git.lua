@@ -62,11 +62,11 @@ TestGit = {}
     lu.assertEquals(git.get_git_file_path(), "lua/gitportal/cli.lua")
   end
 
-  function TestGit:test_get_git_branch_name()
+  function TestGit:test_get_branch_or_commit()
     self.active_branch_or_commit = self.branch
-    lu.assertEquals(git.get_git_branch_name(), self.branch)
+    lu.assertEquals(git.get_branch_or_commit(), self.branch)
     self.active_branch_or_commit = self.commit
-    lu.assertEquals(git.get_git_branch_name(), self.commit)
+    lu.assertEquals(git.get_branch_or_commit(), self.commit)
   end
 
 

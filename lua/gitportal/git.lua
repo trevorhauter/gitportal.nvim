@@ -13,6 +13,17 @@ function M.get_git_root_dir()
 end
 
 
+function M.branch_or_commit_exists(branch_or_commit)
+  -- Check to see if a branch or a commit exists in a given repo
+  local result = cli.run_command("git cat-file -t " .. branch_or_commit)
+  if result == "commit" then
+    return true
+  else
+    return false
+  end
+
+end
+
 function M.get_git_base_directory()
   -- Gets the name of the base directory for the git repo
   return M.get_git_root_dir():match("([^/]+)$")
@@ -29,7 +40,7 @@ function M.get_git_file_path()
 end
 
 
-function M.get_git_branch_name()
+function M.get_branch_or_commit()
   local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
 
   if branch_name == "HEAD\n" then
@@ -71,17 +82,18 @@ function M.get_git_url_for_current_file()
   -- branch_name: initial_setup
   -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
-  local branch_name = M.get_git_branch_name()
+  local branch_or_commit = M.get_branch_or_commit()
   local git_path = M.get_git_file_path()
 
-  -- If the file does exist, make sure the branch exists on the remote host too
-  local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
-  if branch_exists == "" then
-    print("The specified branch has not been pushed to the remote repository!")
+  -- If the file does exist, make sure the branch or commit exists on the remote host too
+  -- 64ad8be39a26d41c81a30513dc2b7f9816f7f7ae
+
+  if M.branch_or_commit_exists(branch_or_commit) ~= true then
+    cli.log_error("The specified branch/commit could not be found on the remote repository!")
     return nil
   end
 
-  local permalink = remote_url .. "/blob/" .. branch_name .. "/" .. git_path
+  local permalink = remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" then
     local start_line, end_line = nv_utils.get_visual_selection_lines()

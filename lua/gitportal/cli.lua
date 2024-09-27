@@ -1,12 +1,17 @@
 local M = {}
 
 
+function M.log_error(message)
+  vim.notify(message, vim.log.levels.ERROR)
+end
+
+
 function M.run_command(command)
   -- Get the git remotes which we can use for the base github url (and maybe other hosts...?)
   local output = vim.fn.system(command)
   if vim.v.shell_error ~= 0 then
       -- Handle errors if the command fails
-      vim.notify("Failed to run command", vim.log.levels.ERROR)
+      M.log_error("Failed to run command")
       return nil
   end
   return output
