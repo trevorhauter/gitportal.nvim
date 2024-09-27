@@ -125,15 +125,11 @@ function M.open_file_from_git_url(url)
   local parsed_url = url_utils.parse_githost_url(url)
   -- First, ensure we are in the same repo as the link
   local current_location = vim.api.nvim_buf_get_name(0)
-  if current_location == nil then
-    print("ERROR! Couldn't find current file location.")
-    return nil
-  else
-    if string.find(current_location, parsed_url.repo, 0, true) == nil then
-      -- If we run into this issue, it's possible that the folder containing the repo and the
-      -- repo name are different. So infer the repo name from the relative git path
-      parsed_url.repo = M.get_git_base_directory()
-    end
+
+  if string.find(current_location, parsed_url.repo, 0, true) == nil then
+    -- If we run into this issue, it's possible that the folder containing the repo and the
+    -- repo name are different. So infer the repo name from the relative git path
+    parsed_url.repo = M.get_git_base_directory()
   end
 
   -- Checkout the branch of commit!
