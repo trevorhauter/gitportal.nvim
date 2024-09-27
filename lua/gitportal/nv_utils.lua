@@ -75,7 +75,7 @@ end
 function M.highlight_line_range_for_new_buffer(start_line, end_line)
   -- Sets up an autocommand with delay that waits for a new buffer to be entered
   -- before triggering. Used for entering and highlighting a file from a nofile like buffer
-  vim.api.nvim_create_autocmd("BufReadPost", {
+  vim.api.nvim_create_autocmd("BufWinEnter", {
     callback = function()
       vim.defer_fn(function()
         -- Once the buffer is loaded, call the highlight function
