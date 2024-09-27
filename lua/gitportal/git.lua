@@ -51,7 +51,7 @@ function M.get_branch_or_commit()
   if branch_name then
     branch_name = branch_name:gsub("\n", "")
   else
-    return nil 
+    return nil
   end
 
   return branch_name
@@ -98,7 +98,11 @@ function M.get_git_url_for_current_file()
   if vim.fn.mode() ~= "n" then
     local start_line, end_line = nv_utils.get_visual_selection_lines()
     if start_line and end_line then
-      permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
+      if start_line == end_line then
+        permalink = permalink .. "#L" .. start_line
+      else
+        permalink = permalink .. "#L" .. start_line .. "-L" .. end_line
+      end
     end
 
   end
