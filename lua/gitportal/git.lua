@@ -29,7 +29,7 @@ function M.get_git_file_path()
 end
 
 
-local function get_git_branch_name()
+function M.get_git_branch_name()
   local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
 
   if branch_name == "HEAD\n" then
@@ -71,7 +71,7 @@ function M.get_git_url_for_current_file()
   -- branch_name: initial_setup
   -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
-  local branch_name = get_git_branch_name()
+  local branch_name = M.get_git_branch_name()
   local git_path = M.get_git_file_path()
 
   -- If the file does exist, make sure the branch exists on the remote host too
