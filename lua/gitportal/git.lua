@@ -7,23 +7,23 @@ local git_root_patterns = { ".git" }
 local M = {}
 
 
-local function get_git_root_dir()
+function M.get_git_root_dir()
   -- Get the git root dir
   return vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
 end
 
 
-local function get_git_base_directory()
+function M.get_git_base_directory()
   -- Gets the name of the base directory for the git repo
-  return get_git_root_dir():match("([^/]+)$")
+  return M.get_git_root_dir():match("([^/]+)$")
 end
 
 
-local function get_git_file_path()
+function M.get_git_file_path()
   -- Gets a path of the file relative the the base git directory.
   -- Get the full path of the current file
   local current_file_path = vim.api.nvim_buf_get_name(0)
-  local git_root_dir = get_git_root_dir()
+  local git_root_dir = M.get_git_root_dir()
   local git_path = current_file_path:sub(#git_root_dir + 2) -- Have to add one so we don't repeat last char
   return git_path
 end
@@ -72,7 +72,7 @@ function M.get_git_url_for_current_file()
   -- file_path: lua/gitportal/cli.lua (Note doesn't include base dir, i.e. gitportal.nvim)
   local remote_url = get_base_github_url()
   local branch_name = get_git_branch_name()
-  local git_path = get_git_file_path()
+  local git_path = M.get_git_file_path()
 
   -- If the file does exist, make sure the branch exists on the remote host too
   local branch_exists = cli.run_command("git ls-remote --heads origin " .. branch_name)
@@ -106,7 +106,7 @@ function M.open_file_from_git_url(url)
     if string.find(current_location, parsed_url.repo, 0, true) == nil then
       -- If we run into this issue, it's possible that the folder containing the repo and the
       -- repo name are different. So infer the repo name from the relative git path
-      parsed_url.repo = get_git_base_directory()
+      parsed_url.repo = M.get_git_base_directory()
     end
   end
 
@@ -137,16 +137,7 @@ function M.open_file_from_git_url(url)
     if buftype == "nofile" then
       -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
       -- line highlighting
-      vim.api.nvim_create_autocmd("BufReadPost", {
-        callback = function()
-          vim.defer_fn(function()
-            -- Once the buffer is loaded, call the highlight function
-            nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
-            nv_utils.enter_visual_mode()
-          end, 100)  -- 100ms delay to give the file time to load
-        end,
-        once=true
-      })
+      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
       nv_utils.open_file(absolute_file_path)
     else
       -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
