@@ -40,13 +40,14 @@ If you wish to keep these defaults, no configuration is required. If you wish to
   always_include_current_line = false,
 
   -- When ingesting permalinks, should gitportal always switch to the specified
-  -- branch or commit? 
-  switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
+  -- branch or commit?
+  -- Can be "always", "ask_first", or "never"
+  switch_branch_or_commit_upon_ingestion = "always",
 }
 ```
 
 ## ꩜ Basic setup
-Here is how I have gitportal currently set up
+Here is a brief example of the available functions and how I have them set up in my personal config.
 ```lua
 local gitportal = require("gitportal")
 
