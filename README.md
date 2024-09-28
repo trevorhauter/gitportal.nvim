@@ -34,14 +34,21 @@ Here is how I have gitportal currently set up
 ```lua
 local gitportal = require("gitportal")
 
--- In normal mode, this opens the current file in your browser on the correct branch/commit.
+gitportal.setup({
+  always_include_current_line = true
+})
+
+-- open_file_in_browser() in normal mode
+-- Opens the current file in your browser on the correct branch/commit.
 vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
--- In visual mode, this behaves the same but it also includes the selected line(s) in the permalink.
+-- open_file_in_browser() in visual mode
+-- This behaves the same but it also includes the selected line(s) in the permalink.
 vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
--- This method asks for a github link, switches to the correct branch/commit, and opens the specified file.
--- Line ranges, if included, are respected.
+-- open_file_in_neovim()
+-- Requests a github link, optionally switches to the branch/commit, and
+-- opens the specified file in neovim. Line ranges, if included, are respected.
 vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
 ```
 
