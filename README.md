@@ -29,6 +29,22 @@
 use { 'trevorhauter/gitportal.nvim' }
 ```
 
+## ꩜ Configuration
+**gitportal.nvim** comes with the following defaults.
+
+If you wish to keep these defaults, no configuration is required. If you wish to customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
+```lua
+{
+  -- When opening permalinks, whether to always include the current line in the URL,
+  --  regardless of visual mode.
+  always_include_current_line = false,
+
+  -- When ingesting permalinks to open files locally, how should gitportal treat any new branch or commit
+  -- specified in the url
+  switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
+}
+```
+
 ## ꩜ Basic setup
 Here is how I have gitportal currently set up
 ```lua
