@@ -105,11 +105,13 @@ function M.checkout_branch_or_commit(branch_or_commit)
     end
   end
 
-  if switch_config == "always" then
-    local output = cli.run_command("git checkout " .. branch_or_commit)
-    if output == nil then
-      cli.log_error("Failed to switch branches! (Could there be unstashed work?)")
-    end
+  local output = cli.run_command("git checkout " .. branch_or_commit)
+  if output == nil then
+    cli.log_error("Failed to switch branches! (Could there be unstashed work?)")
+  end
+
+  if switch_config == "always" or switch_config == "ask_first" then
+    return
   end
 
   cli.log_error("Couldn't switch to branch or commit. Config value of '" .. switch_config .. "' is invalid.")
