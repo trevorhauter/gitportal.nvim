@@ -29,19 +29,43 @@
 use { 'trevorhauter/gitportal.nvim' }
 ```
 
+## ꩜ Configuration
+**gitportal.nvim** comes with the following defaults.
+
+If you wish to keep these defaults, no configuration is required. If you wish to customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
+```lua
+{
+  -- When opening generating permalinks, whether to always include the current line in
+  -- the URL, regardless of visual mode.
+  always_include_current_line = false,
+
+  -- When ingesting permalinks, should gitportal always switch to the specified
+  -- branch or commit?
+  -- Can be "always", "ask_first", or "never"
+  switch_branch_or_commit_upon_ingestion = "always",
+}
+```
+
 ## ꩜ Basic setup
-Here is how I have gitportal currently set up
+Here is a brief example of the available functions and how I have them set up in my personal config.
 ```lua
 local gitportal = require("gitportal")
 
--- In normal mode, this opens the current file in your browser on the correct branch/commit.
+gitportal.setup({
+  always_include_current_line = true
+})
+
+-- open_file_in_browser() in normal mode
+-- Opens the current file in your browser on the correct branch/commit.
 vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
--- In visual mode, this behaves the same but it also includes the selected line(s) in the permalink.
+-- open_file_in_browser() in visual mode
+-- This behaves the same but it also includes the selected line(s) in the permalink.
 vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
 
--- This method asks for a github link, switches to the correct branch/commit, and opens the specified file.
--- Line ranges, if included, are respected.
+-- open_file_in_neovim()
+-- Requests a github link, optionally switches to the branch/commit, and
+-- opens the specified file in neovim. Line ranges, if included, are respected.
 vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
 ```
 

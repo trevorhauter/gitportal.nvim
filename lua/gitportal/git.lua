@@ -1,6 +1,8 @@
 local cli = require("gitportal.cli")
 local nv_utils = require("gitportal.nv_utils")
 local url_utils = require("gitportal.url_utils")
+local config = require("gitportal.config")
+
 
 local git_root_patterns = { ".git" }
 
@@ -90,6 +92,31 @@ function M.create_url_params(start_line, end_line)
 end
 
 
+function M.checkout_branch_or_commit(branch_or_commit)
+  local switch_config = config.options.switch_branch_or_commit_upon_ingestion
+  if switch_config == "never" then
+    return
+  end
+
+  if switch_config == "ask_first" then
+    local response = vim.fn.input("Switch to branch/commit '" .. branch_or_commit .. "'? (y/n): ")
+    if response ~= "Y" and response ~= "y" then
+      return
+    end
+  end
+
+  local output = cli.run_command("git checkout " .. branch_or_commit)
+  if output == nil then
+    cli.log_error("Failed to switch branches! (Could there be unstashed work?)")
+  end
+
+  if switch_config == "always" or switch_config == "ask_first" then
+    return
+  end
+
+  cli.log_error("Couldn't switch to branch or commit. Config value of '" .. switch_config .. "' is invalid.")
+end
+
 function M.get_git_url_for_current_file()
   -- Creates a url for the current file in github. General formula follows...
   --[[
@@ -112,7 +139,7 @@ function M.get_git_url_for_current_file()
 
   local permalink = remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
 
-  if vim.fn.mode() ~= "n" then
+  if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
     local start_line, end_line = nv_utils.get_visual_selection_lines()
     permalink = permalink .. M.create_url_params(start_line, end_line)
   end
@@ -132,11 +159,7 @@ function M.open_file_from_git_url(url)
     parsed_url.repo = M.get_git_base_directory()
   end
 
-  -- Checkout the branch of commit!
-  local output = cli.run_command("git checkout " .. parsed_url.branch_or_commit)
-  if output == nil then
-    vim.notify("Failed to switch branches! (Could there be unstashed work?)", vim.log.levels.ERROR)
-  end
+  M.checkout_branch_or_commit(parsed_url.branch_or_commit)
 
   -- Now we must craft an absolute path for the file we want to open, because we don't know where it is relative to us.
   -- Find the position of the repo_name in the path
