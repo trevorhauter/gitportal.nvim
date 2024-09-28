@@ -1,6 +1,6 @@
 local cli = require('gitportal.cli')
 local git_helpers = require('gitportal.git')
-local config = require('yourplugin.config')
+local config = require('gitportal.config')
 
 local M = {}
 
