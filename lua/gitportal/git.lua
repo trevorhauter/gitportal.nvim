@@ -6,6 +6,7 @@ local config = require("gitportal.config")
 
 local git_root_patterns = { ".git" }
 
+
 local M = {}
 
 
@@ -38,6 +39,24 @@ function M.get_git_file_path()
   local git_root_dir = M.get_git_root_dir()
   local git_path = current_file_path:sub(#git_root_dir + 2) -- Have to add one so we don't repeat last char
   return git_path
+end
+
+
+function M.can_open_current_file()
+  -- Check to confirm we are in a git repo and not in a nofile like buffer
+  if nv_utils.get_current_buf_type() == false then
+    cli.log_error("Cannot open current buffer in browser!")
+    return false
+  end
+
+  local status = cli.run_command("git status")
+  if status == nil then
+    cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
+    return false
+  end
+
+  return true
+
 end
 
 
@@ -130,6 +149,10 @@ function M.get_git_url_for_current_file()
     file_path: lua/gitportal/cli.lua
     Line highlights: #L1 | #L1-L2
   --]]
+  if M.can_open_current_file() == false then
+    return nil
+  end
+
   local remote_url = get_base_github_url()
   local branch_or_commit = M.get_branch_or_commit()
   local git_path = M.get_git_file_path()
@@ -186,19 +209,19 @@ function M.open_file_from_git_url(url)
   end
 
   if parsed_url.start_line ~= nil then
-    local buftype = nv_utils.get_current_buf_type()
-
-    if buftype == "nofile" then
-      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
-      -- line highlighting
-      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
-      nv_utils.open_file(absolute_file_path)
-    else
+    if nv_utils.is_valid_buffer_type() == true then
       -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
       -- normal
       nv_utils.open_file(absolute_file_path)
       nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
       nv_utils.enter_visual_mode()
+
+    else
+      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
+      -- line highlighting
+      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
+      nv_utils.open_file(absolute_file_path)
+
     end
 
   end
