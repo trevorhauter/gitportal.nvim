@@ -7,10 +7,6 @@
 <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
 
-# 🚧 UNDER CONSTRUCTION 🚧
-#### This plugin is not complete. You can track my progress here with this [milestone](https://github.com/trevorhauter/gitportal.nvim/milestone/1). 
-#### Current expected release date: October 1st, 2024.
-
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
 - `gitportal` will automatically open your current file in github, including any selected lines in the permalink.
