@@ -51,7 +51,7 @@ function M.can_open_current_file()
 
   local status = cli.run_command("git status")
   if status == nil then
-    cli.log_error("Cannot open current file. No git repository could be detected!")
+    cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
     return false
   end
 
