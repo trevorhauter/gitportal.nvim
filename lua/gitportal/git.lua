@@ -44,7 +44,7 @@ end
 
 function M.can_open_current_file()
   -- Check to confirm we are in a git repo and not in a nofile like buffer
-  if nv_utils.get_current_buf_type() == false then
+  if nv_utils.is_valid_buffer_type() == false then
     cli.log_error("Cannot open current buffer in browser!")
     return false
   end
