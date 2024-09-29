@@ -43,6 +43,25 @@ function M.get_git_file_path()
 end
 
 
+function M.can_open_current_file()
+  -- Check to confirm we are in a git repo and not in a nofile like buffer
+  local buftype = nv_utils.get_current_buf_type()
+  if buftype == "nofile" then
+    cli.log_error("Cannot open current buffer in browser!")
+    return false
+  end
+
+  local status = cli.run_command("git status")
+  if status == nil then
+    cli.log_error("Cannot open current file. No git repository could be detected!")
+    return false
+  end
+
+  return true
+
+end
+
+
 function M.get_branch_or_commit()
   local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
 
@@ -127,6 +146,10 @@ function M.get_git_url_for_current_file()
     file_path: lua/gitportal/cli.lua
     Line highlights: #L1 | #L1-L2
   --]]
+  if M.can_open_current_file() == false then
+    return nil
+  end
+
   local remote_url = get_base_github_url()
   local branch_or_commit = M.get_branch_or_commit()
   local git_path = M.get_git_file_path()
