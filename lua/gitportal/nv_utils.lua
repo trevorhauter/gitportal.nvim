@@ -7,6 +7,18 @@ function M.get_current_buf_type()
     return vim.api.nvim_buf_get_option(bufnr, "buftype")
 end
 
+
+function M.is_valid_buffer_type()
+  -- In the context of gitportal, a valid buffer type is one that we can open in github!
+  local buf_type = M.get_current_buf_type()
+  if buf_type == "nofile" then
+    return false
+  else
+    return true
+  end
+
+end
+
 function M.get_visual_selection_lines()
   -- Get the start and end line numbers of the current visual selection
   local start_line = vim.fn.line("v") -- Get visual start line

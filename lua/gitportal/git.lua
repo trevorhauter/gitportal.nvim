@@ -6,6 +6,7 @@ local config = require("gitportal.config")
 
 local git_root_patterns = { ".git" }
 
+
 local M = {}
 
 
@@ -43,8 +44,7 @@ end
 
 function M.can_open_current_file()
   -- Check to confirm we are in a git repo and not in a nofile like buffer
-  local buftype = nv_utils.get_current_buf_type()
-  if buftype == "nofile" then
+  if nv_utils.get_current_buf_type() == false then
     cli.log_error("Cannot open current buffer in browser!")
     return false
   end
@@ -209,19 +209,19 @@ function M.open_file_from_git_url(url)
   end
 
   if parsed_url.start_line ~= nil then
-    local buftype = nv_utils.get_current_buf_type()
-
-    if buftype == "nofile" then
-      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
-      -- line highlighting
-      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
-      nv_utils.open_file(absolute_file_path)
-    else
+    if nv_utils.is_valid_buffer_type() == true then
       -- If the buftype is normal, i.e. we're already in a file like buftype, we can highlight the lines
       -- normal
       nv_utils.open_file(absolute_file_path)
       nv_utils.highlight_line_range(parsed_url.start_line, parsed_url.end_line)
       nv_utils.enter_visual_mode()
+
+    else
+      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
+      -- line highlighting
+      nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
+      nv_utils.open_file(absolute_file_path)
+
     end
 
   end
