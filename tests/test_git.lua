@@ -64,9 +64,17 @@ TestGit = {}
 
   function TestGit:test_get_branch_or_commit()
     self.active_branch_or_commit = self.branch
-    lu.assertEquals(git.get_branch_or_commit(), self.branch)
+
+    local result = git.get_branch_or_commit()
+    lu.assertEquals(result.name, self.branch)
+    lu.assertEquals(result.type, "branch")
+
     self.active_branch_or_commit = self.commit
-    lu.assertEquals(git.get_branch_or_commit(), self.commit)
+
+    local result = git.get_branch_or_commit()
+    lu.assertEquals(result.name, self.commit)
+    lu.assertEquals(result.type, "commit")
+
   end
 
 
