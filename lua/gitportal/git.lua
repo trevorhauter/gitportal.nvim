@@ -15,16 +15,14 @@ function M.get_git_root_dir()
 end
 
 
-function M.branch_or_commit_exists(branch_or_commit)
-  -- Check to see if a branch or a commit exists in a given repo
-  local result = cli.run_command("git cat-file -t " .. branch_or_commit)
-  if result == "commit\n" then
+function M.branch_exists(branch_name)
+  -- Check to see if a branch exists in a given repo
+  local result = cli.run_command("git ls-remote origin " .. branch_name)
+  if result ~= "" then
     return true
   else
-    cli.log_error(result)
     return false
   end
-
 end
 
 function M.get_git_base_directory()
@@ -44,19 +42,24 @@ end
 
 
 function M.get_branch_or_commit()
-  local branch_name = cli.run_command("git rev-parse --abbrev-ref HEAD")
+  local branch_or_commit = cli.run_command("git rev-parse --abbrev-ref HEAD")
+  local revision_type = "branch"
 
-  if branch_name == "HEAD\n" then
-    branch_name = cli.run_command("git rev-parse HEAD")
+  if branch_or_commit == "HEAD\n" then
+    branch_or_commit = cli.run_command("git rev-parse HEAD")
+    revision_type = "commit"
   end
 
-  if branch_name then
-    branch_name = branch_name:gsub("\n", "")
+  if branch_or_commit then
+    branch_or_commit = branch_or_commit:gsub("\n", "")
   else
     return nil
   end
 
-  return branch_name
+  return {
+    name = branch_or_commit,
+    type = revision_type,
+  }
 end
 
 
@@ -131,13 +134,20 @@ function M.get_git_url_for_current_file()
   local branch_or_commit = M.get_branch_or_commit()
   local git_path = M.get_git_file_path()
 
-  -- If the file does exist, make sure the branch or commit exists on the remote host too
-  if M.branch_or_commit_exists(branch_or_commit) ~= true then
-    cli.log_error("The specified branch/commit could not be found on the remote repository!")
+  if branch_or_commit == nil then
+    cli.log_error("Couldn't find the current branch or commit!")
     return nil
   end
 
-  local permalink = remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
+  -- If the file does exist, make sure the branch or commit exists on the remote host too
+  if branch_or_commit.type == "branch" then
+    if M.branch_exists(branch_or_commit.name) ~= true then
+      cli.log_error("The specified branch could not be found on the remote repository!")
+      return nil
+    end
+  end
+
+  local permalink = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path
 
   if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
     local start_line, end_line = nv_utils.get_visual_selection_lines()
