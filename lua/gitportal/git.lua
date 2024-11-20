@@ -129,7 +129,7 @@ function M.checkout_branch_or_commit(branch_or_commit)
 
   local output = cli.run_command("git checkout " .. branch_or_commit)
   if output == nil then
-    cli.log_error("Failed to switch branches! (Could there be unstashed work?)")
+    cli.log_error("\nFailed to switch branches! \n(Could there be unstashed work? Is the commit/branch available locally?)")
   end
 
   if switch_config == "always" or switch_config == "ask_first" then
