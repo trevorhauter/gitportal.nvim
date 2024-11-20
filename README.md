@@ -77,7 +77,7 @@ vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end
 ## ꩜ Supported git web hosts
 - [GitHub](https://github.com/)
 
-NOTE: Support for additional hosts will be added after release. If you'd like to use this plugin with a different web host, please open an issue. I'll do my best to add it quickly.
+NOTE: Support for additional hosts will be added after release. If you'd like to use this plugin with a different web host, please open an issue. I'll do my best to add it quickly. I also welcome any and all contributions!
 
 ## ꩜ Comparison against other popular git browsing plugins
 
