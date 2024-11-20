@@ -19,9 +19,13 @@
 <summary>Click for preview</summary>
 
 #### Preview
-| Opening file in github | Opening file in neovim |
-| --- | ----------- |
-| ![link_ingestion](https://github.com/user-attachments/assets/770b6bc5-9f05-4737-a057-7872ddc996fa) | <video src="https://github.com/user-attachments/assets/fd567d7e-5a34-4b35-a7ad-17dfdfb05a5b"/> |
+| Opening file in github |
+| --- |
+| ![opening_link](https://github.com/user-attachments/assets/0ca39d86-db90-4e4e-a58d-a457ddf11d33) |
+
+| Opening file in neovim |
+| --- |
+| ![link_ingestion_new](https://github.com/user-attachments/assets/fa04e1f0-ad2c-4afa-bf2d-9098d78438bd) |
 
 </details>
 
