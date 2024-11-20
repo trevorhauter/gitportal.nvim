@@ -49,8 +49,7 @@ function M.can_open_current_file()
     return false
   end
 
-  local status = cli.run_command("git status")
-  if status == nil then
+  if not vim.fs.root(0, "git") then
     cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
     return false
   end
@@ -83,7 +82,7 @@ end
 
 
 local function get_base_github_url()
-  -- Get the base github url for a repo... 
+  -- Get the base github url for a repo...
   -- Ex: https://github.com/trevorhauter/gitportal.nvim
   local url = cli.run_command("git config --get remote.origin.url")
   if url then
@@ -99,7 +98,7 @@ end
 
 function M.create_url_params(start_line, end_line)
   -- Given a start and end line, generate a line range for the end of a github url
-  -- if applicable 
+  -- if applicable
   if start_line and end_line then
 
     if start_line == end_line then
@@ -217,7 +216,7 @@ function M.open_file_from_git_url(url)
       nv_utils.enter_visual_mode()
 
     else
-      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before 
+      -- If our buftype is nofile, i.e. nvimtree, set an autocmd to wait for our buffer to change before
       -- line highlighting
       nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
       nv_utils.open_file(absolute_file_path)

@@ -31,11 +31,7 @@ function M.open_link_in_browser(link)
     return
   end
 
-  -- Construct the command to open the link in the default browser
-  local cmd = open_cmd .. " '" .. link .. "'"
-
-  -- Execute the command
-  os.execute(cmd)
+  vim.system({ open_cmd, link }):wait()
 end
 
 
