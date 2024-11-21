@@ -1,4 +1,3 @@
-test
 <div align="center">
 
 # gitportal.nvim
