@@ -1,6 +1,6 @@
 local cli = require("gitportal.cli")
 local git = require("gitportal.git")
-local lu = require("tests.luaunit")
+local lu = require("luaunit")
 
 TestGit = {}
 

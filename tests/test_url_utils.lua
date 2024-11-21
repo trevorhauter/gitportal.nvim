@@ -1,4 +1,4 @@
-local lu = require("tests.luaunit")
+local lu = require("luaunit")
 local url_utils = require("gitportal.url_utils")
 
 TestParseGithostUrl = {}
