@@ -21,7 +21,7 @@
 #### Preview
 | Opening file in github |
 | --- |
-| ![opening_link](https://github.com/user-attachments/assets/0ca39d86-db90-4e4e-a58d-a457ddf11d33) |
+| ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
 
 | Opening file in neovim |
 | --- |
