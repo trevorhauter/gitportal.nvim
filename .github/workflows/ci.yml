@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  pull_request: # Run the action on pull request events
+    paths:
+      - "**/*.lua" # Only run on Lua files
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Run Stylua Action
+      - name: Run StyLua
+        uses: JohnnyMorganz/stylua-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: v2.0.1 # Specify the version
+          args: --check .
+
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Lua environment
+      - name: Set up Lua
+        uses: leafo/gh-actions-lua@v8
+        with:
+          luaVersion: "5.4"  # Adjust to your Lua version
+
+      # Step 3: Install Luarocks and LuaUnit
+      - name: Install LuaRocks and LuaUnit
+        run: |
+          sudo apt-get update
+          sudo apt-get install lua5.4 luarocks
+          luarocks config --lua-version=5.4
+          luarocks install luaunit --local
+
+      # Step 4: Set LUA_PATH and LUA_CPATH for LuaUnit and run tests
+      - name: Run tests
+        run: |
+          export LUA_PATH="$HOME/.luarocks/share/lua/5.1/?.lua;$HOME/.luarocks/share/lua/5.1/?/init.lua;$GITHUB_WORKSPACE/?.lua;$LUA_PATH"
+          export LUA_CPATH="$HOME/.luarocks/lib/lua/5.1/?.so;$LUA_CPATH"
+          echo "LUA_PATH: $LUA_PATH"
+          echo "LUA_CPATH: $LUA_CPATH"
+          pwd
+          lua ./tests/run_tests.lua  # Adjust the path to your test file
+
