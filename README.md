@@ -25,7 +25,8 @@
 
 | Opening file in neovim |
 | --- |
-| ![link_ingestion_new](https://github.com/user-attachments/assets/fa04e1f0-ad2c-4afa-bf2d-9098d78438bd) |
+| ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
+
 
 </details>
 
