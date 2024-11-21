@@ -1,3 +1,5 @@
+local config = require("gitportal.config")
+
 local M = {}
 
 function M.log_error(message)
@@ -15,8 +17,11 @@ end
 
 function M.open_link_in_browser(link)
     -- Check for the platform and open the link using the appropriate command
+    local browser_command = config.options.browser_command
     local open_cmd
-    if vim.fn.has("macunix") == 1 then
+    if browser_command ~= nil then
+        open_cmd = browser_command
+    elseif vim.fn.has("macunix") == 1 then
         open_cmd = "open"
     elseif vim.fn.has("unix") == 1 then
         open_cmd = "xdg-open"
