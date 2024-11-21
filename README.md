@@ -21,11 +21,12 @@
 #### Preview
 | Opening file in github |
 | --- |
-| ![opening_link](https://github.com/user-attachments/assets/0ca39d86-db90-4e4e-a58d-a457ddf11d33) |
+| ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
 
 | Opening file in neovim |
 | --- |
-| ![link_ingestion_new](https://github.com/user-attachments/assets/fa04e1f0-ad2c-4afa-bf2d-9098d78438bd) |
+| ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
+
 
 </details>
 
