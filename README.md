@@ -49,7 +49,7 @@ If you wish to keep these defaults, no configuration is required. If you wish to
 {
     -- When opening generating permalinks, whether to always include the current line in
     -- the URL, regardless of visual mode.
-    always_include_current_line = false,
+    always_include_current_line = false, -- bool
 
     -- When ingesting permalinks, should gitportal always switch to the specified
     -- branch or commit?
@@ -59,7 +59,7 @@ If you wish to keep these defaults, no configuration is required. If you wish to
     -- The command used via command line to open a url in  your default browser.
     -- gitportal.nvim will try to autodetect and use the appropriate command
     -- but it is configurable here as well.
-    browser_command = nil,
+    browser_command = nil, -- nil | string
 }
 ```
 
