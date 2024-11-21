@@ -12,16 +12,6 @@ function M.get_git_root_dir()
     return vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
 end
 
-function M.branch_exists(branch_name)
-    -- Check to see if a branch exists in a given repo
-    local result = cli.run_command("git ls-remote origin " .. branch_name)
-    if result ~= "" then
-        return true
-    else
-        return false
-    end
-end
-
 function M.get_git_base_directory()
     -- Gets the name of the base directory for the git repo
     return M.get_git_root_dir():match("([^/]+)$")
@@ -149,14 +139,6 @@ function M.get_git_url_for_current_file()
     if branch_or_commit == nil then
         cli.log_error("Couldn't find the current branch or commit!")
         return nil
-    end
-
-    -- If the file does exist, make sure the branch or commit exists on the remote host too
-    if branch_or_commit.type == "branch" then
-        if M.branch_exists(branch_or_commit.name) ~= true then
-            cli.log_error("The specified branch could not be found on the remote repository!")
-            return nil
-        end
     end
 
     local permalink = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path
