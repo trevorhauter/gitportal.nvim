@@ -110,3 +110,19 @@ function TestParseGitLabUrl:test_url_with_query_param()
     }
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
+
+function TestParseGitLabUrl:test_url_with_github_format()
+    -- So this is more of a feature than a bug but at the moment we are generating links in only one format.
+    -- Funnily enough, gitlab doesn't really seem to care about that. But we need to make sure we can ingest these
+    -- Types of links too. I will probably have to resolve this at a later date... #TODO
+    local base_url =
+        "https://gitlab.com/gitportal/gitlab-test/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/.gitlab-ci.yml"
+    local expected_result = {
+        repo = "gitlab-test",
+        branch_or_commit = "7e14d7545918b9167dd65bea8da454d2e389df5b",
+        file_path = ".gitlab-ci.yml",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+end
