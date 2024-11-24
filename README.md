@@ -9,10 +9,10 @@
   
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
-- `gitportal` will automatically open your current file in github, including any selected lines in the permalink.
+- `GitPortal` will open your current file in your browser, including any selected lines in the permalink.
 
 #### A coworker shares a file with you 
-- `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the permalink.
+- `GitPortal` will accept shareable permalinks from your favorite git host, switch to the proper branch/commit, open the file in neovim, and go to or highlight any relevant lines embedded in the permalink.
 
 
 <details>
@@ -42,7 +42,7 @@ use { 'trevorhauter/gitportal.nvim' }
 ```
 
 ## ꩜ Configuration
-**gitportal.nvim** comes with the following defaults.
+**`GitPortal`** comes with the following defaults.
 
 If you wish to keep these defaults, no configuration is required. If you wish to customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
 ```lua
@@ -88,8 +88,11 @@ vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end
 
 ## ꩜ Supported git web hosts
 - [GitHub](https://github.com/)
+- [GitLab](https://gitlab.com/)
 
-NOTE: Support for additional hosts will be added after release. If you'd like to use this plugin with a different web host, please open an issue. I'll do my best to add it quickly. I also welcome any and all contributions!
+No configuration is required to use one git host or another. `GitPortal` will take care of that work for you!
+
+We are working hard to add more hosts for git, including self hosted options. If you'd like to use a host not yet listed, please check out our [enhancement issues](https://github.com/trevorhauter/gitportal.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) to see if an issue is present. If you don't see an issue created for your desired host, please create one!
 
 ## ꩜ Comparison against other popular git browsing plugins
 
