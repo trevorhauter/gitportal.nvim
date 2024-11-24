@@ -9,10 +9,10 @@
   
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
-- `gitportal` will automatically open your current file in github, including any selected lines in the permalink.
+- `GitPortal` will open your current file in your browser, including any selected lines in the permalink.
 
 #### A coworker shares a file with you 
-- `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the permalink.
+- `GitPortal` will accept shareable permalinks from your favorite git host, switch to the proper branch/commit, open the file in neovim, and go to or highlight any relevant lines embedded in the permalink.
 
 
 <details>
@@ -21,11 +21,12 @@
 #### Preview
 | Opening file in github |
 | --- |
-| ![opening_link](https://github.com/user-attachments/assets/0ca39d86-db90-4e4e-a58d-a457ddf11d33) |
+| ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
 
 | Opening file in neovim |
 | --- |
-| ![link_ingestion_new](https://github.com/user-attachments/assets/fa04e1f0-ad2c-4afa-bf2d-9098d78438bd) |
+| ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
+
 
 </details>
 
@@ -41,19 +42,24 @@ use { 'trevorhauter/gitportal.nvim' }
 ```
 
 ## ꩜ Configuration
-**gitportal.nvim** comes with the following defaults.
+**`GitPortal`** comes with the following defaults.
 
 If you wish to keep these defaults, no configuration is required. If you wish to customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
 ```lua
 {
-  -- When opening generating permalinks, whether to always include the current line in
-  -- the URL, regardless of visual mode.
-  always_include_current_line = false,
+    -- When opening generating permalinks, whether to always include the current line in
+    -- the URL, regardless of visual mode.
+    always_include_current_line = false, -- bool
 
-  -- When ingesting permalinks, should gitportal always switch to the specified
-  -- branch or commit?
-  -- Can be "always", "ask_first", or "never"
-  switch_branch_or_commit_upon_ingestion = "always",
+    -- When ingesting permalinks, should gitportal always switch to the specified
+    -- branch or commit?
+    -- Can be "always", "ask_first", or "never"
+    switch_branch_or_commit_upon_ingestion = "always",
+
+    -- The command used via command line to open a url in  your default browser.
+    -- gitportal.nvim will try to autodetect and use the appropriate command
+    -- but it is configurable here as well.
+    browser_command = nil, -- nil | string
 }
 ```
 
@@ -63,7 +69,7 @@ Here is a brief example of the available functions and how I have them set up in
 local gitportal = require("gitportal")
 
 gitportal.setup({
-  always_include_current_line = true
+    always_include_current_line = true
 })
 
 -- open_file_in_browser() in normal mode
@@ -82,8 +88,11 @@ vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end
 
 ## ꩜ Supported git web hosts
 - [GitHub](https://github.com/)
+- [GitLab](https://gitlab.com/)
 
-NOTE: Support for additional hosts will be added after release. If you'd like to use this plugin with a different web host, please open an issue. I'll do my best to add it quickly. I also welcome any and all contributions!
+No configuration is required to use one git host or another. `GitPortal` will take care of that work for you!
+
+We are working hard to add more hosts for git, including self hosted options. If you'd like to use a host not yet listed, please check out our [enhancement issues](https://github.com/trevorhauter/gitportal.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) to see if an issue is present. If you don't see an issue created for your desired host, please create one!
 
 ## ꩜ Comparison against other popular git browsing plugins
 
