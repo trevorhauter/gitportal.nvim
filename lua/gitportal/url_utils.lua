@@ -1,5 +1,6 @@
 local cli = require("gitportal.cli")
-local git_helpers = require("gitportal.git")
+local git_utils = require("gitportal.git")
+local lua_utils = require("gitportal.lua_utils")
 
 local M = {}
 
@@ -9,15 +10,14 @@ local function parse_url_remainder(remainder)
     -- This is everything after /blob/. Problem is, branches can have a '/' in them, so we need to carefully
     -- determine where the branch_or_commit ends and the file_path beings
     -- (Example of difficult url '/githost/gitlab/tests/run_tests.lua' -> 'githost/gitlab' is the branch name)
-    print(remainder)
-    local url_parts = vim.split(remainder, "/", { plain = true })
+    local url_parts = lua_utils.split_string(remainder, "/")
     local branch_or_commit = ""
     local file_path = ""
 
     for i = 1, #url_parts do
         -- Test branch incrementally
         branch_or_commit = branch_or_commit .. (i > 1 and "/" or "") .. url_parts[i]
-        local branch_exists = git_helpers.branch_or_commit_exists(branch_or_commit)
+        local branch_exists = git_utils.branch_or_commit_exists(branch_or_commit)
         if branch_exists ~= nil and branch_exists ~= "" then
             -- Remaining parts are the file path
             file_path = table.concat(url_parts, "/", i + 1)
@@ -25,7 +25,10 @@ local function parse_url_remainder(remainder)
         end
     end
 
-    return branch_or_commit, file_path
+    -- Trim any of the end url stuff off of out file path
+    local cleaned_file_path = file_path:match("([^\n%?#]+)")
+
+    return branch_or_commit, cleaned_file_path
 end
 
 local function parse_line_range(url)
