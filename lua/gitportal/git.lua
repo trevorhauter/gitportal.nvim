@@ -8,8 +8,8 @@ local git_root_patterns = { ".git" }
 local M = {}
 
 function M.get_git_root_dir()
-  -- Get the git root dir
-  return vim.fs.root(0, git_root_patterns)
+    -- Get the git root dir
+    return vim.fs.root(0, git_root_patterns)
 end
 
 function M.get_git_base_directory()
@@ -27,16 +27,16 @@ function M.get_git_file_path()
 end
 
 function M.can_open_current_file()
-  -- Check to confirm we are in a git repo and not in a nofile like buffer
-  if nv_utils.is_valid_buffer_type() == false then
-    cli.log_error("Cannot open current buffer in browser!")
-    return false
-  end
+    -- Check to confirm we are in a git repo and not in a nofile like buffer
+    if nv_utils.is_valid_buffer_type() == false then
+        cli.log_error("Cannot open current buffer in browser!")
+        return false
+    end
 
-  if not M.get_git_root_dir() then
-    cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
-    return false
-  end
+    if not M.get_git_root_dir() then
+        cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
+        return false
+    end
 
     return true
 end
@@ -61,7 +61,6 @@ function M.get_branch_or_commit()
         type = revision_type,
     }
 end
-
 
 local function get_base_github_url()
     -- Get the base github url for a repo...

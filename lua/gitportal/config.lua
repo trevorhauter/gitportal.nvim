@@ -12,32 +12,32 @@ local default = {
 M.options = default
 
 function M.setup(options)
-  -- Merge user options with default options
-  M.options = vim.tbl_deep_extend("force", {}, default, options or {})
+    -- Merge user options with default options
+    M.options = vim.tbl_deep_extend("force", {}, default, options or {})
 
-  local commands = {
-    browse_file = function ()
-      require("gitportal").open_file_in_browser()
-    end,
-    open_link = function ()
-      require("gitportal").open_file_in_neovim()
-    end
-  }
+    local commands = {
+        browse_file = function()
+            require("gitportal").open_file_in_browser()
+        end,
+        open_link = function()
+            require("gitportal").open_file_in_neovim()
+        end,
+    }
 
-  vim.api.nvim_create_user_command("GitPortal", function (ev)
-    local cmd = commands[ev.fargs[1] or "browse_file"]
-    if cmd then
-      cmd()
-      return
-    end
+    vim.api.nvim_create_user_command("GitPortal", function(ev)
+        local cmd = commands[ev.fargs[1] or "browse_file"]
+        if cmd then
+            cmd()
+            return
+        end
 
-    cli.log_error("unknown command")
-  end, {
-      nargs = "?",
-      complete = function ()
-        return vim.tbl_keys(commands)
-      end
-  })
+        cli.log_error("unknown command")
+    end, {
+        nargs = "?",
+        complete = function()
+            return vim.tbl_keys(commands)
+        end,
+    })
 end
 
 return M
