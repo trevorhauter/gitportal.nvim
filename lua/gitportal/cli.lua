@@ -1,5 +1,3 @@
-local config = require("gitportal.config")
-
 local M = {}
 
 function M.log_error(message)
@@ -15,9 +13,8 @@ function M.run_command(command)
     return output
 end
 
-function M.open_link_in_browser(link)
+function M.open_link_in_browser(link, browser_command)
     -- Check for the platform and open the link using the appropriate command
-    local browser_command = config.options.browser_command
     local open_cmd
     if browser_command ~= nil then
         open_cmd = browser_command
