@@ -157,6 +157,10 @@ end
 
 function M.open_file_from_git_url(url)
     local parsed_url = url_utils.parse_githost_url(url)
+    if parsed_url == nil then
+        -- If parsed_url is nil, a clear log message was logged by parse_githost_url
+        return nil
+    end
     -- First, ensure we are in the same repo as the link
     local current_location = vim.api.nvim_buf_get_name(0)
 
@@ -179,7 +183,7 @@ function M.open_file_from_git_url(url)
     end
 
     if absolute_file_path == nil then
-        print("ERROR! File path could not be determined!")
+        cli.log_error("ERROR! File path could not be determined!")
     end
 
     if parsed_url.start_line ~= nil then
