@@ -50,8 +50,21 @@ end
 
 TestParseGitLabUrl = {}
 
+function TestParseGitLabUrl:test_blank_url_with_branch()
+    local first_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html"
+
+    local result = url_utils.parse_githost_url(first_url)
+
+    lu.assertEquals(result.repo, "gitlab-test")
+    lu.assertEquals(result.branch_or_commit, "master")
+    lu.assertEquals(result.file_path, "public/index.html")
+    lu.assertNil(result.start_line)
+    lu.assertNil(result.end_line)
+end
+
 function TestParseGitLabUrl:test_url_with_line_range()
     local first_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads#L5-11"
+
     local result = url_utils.parse_githost_url(first_url)
 
     lu.assertEquals(result.repo, "gitlab-test")

@@ -35,8 +35,8 @@ end
 
 local function parse_gitlab_url(url)
     -- https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads#L5-11
-    -- Given a github URL, parse all of the info we care about out of it!
-    local repo, branch_or_commit, file_path = url:match("gitlab.com/[^/]+/([^/]+)/-/blob/([^/]+)/([^\n#]+)")
+    -- Given a gitlab URL, parse all of the info we care about out of it!
+    local repo, branch_or_commit, file_path = url:match("gitlab.com/[^/]+/([^/]+)/%-/blob/([^/]+)/([^\n%?]+)")
     -- check for line numbers
     local start_line = nil
     local end_line = nil
@@ -44,7 +44,7 @@ local function parse_gitlab_url(url)
     if string.find(url, "#", 0, true) ~= nil then
         start_line = url:match("#L(%d+)")
         if string.find(url, "-", 0, true) ~= nil then
-            end_line = url:match("%-L(%d+)$")
+            end_line = url:match("#L%d+%-L?(%d+)$")
         end
     end
 
