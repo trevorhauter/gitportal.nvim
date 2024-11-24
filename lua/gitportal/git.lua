@@ -8,7 +8,7 @@ local M = {}
 
 function M.get_git_root_dir()
     -- Get the git root dir
-    return vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
+    return vim.fs.root(0, git_root_patterns)
 end
 
 function M.get_git_base_directory()
@@ -36,8 +36,7 @@ function M.can_open_current_file()
         return false
     end
 
-    local status = cli.run_command("git status")
-    if status == nil then
+    if not M.get_git_root_dir() then
         cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
         return false
     end
