@@ -3,13 +3,13 @@ local cli = require("gitportal.cli")
 local M = {}
 
 local function parse_line_range(url)
-    -- Given a url, parse the optional line range from the end.
+    -- Given a url, parse the optional line range from the end of the URL itself.
     -- These may looks like #L5-L11 or #L5-11, or may not be present at all.
-    -- check for line numbers
     local start_line = nil
     local end_line = nil
 
-    if string.find(url, "#", 0, true) ~= nil then
+    -- TODO: Is this robust enough?
+    if string.find(url, "#L", 0, true) ~= nil then
         start_line = url:match("#L(%d+)")
         if string.find(url, "-", 0, true) ~= nil then
             end_line = url:match("#L%d+%-L?(%d+)$")
@@ -27,14 +27,15 @@ local function parse_line_range(url)
 end
 
 local function parse_github_url(url)
-    -- Given a github URL, parse all of the info we care about out of it!
+    -- a GitHub url may appear as follows... (Check tests for more variants)
+    -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua#L45-L55
     local repo, branch_or_commit, file_path = url:match("github.com/[^/]+/([^/]+)/blob/([^/]+)/([^\n#]+)")
     return repo, branch_or_commit, file_path
 end
 
 local function parse_gitlab_url(url)
+    -- a GitLab url may appear as follows... (Check tests for more variants)
     -- https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads#L5-11
-    -- Given a gitlab URL, parse all of the info we care about out of it!
     local repo, branch_or_commit, file_path = url:match("gitlab.com/[^/]+/([^/]+)/%-/blob/([^/]+)/([^\n%?]+)")
     return repo, branch_or_commit, file_path
 end
