@@ -7,6 +7,8 @@ function M.log_error(message)
 end
 
 function M.run_command(command)
+    -- TODO: Update this func to accept multiple arguments and pass it to vim.fn.system so we won't get destroyed by
+    -- unescaped characters
     -- Get the git remotes which we can use for the base github url (and maybe other hosts...?)
     local output = vim.fn.system(command)
     if vim.v.shell_error ~= 0 then

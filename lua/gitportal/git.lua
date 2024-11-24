@@ -17,6 +17,10 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
+function M.branch_or_commit_exists(branch_or_commit)
+    return cli.run_command("git show-ref --heads " .. branch_or_commit)
+end
+
 function M.get_git_file_path()
     -- Gets a path of the file relative the the base git directory.
     -- Get the full path of the current file
