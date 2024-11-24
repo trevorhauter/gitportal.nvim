@@ -1,3 +1,4 @@
+local git_helper = require("gitportal.git")
 local lu = require("luaunit")
 local url_utils = require("gitportal.url_utils")
 
@@ -33,15 +34,43 @@ local function test_github_url(base_url, expected_result, single_line_info, line
     assert_parsed_url(line_range_url, expected_result)
 end
 
+TestParseGitHostUrl = {}
+
+function TestParseGitHostUrl:setUp()
+    -- Backup the function that will be mocked
+    self.backup_branch_or_commit_exists = git_helper.branch_or_commit_exists
+
+    -- Mock functions for tests
+    -- mock git_helper.branch_or_commit_exists
+    ---@diagnostic disable-next-line: duplicate-set-field
+    git_helper.branch_or_commit_exists = function(param)
+        -- Hard coded branch values
+        if param == "main" or param == "master" or param == "githost/gitlab" then
+            return "asdfjkl;asdfjkl;" -- We just check if the return is truthy
+        end
+
+        -- Hard coded commit values
+        if
+            param == "376596caaa683e6f607c45d6fe1b6834070c517a"
+            or param == "7e14d7545918b9167dd65bea8da454d2e389df5b"
+        then
+            return "asdefjkl;asdfjkl;"
+        end
+
+        -- This is the "falsey" return value. Keep in mind lua does not technically interpret empty string
+        -- as falsey
+        return ""
+    end
+end
+
 -- ****
 -- BEGIN GITHUB TESTS
 -- ****
-TestParseGitHubUrl = {}
 
 local github_single_line_info = { url = "#L45", start_line = 45 }
 local github_line_range_info = { url = "#L50-L55", start_line = 50, end_line = 55 }
 
-function TestParseGitHubUrl:test_url_with_branch()
+function TestParseGitHostUrl:test_github_url_with_branch()
     local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua"
     local expected_result = {
         repo = "gitportal.nvim",
@@ -53,7 +82,7 @@ function TestParseGitHubUrl:test_url_with_branch()
     test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
 end
 
-function TestParseGitHubUrl:test_url_with_commit()
+function TestParseGitHostUrl:test_github_url_with_commit()
     local base_url =
         "https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua"
     local expected_result = {
@@ -66,15 +95,27 @@ function TestParseGitHubUrl:test_url_with_commit()
     test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
 end
 
+function TestParseGitHostUrl:test_github_url_with_difficult_branch_name()
+    -- In this case, the branch name is "githost/gitlab"
+    local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/githost/gitlab/tests/run_tests.lua"
+    local expected_result = {
+        repo = "gitportal.nvim",
+        branch_or_commit = "githost/gitlab",
+        file_path = "tests/run_tests.lua",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+end
+
 -- ****
 -- BEGIN GITLAB TESTS
 -- ****
-TestParseGitLabUrl = {}
 
 local gitlab_single_line_info = { url = "#L6", start_line = 6 }
 local gitlab_line_range_info = { url = "#L5-L11", start_line = 5, end_line = 11 }
 
-function TestParseGitLabUrl:test_url_with_branch()
+function TestParseGitHostUrl:test_gitlab_url_with_branch()
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html"
     local expected_result = {
         repo = "gitlab-test",
@@ -86,7 +127,7 @@ function TestParseGitLabUrl:test_url_with_branch()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitLabUrl:test_url_with_commit()
+function TestParseGitHostUrl:test_gitlab_url_with_commit()
     local base_url =
         "https://gitlab.com/gitportal/gitlab-test/-/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/public/index.html"
     local expected_result = {
@@ -99,7 +140,7 @@ function TestParseGitLabUrl:test_url_with_commit()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitLabUrl:test_url_with_query_param()
+function TestParseGitHostUrl:test_gitlab_url_with_query_param()
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads"
     local expected_result = {
         repo = "gitlab-test",
@@ -111,7 +152,7 @@ function TestParseGitLabUrl:test_url_with_query_param()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitLabUrl:test_url_with_github_format()
+function TestParseGitHostUrl:test_gitlab_url_with_github_format()
     -- So this is more of a feature than a bug but at the moment we are generating links in only one format.
     -- Funnily enough, gitlab doesn't really seem to care about that. But we need to make sure we can ingest these
     -- Types of links too. I will probably have to resolve this at a later date... #TODO
@@ -125,4 +166,12 @@ function TestParseGitLabUrl:test_url_with_github_format()
         end_line = nil,
     }
     test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+end
+
+-- ****
+-- END TESTS
+-- ****
+function TestParseGitHostUrl:tearDown()
+    -- Restore mocked function
+    git_helper.branch_or_commit_exists = self.backup_branch_or_commit_exists
 end

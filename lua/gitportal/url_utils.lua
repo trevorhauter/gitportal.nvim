@@ -9,6 +9,7 @@ local function parse_url_remainder(remainder)
     -- This is everything after /blob/. Problem is, branches can have a '/' in them, so we need to carefully
     -- determine where the branch_or_commit ends and the file_path beings
     -- (Example of difficult url '/githost/gitlab/tests/run_tests.lua' -> 'githost/gitlab' is the branch name)
+    print(remainder)
     local url_parts = vim.split(remainder, "/", { plain = true })
     local branch_or_commit = ""
     local file_path = ""
@@ -16,7 +17,8 @@ local function parse_url_remainder(remainder)
     for i = 1, #url_parts do
         -- Test branch incrementally
         branch_or_commit = branch_or_commit .. (i > 1 and "/" or "") .. url_parts[i]
-        if git_helpers.branch_or_commit_exists(branch_or_commit) then
+        local branch_exists = git_helpers.branch_or_commit_exists(branch_or_commit)
+        if branch_exists ~= nil and branch_exists ~= "" then
             -- Remaining parts are the file path
             file_path = table.concat(url_parts, "/", i + 1)
             break

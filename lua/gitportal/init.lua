@@ -1,6 +1,7 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
 local git_helpers = require("gitportal.git")
+local url_utils = require("gitportal.url_utils")
 
 local M = {}
 
@@ -21,6 +22,10 @@ function M.open_file_in_neovim()
     local url = vim.fn.input("Git host link > ")
     if url ~= nil then
         git_helpers.open_file_from_git_url(url)
+        local parsed_url = url_utils.parse_githost_url(url)
+        if parsed_url == nil then
+            return nil
+        end
     end
 end
 

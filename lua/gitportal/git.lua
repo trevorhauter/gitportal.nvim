@@ -1,7 +1,6 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
 local nv_utils = require("gitportal.nv_utils")
-local url_utils = require("gitportal.url_utils")
 
 local git_root_patterns = { ".git" }
 
@@ -155,12 +154,7 @@ function M.get_git_url_for_current_file()
     return permalink
 end
 
-function M.open_file_from_git_url(url)
-    local parsed_url = url_utils.parse_githost_url(url)
-    if parsed_url == nil then
-        -- If parsed_url is nil, a clear log message was logged by parse_githost_url
-        return nil
-    end
+function M.open_file_from_git_url(parsed_url)
     -- First, ensure we are in the same repo as the link
     local current_location = vim.api.nvim_buf_get_name(0)
 
