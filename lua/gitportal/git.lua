@@ -12,7 +12,7 @@ local M = {}
 
 function M.get_git_root_dir()
   -- Get the git root dir
-  return vim.fs.dirname(vim.fs.find(git_root_patterns, { upward = true })[1])
+  return vim.fs.root(0, git_root_patterns)
 end
 
 
