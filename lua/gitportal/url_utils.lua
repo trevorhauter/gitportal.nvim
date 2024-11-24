@@ -36,7 +36,7 @@ end
 local function parse_gitlab_url(url)
     -- a GitLab url may appear as follows... (Check tests for more variants)
     -- https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads#L5-11
-    local repo, branch_or_commit, file_path = url:match("gitlab.com/[^/]+/([^/]+)/%-/blob/([^/]+)/([^\n%?]+)")
+    local repo, branch_or_commit, file_path = url:match("gitlab.com/[^/]+/([^/]+)/%-/blob/([^/]+)/([^\n%?#]+)")
     return repo, branch_or_commit, file_path
 end
 

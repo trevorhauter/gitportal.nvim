@@ -11,9 +11,11 @@ local function assert_parsed_url(url, expected)
     lu.assertEquals(result.end_line, expected.end_line)
 end
 
+-- ****
+-- BEGIN GITHUB TESTS
+-- ****
 TestParseGitHubUrl = {}
 
--- Test cases
 function TestParseGitHubUrl:test_blank_url_with_branch()
     assert_parsed_url("https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua", {
         repo = "gitportal.nvim",
@@ -57,6 +59,9 @@ function TestParseGitHubUrl:test_url_with_line_range()
     })
 end
 
+-- ****
+-- BEGIN GITLAB TESTS
+-- ****
 TestParseGitLabUrl = {}
 
 function TestParseGitLabUrl:test_blank_url_with_branch()
@@ -67,6 +72,32 @@ function TestParseGitLabUrl:test_blank_url_with_branch()
         start_line = nil,
         end_line = nil,
     })
+end
+
+function TestParseGitLabUrl:test_blank_url_with_commit()
+    assert_parsed_url(
+        "https://gitlab.com/gitportal/gitlab-test/-/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/public/index.html",
+        {
+            repo = "gitlab-test",
+            branch_or_commit = "7e14d7545918b9167dd65bea8da454d2e389df5b",
+            file_path = "public/index.html",
+            start_line = nil,
+            end_line = nil,
+        }
+    )
+end
+
+function TestParseGitLabUrl:test_url_with_one_line()
+    assert_parsed_url(
+        "https://gitlab.com/gitportal/gitlab-test/-/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/public/index.html#L6",
+        {
+            repo = "gitlab-test",
+            branch_or_commit = "7e14d7545918b9167dd65bea8da454d2e389df5b",
+            file_path = "public/index.html",
+            start_line = 6,
+            end_line = 6,
+        }
+    )
 end
 
 function TestParseGitLabUrl:test_url_with_line_range()
