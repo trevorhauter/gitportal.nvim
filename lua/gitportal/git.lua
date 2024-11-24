@@ -49,7 +49,7 @@ function M.can_open_current_file()
     return false
   end
 
-  if not vim.fs.root(0, "git") then
+  if not M.get_git_root_dir() then
     cli.log_error("Cannot open current buffer in browser. No git repository could be detected!")
     return false
   end

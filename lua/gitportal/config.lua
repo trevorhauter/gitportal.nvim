@@ -18,16 +18,16 @@ function M.setup(options)
   M.options = vim.tbl_deep_extend("force", {}, default, options or {})
 
   local commands = {
-    open = function ()
+    browse_file = function ()
       require("gitportal").open_file_in_browser()
     end,
-    link = function ()
+    open_link = function ()
       require("gitportal").open_file_in_neovim()
     end
   }
 
   vim.api.nvim_create_user_command("GitPortal", function (ev)
-    local cmd = commands[ev.fargs[1] or "open"]
+    local cmd = commands[ev.fargs[1] or "browse_file"]
     if cmd then
       cmd()
       return
