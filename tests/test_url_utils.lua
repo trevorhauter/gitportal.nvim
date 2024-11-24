@@ -1,6 +1,10 @@
 local lu = require("luaunit")
 local url_utils = require("gitportal.url_utils")
 
+-- ****
+-- HELPER FUNCS
+-- ****
+
 -- Helper function to validate parsed URLs
 local function assert_parsed_url(url, expected)
     local result = url_utils.parse_githost_url(url)
@@ -79,7 +83,7 @@ function TestParseGitLabUrl:test_url_with_branch()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, github_line_range_info)
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitLabUrl:test_url_with_commit()
@@ -92,7 +96,7 @@ function TestParseGitLabUrl:test_url_with_commit()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, github_line_range_info)
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitLabUrl:test_url_with_query_param()
@@ -104,5 +108,5 @@ function TestParseGitLabUrl:test_url_with_query_param()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, github_line_range_info)
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
