@@ -21,10 +21,9 @@ end
 function M.open_file_in_neovim()
     local url = vim.fn.input("Git host link > ")
     if url ~= nil then
-        git_utils.open_file_from_git_url(url)
         local parsed_url = url_utils.parse_githost_url(url)
-        if parsed_url == nil then
-            return nil
+        if parsed_url ~= nil then
+            git_utils.open_file_from_git_url(parsed_url)
         end
     end
 end
