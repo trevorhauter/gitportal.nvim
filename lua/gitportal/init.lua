@@ -14,7 +14,12 @@ end
 function M.open_file_in_browser()
     local git_url = git_utils.get_git_url_for_current_file()
     if git_url ~= nil then
+        if string.find(git_url, "http", 0, true) == nil then
+            cli.log_error("Malformed link detected!")
+        end
         cli.open_link_in_browser(git_url, config.options.browser_command)
+    else
+        cli.log_error("Failed to properly open file!")
     end
 end
 
