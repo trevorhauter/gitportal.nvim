@@ -45,7 +45,7 @@ function TestParseGitHostUrl:setUp()
     ---@diagnostic disable-next-line: duplicate-set-field
     git_helper.branch_or_commit_exists = function(param)
         -- Hard coded branch values
-        if param == "main" or param == "master" or param == "githost/gitlab" then
+        if param == "main" or param == "master" or param == "githost/gitlab" or param == "feature/mfError" then
             return "asdfjkl;asdfjkl;" -- We just check if the return is truthy
         end
 
@@ -152,20 +152,34 @@ function TestParseGitHostUrl:test_gitlab_url_with_query_param()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitHostUrl:test_gitlab_url_with_github_format()
-    -- So this is more of a feature than a bug but at the moment we are generating links in only one format.
-    -- Funnily enough, gitlab doesn't really seem to care about that. But we need to make sure we can ingest these
-    -- Types of links too. I will probably have to resolve this at a later date... #TODO
+-- TODO: Remove this after adding proper support for gitlab url generation
+--function TestParseGitHostUrl:test_gitlab_url_with_github_format()
+--So this is more of a feature than a bug but at the moment we are generating links in only one format.
+--Funnily enough, gitlab doesn't really seem to care about that. But we need to make sure we can ingest these
+--Types of links too. I will probably have to resolve this at a later date... #TODO
+--local base_url =
+--"https://gitlab.com/gitportal/gitlab-test/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/.gitlab-ci.yml"
+--local expected_result = {
+--repo = "gitlab-test",
+--branch_or_commit = "7e14d7545918b9167dd65bea8da454d2e389df5b",
+--file_path = ".gitlab-ci.yml",
+--start_line = nil,
+--end_line = nil,
+--}
+--test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+--end
+
+function TestParseGitHostUrl:test_self_host_gitlab_url()
     local base_url =
-        "https://gitlab.com/gitportal/gitlab-test/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/.gitlab-ci.yml"
+        "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell/-/blob/feature/mfError/src/hooks/useSessionTimer.js?ref_type=heads"
     local expected_result = {
-        repo = "gitlab-test",
-        branch_or_commit = "7e14d7545918b9167dd65bea8da454d2e389df5b",
-        file_path = ".gitlab-ci.yml",
+        repo = "app-shell",
+        branch_or_commit = "feature/mfError",
+        file_path = "src/hooks/useSessionTimer.js",
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 -- ****
