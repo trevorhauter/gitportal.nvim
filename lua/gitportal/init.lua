@@ -11,10 +11,10 @@ function M.setup(options)
 end
 
 -- CORE FUNCTIONS
-function M.open_file_in_browser(browser_command)
+function M.open_file_in_browser()
     local git_url = git_utils.get_git_url_for_current_file()
     if git_url ~= nil then
-        cli.open_link_in_browser(git_url, browser_command)
+        cli.open_link_in_browser(git_url, config.options.browser_command)
     end
 end
 
