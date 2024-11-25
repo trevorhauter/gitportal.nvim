@@ -1,7 +1,6 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
 local nv_utils = require("gitportal.nv_utils")
-local url_utils = require("gitportal.url_utils")
 
 local git_root_patterns = { ".git" }
 
@@ -15,6 +14,10 @@ end
 function M.get_git_base_directory()
     -- Gets the name of the base directory for the git repo
     return M.get_git_root_dir():match("([^/]+)$")
+end
+
+function M.branch_or_commit_exists(branch_or_commit)
+    return cli.run_command("git show-ref --heads " .. branch_or_commit)
 end
 
 function M.get_git_file_path()
@@ -150,8 +153,7 @@ function M.get_git_url_for_current_file()
     return permalink
 end
 
-function M.open_file_from_git_url(url)
-    local parsed_url = url_utils.parse_githost_url(url)
+function M.open_file_from_git_url(parsed_url)
     -- First, ensure we are in the same repo as the link
     local current_location = vim.api.nvim_buf_get_name(0)
 
@@ -174,7 +176,7 @@ function M.open_file_from_git_url(url)
     end
 
     if absolute_file_path == nil then
-        print("ERROR! File path could not be determined!")
+        cli.log_error("ERROR! File path could not be determined!")
     end
 
     if parsed_url.start_line ~= nil then
