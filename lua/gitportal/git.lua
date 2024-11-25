@@ -72,8 +72,9 @@ local function get_base_github_url()
     if url then
         url = url:gsub("%.git\n$", "")
         url = url:gsub("git@github.com:", "https://github.com/")
+        url = url:gsub("git@gitlab.com:", "https://gitlab.com/")
     else
-        url = "FAILED"
+        cli.log_error("Failed to find remote origin url")
     end
 
     return url
