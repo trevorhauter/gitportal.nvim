@@ -17,7 +17,7 @@ function M.setup(options)
 
     local commands = {
         browse_file = function()
-            require("gitportal").open_file_in_browser(M.options.browser_command)
+            require("gitportal").open_file_in_browser()
         end,
         open_link = function()
             require("gitportal").open_file_in_neovim()
