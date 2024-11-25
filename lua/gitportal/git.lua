@@ -144,10 +144,13 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
+    -- TODO: Add a func here to determine which host we are generating a link for
+    -- TODO: Add branching logic to create different formats for different hosts (gitlab)
     local permalink = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
+        -- TODO: Allow url_params to accept an argument to determine format of start/end line
         permalink = permalink .. M.create_url_params(start_line, end_line)
     end
 
