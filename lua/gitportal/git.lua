@@ -4,8 +4,18 @@ local nv_utils = require("gitportal.nv_utils")
 
 local git_root_patterns = { ".git" }
 -- GIT HOSTS
-local github = "github"
-local gitlab = "gitlab"
+local GIT_HOSTS = {
+    github = {
+        name = "github",
+        ssh_str = "git@github.com",
+        url = "https://github.com/",
+    },
+    gitlab = {
+        name = "gitlab",
+        ssh_str = "git@gitlab.com",
+        url = "https://gitlab.com/",
+    },
+}
 
 local M = {}
 
@@ -27,13 +37,15 @@ function M.determine_git_host()
     local origin_url = M.get_origin_url()
     if origin_url == nil then
         return nil
-    elseif string.find(origin_url, github, 0, true) then
-        return github
-    elseif string.find(origin_url, gitlab, 0, true) then
-        return gitlab
-    else
-        return nil
     end
+
+    for host, host_info in pairs(GIT_HOSTS) do
+        if string.find(origin_url, host_info.name, 0, true) then
+            return host
+        end
+    end
+
+    return nil
 end
 
 function M.branch_or_commit_exists(branch_or_commit)
@@ -91,8 +103,9 @@ local function get_base_git_host_url()
     local origin_url = M.get_origin_url()
     if origin_url then
         origin_url = origin_url:gsub("%.git\n$", "")
-        origin_url = origin_url:gsub("git@github.com:", "https://github.com/")
-        origin_url = origin_url:gsub("git@gitlab.com:", "https://gitlab.com/")
+        for _, host_info in pairs(GIT_HOSTS) do
+            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+        end
     else
         cli.log_error("Failed to find remote origin url")
     end
@@ -101,23 +114,23 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host == github then
+    if git_host.name == GIT_HOSTS.github.name then
         return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
-    elseif git_host == gitlab then
+    elseif git_host == GIT_HOSTS.gitlab.name then
         return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
     else
         return nil
     end
 end
 
-function M.create_url_params(start_line, end_line, githost)
+function M.create_url_params(start_line, end_line, git_host)
     -- Given a start and end line, generate a line range for the end of a github url
     -- if applicable
     local first_prefix, second_prefix
     first_prefix = "#L"
-    if githost == github then
+    if git_host == GIT_HOSTS.github.name then
         second_prefix = "-L"
-    elseif githost == gitlab then
+    elseif git_host == GIT_HOSTS.gitlab.name then
         second_prefix = "-"
     end
 
