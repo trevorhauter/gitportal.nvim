@@ -3,6 +3,9 @@ local config = require("gitportal.config")
 local nv_utils = require("gitportal.nv_utils")
 
 local git_root_patterns = { ".git" }
+-- GIT HOSTS
+local github = "github"
+local gitlab = "gitlab"
 
 local M = {}
 
@@ -24,10 +27,10 @@ function M.determine_git_host()
     local origin_url = M.get_origin_url()
     if origin_url == nil then
         return nil
-    elseif string.find(origin_url, "github", 0, true) then
-        return "github"
-    elseif string.find(origin_url, "gitlab", 0, true) then
-        return "gitlab"
+    elseif string.find(origin_url, github, 0, true) then
+        return github
+    elseif string.find(origin_url, gitlab, 0, true) then
+        return gitlab
     else
         return nil
     end
@@ -82,7 +85,7 @@ function M.get_branch_or_commit()
     }
 end
 
-local function get_base_github_url()
+local function get_base_git_host_url()
     -- Get the base github url for a repo...
     -- Ex: https://github.com/trevorhauter/gitportal.nvim
     local origin_url = M.get_origin_url()
@@ -98,9 +101,9 @@ local function get_base_github_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host == "github" then
+    if git_host == github then
         return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
-    elseif git_host == "gitlab" then
+    elseif git_host == gitlab then
         return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
     else
         return nil
@@ -112,9 +115,9 @@ function M.create_url_params(start_line, end_line, githost)
     -- if applicable
     local first_prefix, second_prefix
     first_prefix = "#L"
-    if githost == "github" then
+    if githost == github then
         second_prefix = "-L"
-    elseif githost == "gitlab" then
+    elseif githost == gitlab then
         second_prefix = "-"
     end
 
@@ -170,7 +173,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local remote_url = get_base_github_url()
+    local remote_url = get_base_git_host_url()
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host()
