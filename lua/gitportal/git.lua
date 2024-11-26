@@ -16,6 +16,23 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
+function M.get_origin_url()
+    return cli.run_command("git config --get remote.origin.url")
+end
+
+function M.determine_git_host()
+    local origin_url = M.get_origin_url()
+    if origin_url == nil then
+        return nil
+    elseif string.find(origin_url, "github", 0, true) then
+        return "github"
+    elseif string.find(origin_url, "gitlab", 0, true) then
+        return "gitlab"
+    else
+        return nil
+    end
+end
+
 function M.branch_or_commit_exists(branch_or_commit)
     return cli.run_command("git show-ref --heads " .. branch_or_commit)
 end
@@ -68,26 +85,44 @@ end
 local function get_base_github_url()
     -- Get the base github url for a repo...
     -- Ex: https://github.com/trevorhauter/gitportal.nvim
-    local url = cli.run_command("git config --get remote.origin.url")
-    if url then
-        url = url:gsub("%.git\n$", "")
-        url = url:gsub("git@github.com:", "https://github.com/")
-        url = url:gsub("git@gitlab.com:", "https://gitlab.com/")
+    local origin_url = M.get_origin_url()
+    if origin_url then
+        origin_url = origin_url:gsub("%.git\n$", "")
+        origin_url = origin_url:gsub("git@github.com:", "https://github.com/")
+        origin_url = origin_url:gsub("git@gitlab.com:", "https://gitlab.com/")
     else
         cli.log_error("Failed to find remote origin url")
     end
 
-    return url
+    return origin_url
 end
 
-function M.create_url_params(start_line, end_line)
+function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
+    if git_host == "github" then
+        return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
+    elseif git_host == "gitlab" then
+        return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
+    else
+        return nil
+    end
+end
+
+function M.create_url_params(start_line, end_line, githost)
     -- Given a start and end line, generate a line range for the end of a github url
     -- if applicable
+    local first_prefix, second_prefix
+    first_prefix = "#L"
+    if githost == "github" then
+        second_prefix = "-L"
+    elseif githost == "gitlab" then
+        second_prefix = "-"
+    end
+
     if start_line and end_line then
         if start_line == end_line then
-            return "#L" .. start_line
+            return first_prefix .. start_line
         else
-            return "#L" .. start_line .. "-L" .. end_line
+            return first_prefix .. start_line .. second_prefix .. end_line
         end
     end
 
@@ -138,20 +173,21 @@ function M.get_git_url_for_current_file()
     local remote_url = get_base_github_url()
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
+    local git_host = M.determine_git_host()
 
     if branch_or_commit == nil then
         cli.log_error("Couldn't find the current branch or commit!")
         return nil
     end
+    if git_host == nil then
+        cli.log_error("Couldn't determine git host!")
+    end
 
-    -- TODO: Add a func here to determine which host we are generating a link for
-    -- TODO: Add branching logic to create different formats for different hosts (gitlab)
-    local permalink = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path
+    local permalink = M.assemble_permalink(remote_url, branch_or_commit.name, git_path, git_host)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
-        -- TODO: Allow url_params to accept an argument to determine format of start/end line
-        permalink = permalink .. M.create_url_params(start_line, end_line)
+        permalink = permalink .. M.create_url_params(start_line, end_line, git_host)
     end
 
     return permalink
