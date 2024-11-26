@@ -14,6 +14,8 @@
 #### A coworker shares a file with you 
 - `GitPortal` will accept shareable permalinks from your favorite git host, switch to the proper branch/commit, open the file in neovim, and go to or highlight any relevant lines embedded in the permalink.
 
+Please note that the branch/commit must be available locally for it to switch automatically :-) 
+
 
 <details>
 <summary>Click for preview</summary>
@@ -44,7 +46,7 @@ use { 'trevorhauter/gitportal.nvim' }
 ## ꩜ Configuration
 **`GitPortal`** comes with the following defaults.
 
-If you wish to keep these defaults, no configuration is required. If you wish to customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
+If you wish to keep these defaults, no configuration is required. To customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
 ```lua
 {
     -- When opening generating permalinks, whether to always include the current line in
@@ -87,10 +89,12 @@ vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end
 ```
 
 ## ꩜ Supported git web hosts
-- [GitHub](https://github.com/)
-- [GitLab](https://gitlab.com/)
+Git host                        | Supported          | Self host support 
+--------------------------------|--------------------|---------------------------
+[GitHub](https://github.com/)   | :white_check_mark: | 🔎 Needs testing (please open issue if interested!)
+[GitLab](https://gitlab.com/)   | :white_check_mark: | :white_check_mark:
 
-No configuration is required to use one git host or another. `GitPortal` will take care of that work for you!
+No configuration is required to use one git host or another. Self host, ssh, it doesn't matter, `GitPortal` will take care of that work for you!
 
 We are working hard to add more hosts for git, including self hosted options. If you'd like to use a host not yet listed, please check out our [enhancement issues](https://github.com/trevorhauter/gitportal.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) to see if an issue is present. If you don't see an issue created for your desired host, please create one!
 
