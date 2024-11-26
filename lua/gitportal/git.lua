@@ -114,7 +114,7 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host.name == GIT_HOSTS.github.name then
+    if git_host == GIT_HOSTS.github.name then
         return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
     elseif git_host == GIT_HOSTS.gitlab.name then
         return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
