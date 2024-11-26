@@ -181,6 +181,7 @@ function M.get_git_url_for_current_file()
     end
     if git_host == nil then
         cli.log_error("Couldn't determine git host!")
+        return nil
     end
 
     local permalink = M.assemble_permalink(remote_url, branch_or_commit.name, git_path, git_host)
