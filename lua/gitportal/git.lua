@@ -249,6 +249,8 @@ function M.open_file_from_git_url(parsed_url)
             nv_utils.highlight_line_range_for_new_buffer(parsed_url.start_line, parsed_url.end_line)
             nv_utils.open_file(absolute_file_path)
         end
+    else
+        nv_utils.open_file(absolute_file_path)
     end
 end
 
