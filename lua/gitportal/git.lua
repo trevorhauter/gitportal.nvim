@@ -3,8 +3,10 @@ local config = require("gitportal.config")
 local nv_utils = require("gitportal.nv_utils")
 
 local git_root_patterns = { ".git" }
--- GIT HOSTS
-local GIT_HOSTS = {
+
+local M = {}
+
+M.GIT_HOSTS = {
     github = {
         name = "github",
         ssh_str = "git@github.com",
@@ -16,8 +18,6 @@ local GIT_HOSTS = {
         url = "https://gitlab.com/",
     },
 }
-
-local M = {}
 
 function M.get_git_root_dir()
     -- Get the git root dir
@@ -39,7 +39,7 @@ function M.determine_git_host()
         return nil
     end
 
-    for host, host_info in pairs(GIT_HOSTS) do
+    for host, host_info in pairs(M.GIT_HOSTS) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host
         end
@@ -103,7 +103,7 @@ local function get_base_git_host_url()
     local origin_url = M.get_origin_url()
     if origin_url then
         origin_url = origin_url:gsub("%.git\n$", "")
-        for _, host_info in pairs(GIT_HOSTS) do
+        for _, host_info in pairs(M.GIT_HOSTS) do
             origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
         end
     else
@@ -114,9 +114,9 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host == GIT_HOSTS.github.name then
+    if git_host == M.GIT_HOSTS.github.name then
         return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
-    elseif git_host == GIT_HOSTS.gitlab.name then
+    elseif git_host == M.GIT_HOSTS.gitlab.name then
         return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
     else
         return nil
@@ -128,9 +128,9 @@ function M.create_url_params(start_line, end_line, git_host)
     -- if applicable
     local first_prefix, second_prefix
     first_prefix = "#L"
-    if git_host == GIT_HOSTS.github.name then
+    if git_host == M.GIT_HOSTS.github.name then
         second_prefix = "-L"
-    elseif git_host == GIT_HOSTS.gitlab.name then
+    elseif git_host == M.GIT_HOSTS.gitlab.name then
         second_prefix = "-"
     end
 
