@@ -4,6 +4,9 @@ local lu = require("luaunit")
 
 TestGit = {}
 
+-- ****
+-- TEST SETUP
+-- ****
 function TestGit:setUp()
     -- Backup the function that will be mocked
     self.backup_get_git_root_dir = git.get_git_root_dir
@@ -50,7 +53,10 @@ function TestGit:setUp()
     end
 end
 
--- ==== TESTS ====
+-- ****
+-- TESTS
+-- ****
+
 function TestGit:test_get_git_base_directory()
     lu.assertEquals(git.get_git_base_directory(), "gitportal.nvim")
 end
@@ -63,17 +69,30 @@ function TestGit:test_get_branch_or_commit()
     self.active_branch_or_commit = self.branch
 
     local result = git.get_branch_or_commit()
+
+    if result == nil then
+        error("git.get_branch_or_commit() returned nil")
+    end
+
     lu.assertEquals(result.name, self.branch)
     lu.assertEquals(result.type, "branch")
 
     self.active_branch_or_commit = self.commit
 
-    local result = git.get_branch_or_commit()
+    result = git.get_branch_or_commit()
+
+    if not result then
+        error("git.get_branch_or_commit() returned nil")
+    end
+
     lu.assertEquals(result.name, self.commit)
     lu.assertEquals(result.type, "commit")
 end
 
--- ==== END TESTS ====
+-- ****
+-- END TESTS
+-- ****
+
 function TestGit:tearDown()
     -- Restore mocked function
     git.get_git_root_dir = self.backup_get_git_root_dir

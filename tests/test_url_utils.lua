@@ -9,6 +9,11 @@ local url_utils = require("gitportal.url_utils")
 -- Helper function to validate parsed URLs
 local function assert_parsed_url(url, expected)
     local result = url_utils.parse_githost_url(url)
+
+    if result == nil then
+        error("Failed to parse url!")
+    end
+
     lu.assertEquals(result.repo, expected.repo)
     lu.assertEquals(result.branch_or_commit, expected.branch_or_commit)
     lu.assertEquals(result.file_path, expected.file_path)
