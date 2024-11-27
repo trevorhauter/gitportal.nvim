@@ -23,7 +23,7 @@ function M.setup(options)
             require("gitportal").open_file_in_neovim()
         end,
         copy_link_to_clipboard = function()
-           require("gitportal").copy_link_to_clipboard()
+            require("gitportal").copy_link_to_clipboard()
         end,
     }
 
