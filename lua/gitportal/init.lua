@@ -40,8 +40,9 @@ function M.copy_link_to_clipboard()
             cli.log_error("Malformed link detected!")
         end
         vim.fn.setreg("+", git_url)
+        cli.log_info("Copied link to system clipboard!")
     else
-        cli.log_error("Failed to properly copy link to clipboard!")
+        cli.log_error("Failed to properly copy link to system clipboard!")
     end
 end
 
