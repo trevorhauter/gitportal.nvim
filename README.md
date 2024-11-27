@@ -86,6 +86,11 @@ vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() en
 -- Requests a github link, optionally switches to the branch/commit, and
 -- opens the specified file in neovim. Line ranges, if included, are respected.
 vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
+
+-- copy_link_to_clipboard() in normal mode
+-- Copies the permalink to your system clipboard
+vim.keymap.set("n", "<leader>gc", function() gitportal.copy_link_to_clipboard() end)
+
 ```
 
 ## ꩜ Supported git web hosts

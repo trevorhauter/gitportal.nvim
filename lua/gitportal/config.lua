@@ -22,6 +22,9 @@ function M.setup(options)
         open_link = function()
             require("gitportal").open_file_in_neovim()
         end,
+        copy_link_to_clipboard = function()
+            require("gitportal").copy_link_to_clipboard()
+        end,
     }
 
     vim.api.nvim_create_user_command("GitPortal", function(ev)

@@ -4,6 +4,10 @@ function M.log_error(message)
     vim.notify(message, vim.log.levels.ERROR)
 end
 
+function M.log_info(message)
+    vim.notify(message, vim.log.levels.INFO)
+end
+
 function M.run_command(command)
     -- TODO: Update this func to accept multiple arguments and pass it to vim.fn.system so we won't get destroyed by
     -- unescaped characters
