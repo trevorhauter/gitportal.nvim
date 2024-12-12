@@ -11,7 +11,7 @@
 * [Use cases](#-use-cases)
 * [Demo](#-gitportal-in-action)
 * [Installation](#-installation)
-* [Configuration](#-configuration)
+* [Options](#-options)
 * [Setup](#-basic-setup)
 * [Supported hosts](#-supported-git-web-hosts)
 * [How this plugin stacks up against others](#-comparison-against-other-popular-git-browsing-plugins)
@@ -50,8 +50,8 @@ use { 'trevorhauter/gitportal.nvim' }
 Plug 'trevorhauter/gitportal.nvim'
 ``` 
 
-## ꩜ Configuration
-**`GitPortal`** comes with the following defaults.
+## ꩜ Options
+**`GitPortal`** comes with the following options by default.
 
 If you wish to keep these defaults, no configuration is required. To customize them, all you have to do is call `setup` with your overrides. An example can be seen in my setup below.
 ```lua
