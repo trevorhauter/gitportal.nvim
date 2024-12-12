@@ -62,8 +62,8 @@ If you wish to keep these defaults, no configuration is required. To customize t
     -- Branch/commit handling when opening links in neovim
     switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
 
-    -- Browser command
-    browser_command = nil, -- Command to open URLs (auto-detected if nil)
+    -- Custom browser command (default: automatically determined by GitPortal)
+    browser_command = nil, -- (override only if necessary, not recommended)
 }
 ```
 
