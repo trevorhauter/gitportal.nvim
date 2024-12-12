@@ -97,15 +97,20 @@ function M.get_branch_or_commit()
     }
 end
 
+function M.parse_origin_url(origin_url)
+    origin_url = origin_url:gsub("%.git\n$", "")
+    for _, host_info in pairs(M.GIT_HOSTS) do
+        origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+    end
+    return origin_url
+end
+
 local function get_base_git_host_url()
     -- Get the base github url for a repo...
     -- Ex: https://github.com/trevorhauter/gitportal.nvim
     local origin_url = M.get_origin_url()
     if origin_url then
-        origin_url = origin_url:gsub("%.git\n$", "")
-        for _, host_info in pairs(M.GIT_HOSTS) do
-            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
-        end
+        origin_url = M.parse_origin_url(origin_url)
     else
         cli.log_error("Failed to find remote origin url")
     end
