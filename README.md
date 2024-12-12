@@ -14,11 +14,7 @@
 #### A coworker shares a file with you 
 - `gitportal` will accept shareable permalinks, switch to the proper commit or branch, open the file, and go to or highlight any relevant lines embedded in the permalink.
 
-
-<details>
-<summary>Click for preview</summary>
-
-#### Preview
+## ꩜ The demo
 | Opening file in github |
 | --- |
 | ![opening_link](https://github.com/user-attachments/assets/0ca39d86-db90-4e4e-a58d-a457ddf11d33) |
@@ -26,8 +22,6 @@
 | Opening file in neovim |
 | --- |
 | ![link_ingestion_new](https://github.com/user-attachments/assets/fa04e1f0-ad2c-4afa-bf2d-9098d78438bd) |
-
-</details>
 
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
