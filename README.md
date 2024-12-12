@@ -13,6 +13,7 @@
 * [Installation](#-installation)
 * [Options](#-options)
 * [Setup](#-basic-setup)
+* [Commands](#-commands)
 * [Supported hosts](#-supported-git-web-hosts)
 * [How this plugin stacks up against others](#-comparison-against-other-popular-git-browsing-plugins)
 
@@ -69,31 +70,38 @@ If you wish to keep these defaults, no configuration is required. To customize t
 
 ## ꩜ Basic setup
 Here is a brief example of the available functions and how I have them set up in my personal config.
+
+**Note**: `setup()` is only required if you are going to use [autocommands](#-commands) or override any of GitPortals defaults.
+
 ```lua
 local gitportal = require("gitportal")
 
 gitportal.setup({
-    always_include_current_line = true
+    always_include_current_line = true, -- Include the current line in permalinks by default
 })
 
--- open_file_in_browser() in normal mode
--- Opens the current file in your browser on the correct branch/commit.
-vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
+-- Key mappings for GitPortal functions:
 
--- open_file_in_browser() in visual mode
--- This behaves the same but it also includes the selected line(s) in the permalink.
-vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
+-- Opens the current file in your browser at the correct branch/commit.
+vim.keymap.set("n", "<leader>gp", gitportal.open_file_in_browser)
 
--- open_file_in_neovim()
--- Requests a github link, optionally switches to the branch/commit, and
--- opens the specified file in neovim. Line ranges, if included, are respected.
-vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
+-- Same as above, but includes the selected lines in the permalink.
+vim.keymap.set("v", "<leader>gp", gitportal.open_file_in_browser)
 
--- copy_link_to_clipboard() in normal mode
--- Copies the permalink to your system clipboard
-vim.keymap.set("n", "<leader>gc", function() gitportal.copy_link_to_clipboard() end)
+-- Opens a Githost link in Neovim, optionally switching to the branch/commit.
+vim.keymap.set("n", "<leader>ig", gitportal.open_file_in_neovim)
 
+-- Generates and copies the permalink of your current file to your clipboard.
+vim.keymap.set("n", "<leader>gc", gitportal.copy_link_to_clipboard)
+
+-- Same as above, but includes the selected lines in the permalink.
+vim.keymap.set("v", "<leader>gc", gitportal.copy_link_to_clipboard)
 ```
+
+## ꩜ Commands
+If you prefer to use commands over calling gitportals functions directly, you can use the following commands 
+Note: `setup()` is required to use autocommands!
+
 
 ## ꩜ Supported git web hosts
 Git host                        | Supported          | Self host support 
