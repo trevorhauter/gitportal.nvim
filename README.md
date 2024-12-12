@@ -16,11 +16,7 @@
 
 Please note that the branch/commit must be available locally for it to switch automatically :-) 
 
-
-<details>
-<summary>Click for preview</summary>
-
-#### Preview
+## ꩜ GitPortal in action
 | Opening file in github |
 | --- |
 | ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
@@ -28,9 +24,6 @@ Please note that the branch/commit must be available locally for it to switch au
 | Opening file in neovim |
 | --- |
 | ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
-
-
-</details>
 
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
