@@ -100,9 +100,15 @@ vim.keymap.set("v", "<leader>gc", gitportal.copy_link_to_clipboard)
 If you prefer to use commands over calling gitportals functions directly, you can use the following commands 
 
 **Note**: `setup()` is required to use autocommands!
-- `:GitPortal browse_file` -- Opens the current file in your browser at the correct branch/commit.
-    - This is the default command, and the same as calling `:GitPortal`
-- `:GitPortal open_link` -- Opens a githost link directly in neovim, optionally switching to the branch/commit depending on your options.
+
+The following command is created upon setup that takes several arguments. 
+```lua
+:GitPortal [action] -- browse_file (default) | open_link | copy_link_to_clipboard
+```
+
+- `:GitPortal` -- Opens the current file in your browser at the correct branch/commit.
+- `:GitPortal browse_file` -- Same as above.
+- `:GitPortal open_link` -- Opens a githost link in neovim, switching to the branch/commit depending on options.
 - `:GitPortal copy_link_to_clipboard` -- Generates a permalink to the current file and copies it to your system clipboard.   
 
 ## ꩜ Supported git web hosts
