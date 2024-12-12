@@ -17,11 +17,11 @@
 Please note that the branch/commit must be available locally for it to switch automatically :-) 
 
 ## ꩜ GitPortal in action
-| Opening file in github |
+| Opening your current file in your browser |
 | --- |
 | ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
 
-| Opening file in neovim |
+| Opening a github url directly in Neovim |
 | --- |
 | ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
 
