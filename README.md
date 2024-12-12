@@ -57,13 +57,13 @@ If you wish to keep these defaults, no configuration is required. To customize t
 ```lua
 {
     -- Permalink generation
-    always_include_current_line = false, -- Always include the current line in URL regardless of current mode.
+    always_include_current_line = false, -- Include the current line in URL regardless of current mode.
 
     -- Branch/commit handling when opening links
     switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
 
-    -- Browser command
-    browser_command = nil, -- CLI command to open URLs (auto-detected if nil, please open issue if your browser isn't opened automatically.)
+    -- Browser command (backup option for if gitportal doesn't detect browser. Please open issue)
+    browser_command = nil, -- string
 }
 ```
 
