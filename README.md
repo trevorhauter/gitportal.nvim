@@ -6,7 +6,16 @@
 
 <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
-  
+
+## ꩜ Table of contents
+* [Use cases](#-use-cases)
+* [Demo](#-gitportal-in-action)
+* [Installation](#-installation)
+* [Configuration](#-configuration)
+* [Setup](#-basic-setup)
+* [Supported hosts](#-supported-git-web-hosts)
+* [How this plugin stacks up against others](#-comparison-against-other-popular-git-browsing-plugins)
+
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
 - `GitPortal` lets you open your current file in your browser, including any selected lines in the permalink.
