@@ -3,39 +3,44 @@
 # gitportal.nvim
 #### Bridging the gap between your favorite git host and neovim.
 
-
 <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
-  
+
+## ꩜ Table of contents
+* [Use cases](#-use-cases)
+* [Demo](#-gitportal-in-action)
+* [Requirements](#-requirements)
+* [Installation](#-installation)
+* [Options](#-options)
+* [Setup](#-basic-setup)
+* [Commands](#-commands)
+* [Supported hosts](#-supported-git-web-hosts)
+* [How this plugin stacks up against others](#-comparison-against-other-popular-git-browsing-plugins)
+
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
-- `GitPortal` will open your current file in your browser, including any selected lines in the permalink.
+- `GitPortal` lets you open your current file in your browser, including any selected lines in the permalink.
 
 #### A coworker shares a file with you 
-- `GitPortal` will accept shareable permalinks from your favorite git host, switch to the proper branch/commit, open the file in neovim, and go to or highlight any relevant lines embedded in the permalink.
+- `GitPortal` lets you open shareable permalinks from your favorite Git host directly in Neovim. It seamlessly switches to the correct branch or commit, opens the specified file, and highlights any lines included in the link.
 
 Please note that the branch/commit must be available locally for it to switch automatically :-) 
 
-
-<details>
-<summary>Click for preview</summary>
-
-#### Preview
-| Opening file in github |
+## ꩜ GitPortal in action
+| Opening your current file in your browser |
 | --- |
 | ![opening_link](https://github.com/user-attachments/assets/92313f0e-5361-47e8-92a5-9137e8aaaab2) |
 
-| Opening file in neovim |
+| Opening a github url directly in Neovim |
 | --- |
 | ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
 
-
-</details>
-
+## ꩜ Requirements
+[![Neovim](https://img.shields.io/badge/Neovim%200.10+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
-{ 'trevorhauter/gitportal.nvim' }
+return { 'trevorhauter/gitportal.nvim' }
 ```
 
 - [packer.nvim](https://github.com/wbthomason/packer.nvim)
@@ -43,55 +48,70 @@ Please note that the branch/commit must be available locally for it to switch au
 use { 'trevorhauter/gitportal.nvim' }
 ```
 
-## ꩜ Configuration
-**`GitPortal`** comes with the following defaults.
+- [vim-lug](https://github.com/junegunn/vim-plug)
+```lua
+Plug 'trevorhauter/gitportal.nvim'
+``` 
 
-If you wish to keep these defaults, no configuration is required. To customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
+## ꩜ Options
+**`GitPortal`** comes with the following options by default.
+
+If you wish to keep these defaults, no configuration is required. To customize them, all you have to do is call `setup` with your overrides. An example can be seen in my setup below. You can read more about the default options on the [wiki](https://github.com/trevorhauter/gitportal.nvim/wiki/Options).
 ```lua
 {
-    -- When opening generating permalinks, whether to always include the current line in
-    -- the URL, regardless of visual mode.
+    -- Permalink generation | Include current line in URL regardless of current mode
     always_include_current_line = false, -- bool
 
-    -- When ingesting permalinks, should gitportal always switch to the specified
-    -- branch or commit?
-    -- Can be "always", "ask_first", or "never"
-    switch_branch_or_commit_upon_ingestion = "always",
+    -- Branch/commit handling when opening links in neovim
+    switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
 
-    -- The command used via command line to open a url in  your default browser.
-    -- gitportal.nvim will try to autodetect and use the appropriate command
-    -- but it is configurable here as well.
-    browser_command = nil, -- nil | string
+    -- Custom browser command (default: automatically determined by GitPortal)
+    browser_command = nil, -- (override only if necessary, not recommended)
 }
 ```
 
 ## ꩜ Basic setup
 Here is a brief example of the available functions and how I have them set up in my personal config.
+
+**Note**: `setup()` is only required if you are going to use [autocommands](#-commands) or override any of GitPortals defaults.
+
 ```lua
 local gitportal = require("gitportal")
 
 gitportal.setup({
-    always_include_current_line = true
+    always_include_current_line = true, -- Include the current line in permalinks by default
 })
 
--- open_file_in_browser() in normal mode
--- Opens the current file in your browser on the correct branch/commit.
-vim.keymap.set("n", "<leader>gp", function() gitportal.open_file_in_browser() end)
+-- Key mappings for GitPortal functions:
 
--- open_file_in_browser() in visual mode
--- This behaves the same but it also includes the selected line(s) in the permalink.
-vim.keymap.set("v", "<leader>gp", function() gitportal.open_file_in_browser() end)
+-- Opens the current file in your browser at the correct branch/commit.
+-- When in visual mode, selected lines are included in the permalink.
+vim.keymap.set("n", "<leader>gp", gitportal.open_file_in_browser)
+vim.keymap.set("v", "<leader>gp", gitportal.open_file_in_browser)
 
--- open_file_in_neovim()
--- Requests a github link, optionally switches to the branch/commit, and
--- opens the specified file in neovim. Line ranges, if included, are respected.
-vim.keymap.set('n', '<leader>ig', function() gitportal.open_file_in_neovim() end) 
+-- Opens a Githost link directly in Neovim, optionally switching to the branch/commit.
+vim.keymap.set("n", "<leader>ig", gitportal.open_file_in_neovim)
 
--- copy_link_to_clipboard() in normal mode
--- Copies the permalink to your system clipboard
-vim.keymap.set("n", "<leader>gc", function() gitportal.copy_link_to_clipboard() end)
-
+-- Generates and copies the permalink of your current file to your clipboard.
+-- When in visual mode, selected lines are included in the permalink.
+vim.keymap.set("n", "<leader>gc", gitportal.copy_link_to_clipboard)
+vim.keymap.set("v", "<leader>gc", gitportal.copy_link_to_clipboard)
 ```
+
+## ꩜ Commands
+If you prefer to use commands over calling gitportals functions directly, you can use the following commands 
+
+**Note**: `setup()` is required to use autocommands!
+
+The following command is created upon setup that takes several arguments. 
+```lua
+:GitPortal [action] -- browse_file (default) | open_link | copy_link_to_clipboard
+```
+
+- `:GitPortal` -- Opens the current file in your browser at the correct branch/commit.
+- `:GitPortal browse_file` -- Same as above.
+- `:GitPortal open_link` -- Opens a githost link in neovim, switching to the branch/commit depending on options.
+- `:GitPortal copy_link_to_clipboard` -- Generates a permalink to the current file and copies it to your system clipboard.   
 
 ## ꩜ Supported git web hosts
 Git host                        | Supported          | Self host support 
