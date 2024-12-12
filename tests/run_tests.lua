@@ -1,11 +1,9 @@
-package.path = package.path .. ';' .. './lua/?.lua'
+package.path = package.path .. ";" .. "./lua/?.lua"
 
+require("tests.test_git")
+require("tests.test_git_remote_urls")
+require("tests.test_url_utils")
 
-require('tests.test_url_utils')
-require('tests.test_git')
-
-
-local lu = require('tests.luaunit')
-
+local lu = require("luaunit")
 
 os.exit(lu.LuaUnit.run())
