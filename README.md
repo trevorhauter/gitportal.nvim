@@ -3,15 +3,13 @@
 # gitportal.nvim
 #### Bridging the gap between your favorite git host and neovim.
 
-[![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
-[![Neovim](https://img.shields.io/badge/Neovim%200.10+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
-
 <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
 
 ## ꩜ Table of contents
 * [Use cases](#-use-cases)
 * [Demo](#-gitportal-in-action)
+* [Requirements](#-requirements)
 * [Installation](#-installation)
 * [Options](#-options)
 * [Setup](#-basic-setup)
@@ -37,6 +35,8 @@ Please note that the branch/commit must be available locally for it to switch au
 | --- |
 | ![new_link_ingestion](https://github.com/user-attachments/assets/98e65711-2f42-42c0-b586-04b158c8290a) |
 
+## ꩜ Requirements
+[![Neovim](https://img.shields.io/badge/Neovim%200.10+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
