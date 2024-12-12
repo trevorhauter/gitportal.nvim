@@ -12,7 +12,7 @@
 - `GitPortal` will open your current file in your browser, including any selected lines in the permalink.
 
 #### A coworker shares a file with you 
-- `GitPortal` will accept shareable permalinks from your favorite git host, switch to the proper branch/commit, open the file in neovim, and go to or highlight any relevant lines embedded in the permalink.
+- `GitPortal` lets you open shareable permalinks from your favorite Git host directly in Neovim. It seamlessly switches to the correct branch or commit, opens the specified file, and highlights any lines included in the link.
 
 Please note that the branch/commit must be available locally for it to switch automatically :-) 
 
