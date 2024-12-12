@@ -44,19 +44,19 @@ Plug 'trevorhauter/gitportal.nvim'
 ## ꩜ Configuration
 **`GitPortal`** comes with the following defaults.
 
-If you wish to keep these defaults, no configuration is required. To customize them, you must pass a dictionary of the options you'd like to override to the setup method. An example can be seen in my setup below.
+If you wish to keep these defaults, no configuration is required. To customize them, all you have to do is call `setup` with your overrides. An example can be seen in my setup below.
 ```lua
 {
-    -- When opening generating permalinks, whether to always include the current line in
+    -- When generating permalinks, whether to always include the current line in
     -- the URL, regardless of visual mode.
     always_include_current_line = false, -- bool
 
-    -- When ingesting permalinks, should gitportal always switch to the specified
+    -- When opening links in neovim, should gitportal always switch to the links
     -- branch or commit?
     -- Can be "always", "ask_first", or "never"
-    switch_branch_or_commit_upon_ingestion = "always",
+    switch_branch_or_commit_upon_ingestion = "always", -- string
 
-    -- The command used via command line to open a url in  your default browser.
+    -- The command used via command line to open a url in your default browser.
     -- gitportal.nvim will try to autodetect and use the appropriate command
     -- but it is configurable here as well.
     browser_command = nil, -- nil | string
