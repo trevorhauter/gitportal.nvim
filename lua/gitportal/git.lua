@@ -98,8 +98,10 @@ function M.get_branch_or_commit()
 end
 
 function M.parse_origin_url(origin_url)
+    -- remove any trailing spaces or line breaks from the end of the line
+    origin_url = origin_url:gsub("%s$", "")
     -- Trim any appending .git from the url, including new line
-    origin_url = origin_url:gsub("%.git%s*$", "")
+    origin_url = origin_url:gsub("%.git$", "")
 
     local temp_url = origin_url
     -- For any of the non-self-hosted git hosts, trim here

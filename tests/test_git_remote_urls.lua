@@ -26,6 +26,13 @@ function TestParseOriginUrl:test_regular_github_http_origin_url()
     validate_parsed_url(origin_url, expected_result)
 end
 
+function TestParseOriginUrl:test_github_http_origin_url_not_git()
+    -- A url that doesn't have the usual appending .git
+    local origin_url = "https://github.com/docker/welcome-to-docker"
+    local expected_result = "https://github.com/docker/welcome-to-docker"
+    validate_parsed_url(origin_url, expected_result)
+end
+
 function TestParseOriginUrl:test_regular_gitlab_http_origin_url()
     local origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
     local expected_result = "https://gitlab.com/gitportal/gitlab-test"
