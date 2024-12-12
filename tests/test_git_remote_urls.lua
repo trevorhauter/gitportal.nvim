@@ -26,9 +26,22 @@ function TestParseOriginUrl:test_regular_github_http_origin_url()
     validate_parsed_url(origin_url, expected_result)
 end
 
+function TestParseOriginUrl:test_regular_gitlab_http_origin_url()
+    local origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
+    local expected_result = "https://gitlab.com/gitportal/gitlab-test"
+    validate_parsed_url(origin_url, expected_result)
+end
+
 function TestParseOriginUrl:test_regular_github_ssh_origin_url()
     local origin_url = "git@github.com:techcompany/mainrepo.git"
     local expected_result = "https://github.com/techcompany/mainrepo"
+
+    validate_parsed_url(origin_url, expected_result)
+end
+
+function TestParseOriginUrl:test_regular_gitlab_ssh_origin_url()
+    local origin_url = "git@gitlab.com:gitportal/gitlab-test.git"
+    local expected_result = "https://gitlab.com/gitportal/gitlab-test"
 
     validate_parsed_url(origin_url, expected_result)
 end
