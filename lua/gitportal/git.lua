@@ -97,15 +97,34 @@ function M.get_branch_or_commit()
     }
 end
 
+function M.parse_origin_url(origin_url)
+    -- Trim any appending .git from the url, including new line
+    origin_url = origin_url:gsub("%.git%s*$", "")
+
+    local temp_url = origin_url
+    -- For any of the non-self-hosted git hosts, trim here
+    for _, host_info in pairs(M.GIT_HOSTS) do
+        origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+    end
+
+    -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
+    if temp_url == origin_url and string.find(origin_url, "@", 0, true) then
+        -- use case 1, self hosted ssh url begins with git@ssh
+        if string.find(origin_url, "git@ssh", 0, true) then
+            origin_url = origin_url:gsub("git@ssh%.", "https://")
+            origin_url = origin_url:gsub("%.com:", ".com/")
+        end
+    end
+
+    return origin_url
+end
+
 local function get_base_git_host_url()
     -- Get the base github url for a repo...
     -- Ex: https://github.com/trevorhauter/gitportal.nvim
     local origin_url = M.get_origin_url()
     if origin_url then
-        origin_url = origin_url:gsub("%.git\n$", "")
-        for _, host_info in pairs(M.GIT_HOSTS) do
-            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
-        end
+        origin_url = M.parse_origin_url(origin_url)
     else
         cli.log_error("Failed to find remote origin url")
     end
