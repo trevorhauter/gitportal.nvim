@@ -3,6 +3,8 @@
 # gitportal.nvim
 #### Bridging the gap between your favorite git host and neovim.
 
+[![Lua](https://img.shields.io/badge/Lua-blue.svg?style=for-the-badge&logo=lua)](http://www.lua.org)
+[![Neovim](https://img.shields.io/badge/Neovim%200.10+-green.svg?style=for-the-badge&logo=neovim)](https://neovim.io)
 
 <img alt="Git Portal" height="175" src="/assets/gitportal-icon.png" />
 </div>
