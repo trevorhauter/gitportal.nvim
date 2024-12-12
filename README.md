@@ -9,7 +9,7 @@
   
 ## ꩜ Use cases
 #### You want to quickly share a file with a coworker 
-- `GitPortal` will open your current file in your browser, including any selected lines in the permalink.
+- `GitPortal` lets you open your current file in your browser, including any selected lines in the permalink.
 
 #### A coworker shares a file with you 
 - `GitPortal` lets you open shareable permalinks from your favorite Git host directly in Neovim. It seamlessly switches to the correct branch or commit, opens the specified file, and highlights any lines included in the link.
