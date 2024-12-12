@@ -28,13 +28,18 @@ Please note that the branch/commit must be available locally for it to switch au
 ## ꩜ Installation
 - [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
-{ 'trevorhauter/gitportal.nvim' }
+return { 'trevorhauter/gitportal.nvim' }
 ```
 
 - [packer.nvim](https://github.com/wbthomason/packer.nvim)
 ```lua
 use { 'trevorhauter/gitportal.nvim' }
 ```
+
+- [vim-lug](https://github.com/junegunn/vim-plug)
+```lua
+Plug 'trevorhauter/gitportal.nvim'
+``` 
 
 ## ꩜ Configuration
 **`GitPortal`** comes with the following defaults.
