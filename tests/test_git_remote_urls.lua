@@ -1,10 +1,6 @@
 local git_helper = require("gitportal.git")
 local lu = require("luaunit")
 
--- ****
--- BEGIN TESTS
--- ****
-
 TestParseOriginUrl = {}
 
 -- Helper function to validate parsed URLs
@@ -19,6 +15,10 @@ local function validate_parsed_url(origin_url, expected_result)
 
     lu.assertEquals(result, expected_result)
 end
+
+-- ****
+-- BEGIN TESTS
+-- ****
 
 function TestParseOriginUrl:test_regular_github_http_origin_url()
     local origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
@@ -42,6 +42,17 @@ end
 function TestParseOriginUrl:test_regular_gitlab_ssh_origin_url()
     local origin_url = "git@gitlab.com:gitportal/gitlab-test.git"
     local expected_result = "https://gitlab.com/gitportal/gitlab-test"
+
+    validate_parsed_url(origin_url, expected_result)
+end
+
+-- ****
+-- SELF HOSTED URL TESTS
+-- ****
+
+function TestParseOriginUrl:test_self_hosted_gitlab_ssh_origin_url()
+    local origin_url = "git@ssh.dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
+    local expected_result = "https://dev.COMPANY_NAME.com/random_word/random_word_2/REPO"
 
     validate_parsed_url(origin_url, expected_result)
 end

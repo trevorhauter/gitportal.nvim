@@ -109,11 +109,7 @@ function M.parse_origin_url(origin_url)
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
     if temp_url == origin_url and string.find(origin_url, "@", 0, true) then
-        -- use case 1, self hosted ssh url begins with git@ssh
-        if string.find(origin_url, "git@ssh", 0, true) then
-            origin_url = origin_url:gsub("git@ssh%.", "https://")
-            origin_url = origin_url:gsub("%.com:", ".com/")
-        end
+        print("test")
     end
 
     return origin_url
