@@ -34,6 +34,10 @@ function M.get_origin_url()
 end
 
 function M.determine_git_host()
+    if config.options.git_platform ~= nil then
+        return config.options.git_platform
+    end
+
     local origin_url = M.get_origin_url()
     if origin_url == nil then
         return nil
