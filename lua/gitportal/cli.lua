@@ -19,22 +19,41 @@ function M.run_command(command)
     return output
 end
 
-function M.open_link_in_browser(link, browser_command)
-    -- Check for the platform and open the link using the appropriate command
-    local open_cmd
+function M.is_wsl()
+    local output = M.run_command("uname -a")
+    if output == nil then
+        return nil
+    end
+
+    if string.find(output, "microsoft", 0, true) then
+        return true
+    end
+    return false
+end
+
+function M.get_browser_command(browser_command)
     if browser_command ~= nil then
-        open_cmd = browser_command
+        return browser_command
     elseif vim.fn.has("macunix") == 1 then
-        open_cmd = "open"
+        return "open"
     elseif vim.fn.has("unix") == 1 then
-        open_cmd = "xdg-open"
+        if M.is_wsl() then
+            return "wslview"
+        else
+            return "xdg-open"
+        end
     elseif vim.fn.has("win32") == 1 then
-        open_cmd = "start"
+        return "start"
     else
         vim.api.nvim_err_writeln("Unsupported system for opening links.")
         return
     end
+end
 
+function M.open_link_in_browser(link, browser_command)
+    -- Check for the platform and open the link using the appropriate command
+
+    local open_cmd = M.get_browser_command(browser_command)
     vim.system({ open_cmd, link }):wait()
 end
 
