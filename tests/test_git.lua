@@ -1,4 +1,5 @@
 local cli = require("gitportal.cli")
+local config = require("gitportal.config")
 local git = require("gitportal.git")
 local lu = require("luaunit")
 
@@ -14,12 +15,14 @@ function TestGit:setUp()
     self.backup_get_git_root_dir = git.get_git_root_dir
     self.backup_run_command = cli.run_command
     self.backup_get_origin_url = git.get_origin_url
+    self.backup_options = config.options
 
     local mock_git_root_dir = "/Users/trevorhauter/Code/gitportal.nvim"
     self.branch = "main"
     self.commit = "64ad8be39a26d41c81a30513dc2b7f9816f7f7ae"
     self.active_branch_or_commit = nil
     self.current_git_host = nil
+    config.options.git_platform = nil
 
     -- ****
     -- Mock functions for tests
@@ -117,6 +120,11 @@ function TestGit:test_determine_git_host()
     self.current_git_host = git.GIT_HOSTS.gitlab.name
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
+
+    config.options.git_platform = "random"
+    self.current_git_host = "nonsense"
+    git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "random")
 end
 
 -- ****
@@ -129,4 +137,5 @@ function TestGit:tearDown()
     _G.vim = self.backup_vim
     cli.run_command = self.backup_run_command
     git.get_origin_url = self.backup_get_origin_url
+    config.options = self.backup_options
 end

@@ -67,6 +67,9 @@ If you wish to keep these defaults, no configuration is required. To customize t
 
     -- Custom browser command (default: automatically determined by GitPortal)
     browser_command = nil, -- (override only if necessary, not recommended)
+
+    -- Git platform (default: automatically determined by GitPortal)
+    git_platform = nil, -- "github" | "gitlab" (Only specify if GitPortal fails)
 }
 ```
 
