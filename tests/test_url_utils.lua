@@ -1,3 +1,4 @@
+local config = require("gitportal.config")
 local git_helper = require("gitportal.git")
 local lu = require("luaunit")
 local url_utils = require("gitportal.url_utils")
@@ -44,6 +45,7 @@ TestParseGitHostUrl = {}
 function TestParseGitHostUrl:setUp()
     -- Backup the function that will be mocked
     self.backup_branch_or_commit_exists = git_helper.branch_or_commit_exists
+    self.backup_options = config.options
 
     -- Mock functions for tests
     -- mock git_helper.branch_or_commit_exists
@@ -170,10 +172,24 @@ function TestParseGitHostUrl:test_self_host_gitlab_url()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
+function TestParseGitHostUrl:test_self_host_gitlab_url_no_indication_of_host()
+    config.options.git_platform = "gitlab"
+    local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
+    local expected_result = {
+        repo = "REPO",
+        branch_or_commit = "master",
+        file_path = "public/index.html",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+end
+
 -- ****
 -- END TESTS
 -- ****
 function TestParseGitHostUrl:tearDown()
     -- Restore mocked function
     git_helper.branch_or_commit_exists = self.backup_branch_or_commit_exists
+    config.options = self.backup_options
 end
