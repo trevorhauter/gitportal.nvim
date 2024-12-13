@@ -1,4 +1,5 @@
 local cli = require("gitportal.cli")
+local config = require("gitportal.config")
 local git_utils = require("gitportal.git")
 local lua_utils = require("gitportal.lua_utils")
 
@@ -73,15 +74,28 @@ local function parse_gitlab_url(url)
     return repo, branch_or_commit, file_path
 end
 
+local function get_githost_parse_func(githost_str)
+    -- githost_str could be a url or a githost specified in the settings
+    if string.find(githost_str, "github") ~= nil then
+        return parse_github_url
+    elseif string.find(githost_str, "gitlab") ~= nil then
+        return parse_gitlab_url
+    else
+        cli.log_error("Could not determine valid githost from url!")
+        return nil
+    end
+end
+
 function M.parse_githost_url(url)
     local githost_parse_func
 
-    if string.find(url, "github") ~= nil then
-        githost_parse_func = parse_github_url
-    elseif string.find(url, "gitlab") ~= nil then
-        githost_parse_func = parse_gitlab_url
+    if config.options.git_platform ~= nil then
+        githost_parse_func = get_githost_parse_func(config.options.git_platform)
     else
-        cli.log_error("Could not determine valid githost from url!")
+        githost_parse_func = get_githost_parse_func(url)
+    end
+
+    if githost_parse_func == nil then
         return nil
     end
 
