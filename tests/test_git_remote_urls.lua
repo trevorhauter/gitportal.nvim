@@ -57,8 +57,15 @@ end
 -- SELF HOSTED URL TESTS
 -- ****
 
-function TestParseOriginUrl:test_self_hosted_gitlab_ssh_origin_url()
+function TestParseOriginUrl:test_self_hosted_gitlab_ssh_origin_url_ssh_prefix()
     local origin_url = "git@ssh.dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
+    local expected_result = "https://dev.COMPANY_NAME.com/random_word/random_word_2/REPO"
+
+    validate_parsed_url(origin_url, expected_result)
+end
+
+function TestParseOriginUrl:test_self_hosted_gitlab_ssh_origin_url()
+    local origin_url = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
     local expected_result = "https://dev.COMPANY_NAME.com/random_word/random_word_2/REPO"
 
     validate_parsed_url(origin_url, expected_result)
