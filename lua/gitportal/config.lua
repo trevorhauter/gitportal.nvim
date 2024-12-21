@@ -17,7 +17,7 @@ function M.setup(options)
     M.options = vim.tbl_deep_extend("force", {}, default, options or {})
 
     if M.options.git_platform then
-        cli.log_error("git_platform is deprecated. Please use git_provider_map instead.")
+        cli.log_warning("git_platform is deprecated. Please use git_provider_map instead.")
     end
 
     local commands = {

@@ -1,11 +1,15 @@
 local M = {}
 
-function M.log_error(message)
-    vim.notify(message, vim.log.levels.ERROR)
-end
-
 function M.log_info(message)
     vim.notify(message, vim.log.levels.INFO)
+end
+
+function M.log_warning(message)
+    vim.notify(message, vim.log.levels.WARN)
+end
+
+function M.log_error(message)
+    vim.notify(message, vim.log.levels.ERROR)
 end
 
 function M.run_command(command)
