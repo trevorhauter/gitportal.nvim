@@ -212,6 +212,20 @@ function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
+function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map_ssh()
+    self.origin_url = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
+    config.options.git_provider_map = { ["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = "gitlab" }
+    local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
+    local expected_result = {
+        repo = "REPO",
+        branch_or_commit = "master",
+        file_path = "public/index.html",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+end
+
 -- ****
 -- END TESTS
 -- ****

@@ -8,7 +8,7 @@ local default = {
     switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
     browser_command = nil, -- String of the command used on command line to open link in browser
     git_platform = nil, -- Deprecated
-    git_provider_map = nil, -- Map of git providers to their base urls
+    git_provider_map = nil, -- Map of urls to their git providers
 }
 
 M.options = default
