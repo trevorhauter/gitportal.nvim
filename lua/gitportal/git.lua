@@ -57,6 +57,7 @@ function M.determine_git_host()
         end
     end
 
+    cli.log_warning("Could not determine git host!")
     return nil
 end
 
