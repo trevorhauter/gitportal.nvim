@@ -7,7 +7,8 @@ local default = {
     always_include_current_line = false,
     switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
     browser_command = nil, -- String of the command used on command line to open link in browser
-    git_platform = nil, -- String, e.g. "github", "gitlab", etc
+    git_platform = nil, -- Deprecated
+    git_provider_map = nil, -- Map of urls to their git providers
 }
 
 M.options = default
@@ -15,6 +16,10 @@ M.options = default
 function M.setup(options)
     -- Merge user options with default options
     M.options = vim.tbl_deep_extend("force", {}, default, options or {})
+
+    if M.options.git_platform then
+        cli.log_warning("git_platform is deprecated. Please use git_provider_map instead.")
+    end
 
     local commands = {
         browse_file = function()

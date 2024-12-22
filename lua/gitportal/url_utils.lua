@@ -74,11 +74,10 @@ local function parse_gitlab_url(url)
     return repo, branch_or_commit, file_path
 end
 
-local function get_githost_parse_func(githost_str)
-    -- githost_str could be a url or a githost specified in the settings
-    if string.find(githost_str, "github") ~= nil then
+local function get_githost_parse_func(githost)
+    if string.find(githost, git_utils.GIT_HOSTS.github.name) ~= nil then
         return parse_github_url
-    elseif string.find(githost_str, "gitlab") ~= nil then
+    elseif string.find(githost, git_utils.GIT_HOSTS.gitlab.name) ~= nil then
         return parse_gitlab_url
     else
         cli.log_error("Could not determine valid githost from url!")
@@ -88,12 +87,9 @@ end
 
 function M.parse_githost_url(url)
     local githost_parse_func
+    local githost = git_utils.determine_git_host()
 
-    if config.options.git_platform ~= nil then
-        githost_parse_func = get_githost_parse_func(config.options.git_platform)
-    else
-        githost_parse_func = get_githost_parse_func(url)
-    end
+    githost_parse_func = get_githost_parse_func(githost)
 
     if githost_parse_func == nil then
         return nil
