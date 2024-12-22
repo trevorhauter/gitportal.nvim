@@ -43,6 +43,14 @@ function M.determine_git_host()
         return nil
     end
 
+    if config.options.git_provider_map ~= nil then
+        for url, host in pairs(config.options.git_provider_map) do
+            if string.find(origin_url, url, 0, true) then
+                return host
+            end
+        end
+    end
+
     for host, host_info in pairs(M.GIT_HOSTS) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host

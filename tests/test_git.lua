@@ -67,7 +67,7 @@ function TestGit:setUp()
         elseif self.current_git_host == git.GIT_HOSTS.gitlab.name then
             return git.GIT_HOSTS.gitlab.url
         else
-            return nil
+            return self.current_git_host
         end
     end
 
@@ -120,9 +120,31 @@ function TestGit:test_determine_git_host()
     self.current_git_host = git.GIT_HOSTS.gitlab.name
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
+end
 
+function TestGit:test_determine_git_host_platform_config()
     config.options.git_platform = "random"
     self.current_git_host = "nonsense"
+    local git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "random")
+end
+
+function TestGit:test_determine_git_host_provider_map()
+    config.options.git_provider_map = {
+        ["https://www.coolcompany.com"] = "github",
+        ["https://merp.com/gitportal/gitlab-test.git"] = "gitlab",
+        ["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = "random",
+    }
+    self.current_git_host = "https://www.coolcompany.com/gitportal/test.git"
+    local git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "github")
+    -- complete the rest of the tests for the 2 remaining entries in the git_provider_map
+
+    self.current_git_host = "https://merp.com/gitportal/gitlab-test.git"
+    git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "gitlab")
+
+    self.current_git_host = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, "random")
 end

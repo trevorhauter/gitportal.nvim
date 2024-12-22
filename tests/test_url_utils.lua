@@ -46,6 +46,7 @@ function TestParseGitHostUrl:setUp()
     -- Backup the function that will be mocked
     self.backup_branch_or_commit_exists = git_helper.branch_or_commit_exists
     self.backup_options = config.options
+    self.backup_origin_url = git_helper.get_origin_url
 
     -- Mock functions for tests
     -- mock git_helper.branch_or_commit_exists
@@ -68,6 +69,11 @@ function TestParseGitHostUrl:setUp()
         -- as falsey
         return ""
     end
+
+    ---@diagnostic disable-next-line: duplicate-set-field
+    git_helper.get_origin_url = function()
+        return self.origin_url
+    end
 end
 
 -- ****
@@ -78,6 +84,7 @@ local github_single_line_info = { url = "#L45", start_line = 45 }
 local github_line_range_info = { url = "#L50-L55", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_github_url_with_branch()
+    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua"
     local expected_result = {
         repo = "gitportal.nvim",
@@ -90,6 +97,7 @@ function TestParseGitHostUrl:test_github_url_with_branch()
 end
 
 function TestParseGitHostUrl:test_github_url_with_commit()
+    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     local base_url =
         "https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua"
     local expected_result = {
@@ -103,6 +111,7 @@ function TestParseGitHostUrl:test_github_url_with_commit()
 end
 
 function TestParseGitHostUrl:test_github_url_with_difficult_branch_name()
+    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     -- In this case, the branch name is "githost/gitlab"
     local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/githost/gitlab/tests/run_tests.lua"
     local expected_result = {
@@ -123,6 +132,7 @@ local gitlab_single_line_info = { url = "#L6", start_line = 6 }
 local gitlab_line_range_info = { url = "#L5-L11", start_line = 5, end_line = 11 }
 
 function TestParseGitHostUrl:test_gitlab_url_with_branch()
+    self.origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html"
     local expected_result = {
         repo = "gitlab-test",
@@ -135,6 +145,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_branch()
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_commit()
+    self.origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
     local base_url =
         "https://gitlab.com/gitportal/gitlab-test/-/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/public/index.html"
     local expected_result = {
@@ -148,6 +159,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_commit()
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_query_param()
+    self.origin_url = "git@gitlab.com/gitportal/gitlab-test.git"
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads"
     local expected_result = {
         repo = "gitlab-test",
@@ -160,6 +172,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_query_param()
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url()
+    self.origin_url = "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell.git"
     local base_url =
         "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell/-/blob/feature/mfError/src/hooks/useSessionTimer.js?ref_type=heads"
     local expected_result = {
@@ -172,8 +185,22 @@ function TestParseGitHostUrl:test_self_host_gitlab_url()
     test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitHostUrl:test_self_host_gitlab_url_no_indication_of_host()
+function TestParseGitHostUrl:test_self_host_gitlab_url_platform()
     config.options.git_platform = "gitlab"
+    local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
+    local expected_result = {
+        repo = "REPO",
+        branch_or_commit = "master",
+        file_path = "public/index.html",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+end
+
+function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
+    self.origin_url = "https://dev.company_name.com"
+    config.options.git_provider_map = { ["https://dev.company_name.com"] = "gitlab" }
     local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
     local expected_result = {
         repo = "REPO",
@@ -192,4 +219,5 @@ function TestParseGitHostUrl:tearDown()
     -- Restore mocked function
     git_helper.branch_or_commit_exists = self.backup_branch_or_commit_exists
     config.options = self.backup_options
+    git_helper.get_origin_url = self.backup_origin_url
 end
