@@ -120,7 +120,7 @@ The following command is created upon setup that takes several arguments.
 ## ꩜ Supported git web hosts
 Git host                        | Supported          | Self host support 
 --------------------------------|--------------------|---------------------------
-[GitHub](https://github.com/)   | :white_check_mark: | 🔎 Needs testing (please open issue if interested!)
+[GitHub](https://github.com/)   | :white_check_mark: | :white_check_mark:
 [GitLab](https://gitlab.com/)   | :white_check_mark: | :white_check_mark:
 
 No configuration is required to use one git host or another. Self host, ssh, it doesn't matter, `GitPortal` will take care of that work for you!
