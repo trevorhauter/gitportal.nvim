@@ -70,7 +70,7 @@ If you wish to keep these defaults, no configuration is required. To customize t
 
     -- Map of origin urls to git providers 
     -- (default: automatically determined by GitPortal, only needed for self hosting)
-    git_provider_map = nil, -- {["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = "gitlab"}            
+    git_provider_map = nil, -- {["origin_url"] = "(github|gitlab)"}   
 }
 ```
 
