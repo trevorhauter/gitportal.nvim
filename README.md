@@ -68,8 +68,9 @@ If you wish to keep these defaults, no configuration is required. To customize t
     -- Custom browser command (default: automatically determined by GitPortal)
     browser_command = nil, -- (override only if necessary, not recommended)
 
-    -- Git platform (default: automatically determined by GitPortal)
-    git_platform = nil, -- "github" | "gitlab" (Only specify if GitPortal fails)
+    -- Map of origin urls to git providers 
+    -- (default: automatically determined by GitPortal, only needed for self hosting)
+    git_provider_map = nil, -- {["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = "gitlab"}            
 }
 ```
 
