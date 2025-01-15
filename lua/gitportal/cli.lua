@@ -38,6 +38,8 @@ end
 function M.get_browser_command(browser_command)
     if browser_command ~= nil then
         return browser_command
+    elseif os.getenv("BROWSER") ~= nil then
+        return os.getenv("BROWSER")
     elseif vim.fn.has("macunix") == 1 then
         return "open"
     elseif vim.fn.has("unix") == 1 then
