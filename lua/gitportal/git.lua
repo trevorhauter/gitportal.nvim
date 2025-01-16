@@ -159,7 +159,7 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    local PERMALINK_MAP = {
+    local permalink_map = {
         [M.GIT_HOSTS.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
         [M.GIT_HOSTS.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
         [M.GIT_HOSTS.forgejo.name] = remote_url
@@ -171,25 +171,27 @@ function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
             .. git_path,
     }
 
-    return PERMALINK_MAP[git_host]
+    return permalink_map[git_host]
 end
 
 function M.create_url_params(start_line, end_line, git_host)
-    -- Given a start and end line, generate a line range for the end of a github url
-    -- if applicable
-    local first_prefix, second_prefix
-    first_prefix = "#L"
-    if git_host == M.GIT_HOSTS.github.name then
-        second_prefix = "-L"
-    elseif git_host == M.GIT_HOSTS.gitlab.name then
-        second_prefix = "-"
-    end
+    local line_range_map = {
+        [M.GIT_HOSTS.github.name] = "#L" .. start_line .. "-L" .. end_line,
+        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
+        [M.GIT_HOSTS.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
+    }
+
+    local single_line_map = {
+        [M.GIT_HOSTS.github.name] = "#L" .. start_line,
+        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line,
+        [M.GIT_HOSTS.forgejo.name] = nil,
+    }
 
     if start_line and end_line then
         if start_line == end_line then
-            return first_prefix .. start_line
+            return single_line_map[git_host]
         else
-            return first_prefix .. start_line .. second_prefix .. end_line
+            return line_range_map[git_host]
         end
     end
 
