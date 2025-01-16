@@ -159,13 +159,19 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host == M.GIT_HOSTS.github.name then
-        return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
-    elseif git_host == M.GIT_HOSTS.gitlab.name then
-        return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
-    else
-        return nil
-    end
+    local PERMALINK_MAP = {
+        [M.GIT_HOSTS.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [M.GIT_HOSTS.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [M.GIT_HOSTS.forgejo.name] = remote_url
+            .. "/src/"
+            .. branch_or_commit.type
+            .. "/"
+            .. branch_or_commit.name
+            .. "/"
+            .. git_path,
+    }
+
+    return PERMALINK_MAP[git_host]
 end
 
 function M.create_url_params(start_line, end_line, git_host)
@@ -245,7 +251,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = M.assemble_permalink(remote_url, branch_or_commit.name, git_path, git_host)
+    local permalink = M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
