@@ -17,6 +17,11 @@ M.GIT_HOSTS = {
         ssh_str = "git@gitlab.com",
         url = "https://gitlab.com/",
     },
+    forgejo = {
+        name = "forgejo", -- forgejo is completely self hosted!
+        ssh_str = nil,
+        url = nil,
+    },
 }
 
 function M.get_git_root_dir()
@@ -119,7 +124,9 @@ function M.parse_origin_url(origin_url)
     local temp_url = origin_url
     -- For any of the non-self-hosted git hosts, trim here
     for _, host_info in pairs(M.GIT_HOSTS) do
-        origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+        if host_info.ssh_str ~= nil and host_info.url ~= nil then
+            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+        end
     end
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
