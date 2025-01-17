@@ -77,7 +77,7 @@ end
 local function parse_forgejo_url(url)
     -- A forgejo url my appear as follows (CHeck tests for more variants)
     -- http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.jsx#L3-L5
-    local repo, remainder = url:match("/.+/([^/]+)/src")
+    local repo, remainder = url:match("/.+/([^/]+)/src/%a+/(.+)")
     local branch_or_commit, file_path = parse_url_remainder(remainder)
 
     return repo, branch_or_commit, file_path

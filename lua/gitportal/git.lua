@@ -181,15 +181,9 @@ function M.create_url_params(start_line, end_line, git_host)
         [M.GIT_HOSTS.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
     }
 
-    local single_line_map = {
-        [M.GIT_HOSTS.github.name] = "#L" .. start_line,
-        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line,
-        [M.GIT_HOSTS.forgejo.name] = nil,
-    }
-
     if start_line and end_line then
         if start_line == end_line then
-            return single_line_map[git_host]
+            return "#L" .. start_line
         else
             return line_range_map[git_host]
         end
