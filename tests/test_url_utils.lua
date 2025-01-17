@@ -248,6 +248,21 @@ function TestParseGitHostUrl:test_self_host_forgejo_url_https()
     }
     test_githost_url(base_url, expected_result, forgejo_single_line_info, forgejo_line_range_info)
 end
+
+function TestParseGitHostUrl:test_self_host_forgejo_url_ssh()
+    self.origin_url = "git@localhost:trevorhauter/advanced-app.git"
+    config.options.git_provider_map = { ["git@localhost:trevorhauter/advanced-app.git"] = "forgejo" }
+    local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
+    local expected_result = {
+        repo = "advanced-app",
+        branch_or_commit = "main",
+        file_path = "components/test.py",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, forgejo_single_line_info, forgejo_line_range_info)
+end
+
 -- ****
 -- End forgejo tests
 -- ****
