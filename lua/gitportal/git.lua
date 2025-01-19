@@ -254,6 +254,10 @@ function M.get_git_url_for_current_file()
         permalink = permalink .. M.create_url_params(start_line, end_line, git_host)
     end
 
+    if permalink == nil then
+        cli.log_error("Failed to assemble permalink!")
+    end
+
     return permalink
 end
 

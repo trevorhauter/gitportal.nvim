@@ -60,7 +60,10 @@ function M.open_link_in_browser(link, browser_command)
     -- Check for the platform and open the link using the appropriate command
 
     local open_cmd = M.get_browser_command(browser_command)
-    vim.system({ open_cmd, link }):wait()
+    local result = vim.system({ open_cmd, link }):wait()
+    if result.code ~= 0 then
+        M.log_error("Error attempting to open link: " .. result.stderr)
+    end
 end
 
 return M
