@@ -74,15 +74,29 @@ local function parse_gitlab_url(url)
     return repo, branch_or_commit, file_path
 end
 
+local function parse_forgejo_url(url)
+    -- A forgejo url my appear as follows (CHeck tests for more variants)
+    -- http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.jsx#L3-L5
+    local repo, remainder = url:match("/.+/([^/]+)/src/%a+/(.+)")
+    local branch_or_commit, file_path = parse_url_remainder(remainder)
+
+    return repo, branch_or_commit, file_path
+end
+
 local function get_githost_parse_func(githost)
-    if string.find(githost, git_utils.GIT_HOSTS.github.name) ~= nil then
-        return parse_github_url
-    elseif string.find(githost, git_utils.GIT_HOSTS.gitlab.name) ~= nil then
-        return parse_gitlab_url
-    else
+    local parse_func_map = {
+        [git_utils.GIT_HOSTS.github.name] = parse_github_url,
+        [git_utils.GIT_HOSTS.gitlab.name] = parse_gitlab_url,
+        [git_utils.GIT_HOSTS.forgejo.name] = parse_forgejo_url,
+    }
+
+    local parse_func = parse_func_map[githost]
+
+    if parse_func == nil then
         cli.log_error("Could not determine valid githost from url!")
-        return nil
     end
+
+    return parse_func
 end
 
 function M.parse_githost_url(url)

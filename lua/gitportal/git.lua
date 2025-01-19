@@ -17,6 +17,11 @@ M.GIT_HOSTS = {
         ssh_str = "git@gitlab.com",
         url = "https://gitlab.com/",
     },
+    forgejo = {
+        name = "forgejo", -- forgejo is completely self hosted!
+        ssh_str = nil,
+        url = nil,
+    },
 }
 
 function M.get_git_root_dir()
@@ -119,7 +124,9 @@ function M.parse_origin_url(origin_url)
     local temp_url = origin_url
     -- For any of the non-self-hosted git hosts, trim here
     for _, host_info in pairs(M.GIT_HOSTS) do
-        origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+        if host_info.ssh_str ~= nil and host_info.url ~= nil then
+            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+        end
     end
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
@@ -152,31 +159,33 @@ local function get_base_git_host_url()
 end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    if git_host == M.GIT_HOSTS.github.name then
-        return remote_url .. "/blob/" .. branch_or_commit .. "/" .. git_path
-    elseif git_host == M.GIT_HOSTS.gitlab.name then
-        return remote_url .. "/-/blob/" .. branch_or_commit .. "/" .. git_path
-    else
-        return nil
-    end
+    local permalink_map = {
+        [M.GIT_HOSTS.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [M.GIT_HOSTS.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [M.GIT_HOSTS.forgejo.name] = remote_url
+            .. "/src/"
+            .. branch_or_commit.type
+            .. "/"
+            .. branch_or_commit.name
+            .. "/"
+            .. git_path,
+    }
+
+    return permalink_map[git_host]
 end
 
 function M.create_url_params(start_line, end_line, git_host)
-    -- Given a start and end line, generate a line range for the end of a github url
-    -- if applicable
-    local first_prefix, second_prefix
-    first_prefix = "#L"
-    if git_host == M.GIT_HOSTS.github.name then
-        second_prefix = "-L"
-    elseif git_host == M.GIT_HOSTS.gitlab.name then
-        second_prefix = "-"
-    end
+    local line_range_map = {
+        [M.GIT_HOSTS.github.name] = "#L" .. start_line .. "-L" .. end_line,
+        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
+        [M.GIT_HOSTS.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
+    }
 
     if start_line and end_line then
         if start_line == end_line then
-            return first_prefix .. start_line
+            return "#L" .. start_line
         else
-            return first_prefix .. start_line .. second_prefix .. end_line
+            return line_range_map[git_host]
         end
     end
 
@@ -238,11 +247,15 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = M.assemble_permalink(remote_url, branch_or_commit.name, git_path, git_host)
+    local permalink = M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
         permalink = permalink .. M.create_url_params(start_line, end_line, git_host)
+    end
+
+    if permalink == nil then
+        cli.log_error("Failed to assemble permalink!")
     end
 
     return permalink

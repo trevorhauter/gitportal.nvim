@@ -23,7 +23,7 @@ local function assert_parsed_url(url, expected)
 end
 
 -- Helper function for to test a base_url (no line ranges) through multiple scenarios for a githost
-local function test_github_url(base_url, expected_result, single_line_info, line_range_info)
+local function test_githost_url(base_url, expected_result, single_line_info, line_range_info)
     -- First, ensure the base produces the expected result
     assert_parsed_url(base_url, expected_result)
 
@@ -93,7 +93,7 @@ function TestParseGitHostUrl:test_github_url_with_branch()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+    test_githost_url(base_url, expected_result, github_single_line_info, github_line_range_info)
 end
 
 function TestParseGitHostUrl:test_github_url_with_commit()
@@ -107,7 +107,7 @@ function TestParseGitHostUrl:test_github_url_with_commit()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+    test_githost_url(base_url, expected_result, github_single_line_info, github_line_range_info)
 end
 
 function TestParseGitHostUrl:test_github_url_with_difficult_branch_name()
@@ -121,7 +121,7 @@ function TestParseGitHostUrl:test_github_url_with_difficult_branch_name()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, github_single_line_info, github_line_range_info)
+    test_githost_url(base_url, expected_result, github_single_line_info, github_line_range_info)
 end
 
 -- ****
@@ -129,7 +129,7 @@ end
 -- ****
 
 local gitlab_single_line_info = { url = "#L6", start_line = 6 }
-local gitlab_line_range_info = { url = "#L5-L11", start_line = 5, end_line = 11 }
+local gitlab_line_range_info = { url = "#L5-11", start_line = 5, end_line = 11 }
 
 function TestParseGitHostUrl:test_gitlab_url_with_branch()
     self.origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
@@ -141,7 +141,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_branch()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_commit()
@@ -155,7 +155,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_commit()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_query_param()
@@ -168,7 +168,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_query_param()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url()
@@ -182,7 +182,7 @@ function TestParseGitHostUrl:test_self_host_gitlab_url()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url_platform()
@@ -195,7 +195,7 @@ function TestParseGitHostUrl:test_self_host_gitlab_url_platform()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
@@ -209,7 +209,7 @@ function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map_ssh()
@@ -223,8 +223,49 @@ function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map_ssh()
         start_line = nil,
         end_line = nil,
     }
-    test_github_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
+    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
+-- ****
+-- END gitlab tests
+-- ****
+
+-- ****
+-- START forgejo tests
+-- ****
+local forgejo_single_line_info = { url = "#L45", start_line = 45 }
+local forgejo_line_range_info = { url = "#L50-L55", start_line = 50, end_line = 55 }
+
+function TestParseGitHostUrl:test_self_host_forgejo_url_https()
+    self.origin_url = "http://localhost:3000/trevorhauter/advanced-app.git"
+    config.options.git_provider_map = { ["http://localhost:3000/trevorhauter/advanced-app.git"] = "forgejo" }
+    local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
+    local expected_result = {
+        repo = "advanced-app",
+        branch_or_commit = "main",
+        file_path = "components/test.py",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, forgejo_single_line_info, forgejo_line_range_info)
+end
+
+function TestParseGitHostUrl:test_self_host_forgejo_url_ssh()
+    self.origin_url = "git@localhost:trevorhauter/advanced-app.git"
+    config.options.git_provider_map = { ["git@localhost:trevorhauter/advanced-app.git"] = "forgejo" }
+    local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
+    local expected_result = {
+        repo = "advanced-app",
+        branch_or_commit = "main",
+        file_path = "components/test.py",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, forgejo_single_line_info, forgejo_line_range_info)
+end
+
+-- ****
+-- End forgejo tests
+-- ****
 
 -- ****
 -- END TESTS
