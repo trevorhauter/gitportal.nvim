@@ -1,5 +1,5 @@
 local cli = require("gitportal.cli")
-local config = require("gitportal.config")
+local git_providers = require("gitportal.git_providers")
 local git_utils = require("gitportal.git")
 local lua_utils = require("gitportal.lua_utils")
 
@@ -85,9 +85,9 @@ end
 
 local function get_githost_parse_func(githost)
     local parse_func_map = {
-        [git_utils.GIT_HOSTS.github.name] = parse_github_url,
-        [git_utils.GIT_HOSTS.gitlab.name] = parse_gitlab_url,
-        [git_utils.GIT_HOSTS.forgejo.name] = parse_forgejo_url,
+        [git_providers.github.name] = parse_github_url,
+        [git_providers.gitlab.name] = parse_gitlab_url,
+        [git_providers.forgejo.name] = parse_forgejo_url,
     }
 
     local parse_func = parse_func_map[githost]

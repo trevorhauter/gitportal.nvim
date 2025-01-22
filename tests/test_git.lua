@@ -1,6 +1,7 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
 local git = require("gitportal.git")
+local git_providers = require("gitportal.git_providers")
 local lu = require("luaunit")
 
 TestGit = {}
@@ -62,10 +63,10 @@ function TestGit:setUp()
 
     ---@diagnostic disable-next-line: duplicate-set-field
     git.get_origin_url = function()
-        if self.current_git_host == git.GIT_HOSTS.github.name then
-            return git.GIT_HOSTS.github.url
-        elseif self.current_git_host == git.GIT_HOSTS.gitlab.name then
-            return git.GIT_HOSTS.gitlab.url
+        if self.current_git_host == git_providers.github.name then
+            return git_providers.github.url
+        elseif self.current_git_host == git_providers.gitlab.name then
+            return git_providers.gitlab.url
         else
             return self.current_git_host
         end
@@ -113,11 +114,11 @@ function TestGit:test_get_branch_or_commit()
 end
 
 function TestGit:test_determine_git_host()
-    self.current_git_host = git.GIT_HOSTS.github.name
+    self.current_git_host = git_providers.github.name
     local git_host = git.determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
 
-    self.current_git_host = git.GIT_HOSTS.gitlab.name
+    self.current_git_host = git_providers.gitlab.name
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
 end

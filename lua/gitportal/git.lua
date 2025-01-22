@@ -1,28 +1,11 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
+local git_providers = require("gitportal.git_providers")
 local nv_utils = require("gitportal.nv_utils")
 
 local git_root_patterns = { ".git" }
 
 local M = {}
-
-M.GIT_HOSTS = {
-    forgejo = {
-        name = "forgejo", -- forgejo is completely self hosted!
-        ssh_str = nil,
-        url = nil,
-    },
-    github = {
-        name = "github",
-        ssh_str = "git@github.com",
-        url = "https://github.com/",
-    },
-    gitlab = {
-        name = "gitlab",
-        ssh_str = "git@gitlab.com",
-        url = "https://gitlab.com/",
-    },
-}
 
 function M.get_git_root_dir()
     -- Get the git root dir
@@ -56,7 +39,7 @@ function M.determine_git_host()
         end
     end
 
-    for host, host_info in pairs(M.GIT_HOSTS) do
+    for host, host_info in pairs(git_providers) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host
         end
@@ -123,7 +106,7 @@ function M.parse_origin_url(origin_url)
 
     local temp_url = origin_url
     -- For any of the non-self-hosted git hosts, trim here
-    for _, host_info in pairs(M.GIT_HOSTS) do
+    for _, host_info in pairs(git_providers) do
         if host_info.ssh_str ~= nil and host_info.url ~= nil then
             origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
         end
@@ -160,9 +143,9 @@ end
 
 function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
     local permalink_map = {
-        [M.GIT_HOSTS.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [M.GIT_HOSTS.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [M.GIT_HOSTS.forgejo.name] = remote_url
+        [git_providers.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [git_providers.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
+        [git_providers.forgejo.name] = remote_url
             .. "/src/"
             .. branch_or_commit.type
             .. "/"
@@ -176,9 +159,9 @@ end
 
 function M.create_url_params(start_line, end_line, git_host)
     local line_range_map = {
-        [M.GIT_HOSTS.github.name] = "#L" .. start_line .. "-L" .. end_line,
-        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
-        [M.GIT_HOSTS.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
+        [git_providers.github.name] = "#L" .. start_line .. "-L" .. end_line,
+        [git_providers.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
+        [git_providers.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
     }
 
     if start_line and end_line then
