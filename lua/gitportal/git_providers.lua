@@ -13,7 +13,7 @@ local GIT_PROVIDERS = {
         ssh_str = nil,
         url = nil,
         assemble_permalink = function() end,
-        regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
+        regex = nil,
     },
 
     forgejo = {
@@ -41,6 +41,7 @@ local GIT_PROVIDERS = {
         assemble_permalink = function(remote_url, branch_or_commit, git_path)
             return table.concat({ remote_url, "/blob/", branch_or_commit.name, "/", git_path })
         end,
+        regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
     },
 
     gitlab = {
