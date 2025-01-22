@@ -56,60 +56,17 @@ local function parse_line_range(url)
     return start_line, end_line
 end
 
-local function parse_github_url(url)
-    -- a GitHub url may appear as follows... (Check tests for more variants)
-    -- https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua#L45-L55
-    local repo, remainder = url:match("github.com/[^/]+/([^/]+)/blob/(.+)")
+local function parse_git_provider_url(url, githost)
+    local repo, remainder = url:match(git_providers[githost].regex)
     local branch_or_commit, file_path = parse_url_remainder(remainder)
 
     return repo, branch_or_commit, file_path
-end
-
-local function parse_gitlab_url(url)
-    -- a GitLab url may appear as follows... (Check tests for more variants)
-    -- https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads#L5-11
-    local repo, remainder = url:match("/.+/([^/]+)/%-/blob/(.+)")
-    local branch_or_commit, file_path = parse_url_remainder(remainder)
-
-    return repo, branch_or_commit, file_path
-end
-
-local function parse_forgejo_url(url)
-    -- A forgejo url my appear as follows (CHeck tests for more variants)
-    -- http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.jsx#L3-L5
-    local repo, remainder = url:match("/.+/([^/]+)/src/%a+/(.+)")
-    local branch_or_commit, file_path = parse_url_remainder(remainder)
-
-    return repo, branch_or_commit, file_path
-end
-
-local function get_githost_parse_func(githost)
-    local parse_func_map = {
-        [git_providers.github.name] = parse_github_url,
-        [git_providers.gitlab.name] = parse_gitlab_url,
-        [git_providers.forgejo.name] = parse_forgejo_url,
-    }
-
-    local parse_func = parse_func_map[githost]
-
-    if parse_func == nil then
-        cli.log_error("Could not determine valid githost from url!")
-    end
-
-    return parse_func
 end
 
 function M.parse_githost_url(url)
-    local githost_parse_func
     local githost = git_utils.determine_git_host()
 
-    githost_parse_func = get_githost_parse_func(githost)
-
-    if githost_parse_func == nil then
-        return nil
-    end
-
-    local repo, branch_or_commit, file_path = githost_parse_func(url)
+    local repo, branch_or_commit, file_path = parse_git_provider_url(url, githost)
     local start_line, end_line = parse_line_range(url)
 
     if not repo or not branch_or_commit or not file_path then
