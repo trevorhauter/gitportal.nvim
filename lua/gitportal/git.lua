@@ -7,6 +7,11 @@ local git_root_patterns = { ".git" }
 local M = {}
 
 M.GIT_HOSTS = {
+    forgejo = {
+        name = "forgejo", -- forgejo is completely self hosted!
+        ssh_str = nil,
+        url = nil,
+    },
     github = {
         name = "github",
         ssh_str = "git@github.com",
@@ -16,11 +21,6 @@ M.GIT_HOSTS = {
         name = "gitlab",
         ssh_str = "git@gitlab.com",
         url = "https://gitlab.com/",
-    },
-    forgejo = {
-        name = "forgejo", -- forgejo is completely self hosted!
-        ssh_str = nil,
-        url = nil,
     },
 }
 
