@@ -141,22 +141,6 @@ local function get_base_git_host_url()
     return origin_url
 end
 
-function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    local permalink_map = {
-        [git_providers.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [git_providers.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [git_providers.forgejo.name] = remote_url
-            .. "/src/"
-            .. branch_or_commit.type
-            .. "/"
-            .. branch_or_commit.name
-            .. "/"
-            .. git_path,
-    }
-
-    return permalink_map[git_host]
-end
-
 function M.create_url_params(start_line, end_line, git_host)
     local line_range_map = {
         [git_providers.github.name] = "#L" .. start_line .. "-L" .. end_line,
@@ -230,7 +214,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
+    local permalink = git_providers[git_host].assemble_permalink(remote_url, branch_or_commit, git_path)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
