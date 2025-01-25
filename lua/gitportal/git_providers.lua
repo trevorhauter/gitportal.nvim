@@ -9,9 +9,6 @@
 
 local GIT_PROVIDERS = {
     onedev = {
-        name = "onedev", -- completely self hosted
-        ssh_str = nil,
-        url = nil,
         assemble_permalink = function(remote_url, branch_or_commit, git_path)
             return table.concat({
                 remote_url,
@@ -21,13 +18,13 @@ local GIT_PROVIDERS = {
                 git_path,
             })
         end,
+        name = "onedev", -- completely self hosted
         regex = nil,
+        ssh_str = nil,
+        url = nil,
     },
 
     forgejo = {
-        name = "forgejo", -- completely self hosted
-        ssh_str = nil,
-        url = nil,
         assemble_permalink = function(remote_url, branch_or_commit, git_path)
             return table.concat({
                 remote_url,
@@ -39,27 +36,30 @@ local GIT_PROVIDERS = {
                 git_path,
             })
         end,
+        name = "forgejo", -- completely self hosted
         regex = "/.+/([^/]+)/src/%a+/(.+)",
+        ssh_str = nil,
+        url = nil,
     },
 
     github = {
-        name = "github",
-        ssh_str = "git@github.com",
-        url = "https://github.com/",
         assemble_permalink = function(remote_url, branch_or_commit, git_path)
             return table.concat({ remote_url, "/blob/", branch_or_commit.name, "/", git_path })
         end,
+        name = "github",
         regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
+        ssh_str = "git@github.com",
+        url = "https://github.com/",
     },
 
     gitlab = {
-        name = "gitlab",
-        ssh_str = "git@gitlab.com",
-        url = "https://gitlab.com/",
         assemble_permalink = function(remote_url, branch_or_commit, git_path)
             return table.concat({ remote_url, "/-/blob/", branch_or_commit.name, "/", git_path })
         end,
+        name = "gitlab",
         regex = "/.+/([^/]+)/%-/blob/(.+)",
+        ssh_str = "git@gitlab.com",
+        url = "https://gitlab.com/",
     },
 }
 
