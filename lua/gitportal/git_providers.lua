@@ -12,7 +12,15 @@ local GIT_PROVIDERS = {
         name = "onedev", -- completely self hosted
         ssh_str = nil,
         url = nil,
-        assemble_permalink = function() end,
+        assemble_permalink = function(remote_url, branch_or_commit, git_path)
+            return table.concat({
+                remote_url,
+                "/~files/",
+                branch_or_commit.name,
+                "/",
+                git_path,
+            })
+        end,
         regex = nil,
     },
 
