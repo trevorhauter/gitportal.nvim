@@ -25,7 +25,11 @@ local GIT_PROVIDERS = {
             })
         end,
         generate_url_params = function(start_line, end_line)
-            return "#L" .. start_line .. "-L" .. end_line
+            if start_line == end_line then
+                return "#L" .. start_line
+            else
+                return "#L" .. start_line .. "-L" .. end_line
+            end
         end,
         name = "forgejo", -- completely self hosted
         regex = "/.+/([^/]+)/src/%a+/(.+)",
@@ -41,7 +45,11 @@ local GIT_PROVIDERS = {
             return table.concat({ remote_url, "/blob/", branch_or_commit.name, "/", git_path })
         end,
         generate_url_params = function(start_line, end_line)
-            return "#L" .. start_line .. "-L" .. end_line
+            if start_line == end_line then
+                return "#L" .. start_line
+            else
+                return "#L" .. start_line .. "-L" .. end_line
+            end
         end,
         name = "github",
         regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
@@ -57,7 +65,11 @@ local GIT_PROVIDERS = {
             return table.concat({ remote_url, "/-/blob/", branch_or_commit.name, "/", git_path })
         end,
         generate_url_params = function(start_line, end_line)
-            return "#L" .. start_line .. "-" .. end_line
+            if start_line == end_line then
+                return "#" .. start_line
+            else
+                return "#L" .. start_line .. "-" .. end_line
+            end
         end,
         name = "gitlab",
         regex = "/.+/([^/]+)/%-/blob/(.+)",
@@ -79,10 +91,10 @@ local GIT_PROVIDERS = {
             })
         end,
         generate_url_params = function(start_line, end_line)
-            return "position=source-" .. start_line .. ".1-" .. end_line + 1 .. ".1"
+            return "?position=source-" .. start_line .. ".1-" .. end_line + 1 .. ".1"
         end,
         name = "onedev", -- completely self hosted
-        regex = nil,
+        regex = "/.+/([^/]+)/~files/(.+)",
         ssh_str = nil,
         url = nil,
     },

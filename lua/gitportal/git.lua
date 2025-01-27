@@ -141,24 +141,6 @@ local function get_base_git_host_url()
     return origin_url
 end
 
-function M.create_url_params(start_line, end_line, git_host)
-    local line_range_map = {
-        [git_providers.github.name] = "#L" .. start_line .. "-L" .. end_line,
-        [git_providers.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
-        [git_providers.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
-    }
-
-    if start_line and end_line then
-        if start_line == end_line then
-            return "#L" .. start_line
-        else
-            return line_range_map[git_host]
-        end
-    end
-
-    return ""
-end
-
 function M.checkout_branch_or_commit(branch_or_commit)
     local switch_config = config.options.switch_branch_or_commit_upon_ingestion
     if switch_config == "never" then
@@ -218,7 +200,7 @@ function M.get_git_url_for_current_file()
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
-        permalink = permalink .. M.create_url_params(start_line, end_line, git_host)
+        permalink = permalink .. git_providers[git_host].generate_url_params(start_line, end_line)
     end
 
     if permalink == nil then
