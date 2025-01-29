@@ -7,6 +7,28 @@
 --     url = "https://github.com/", -- beginning string that appears in https origin URL for host (N/A if self hosted)
 -- }
 
+local function standard_line_range_parser(url)
+    local start_line = nil
+    local end_line = nil
+
+    -- TODO: Is this robust enough?
+    if string.find(url, "#L", 0, true) ~= nil then
+        start_line = url:match("#L(%d+)")
+        if string.find(url, "-", 0, true) ~= nil then
+            end_line = url:match("#L%d+%-L?(%d+)$")
+        end
+    end
+
+    if start_line ~= nil then
+        if end_line == nil then
+            end_line = start_line
+        end
+        start_line = tonumber(start_line)
+        end_line = tonumber(end_line)
+    end
+    return start_line, end_line
+end
+
 local GIT_PROVIDERS = {
 
     -- ****
@@ -32,6 +54,7 @@ local GIT_PROVIDERS = {
             end
         end,
         name = "forgejo", -- completely self hosted
+        parse_line_range = standard_line_range_parser,
         regex = "/.+/([^/]+)/src/%a+/(.+)",
         ssh_str = nil,
         url = nil,
@@ -52,6 +75,7 @@ local GIT_PROVIDERS = {
             end
         end,
         name = "github",
+        parse_line_range = standard_line_range_parser,
         regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
         ssh_str = "git@github.com",
         url = "https://github.com/",
@@ -71,6 +95,7 @@ local GIT_PROVIDERS = {
                 return "#L" .. start_line .. "-" .. end_line
             end
         end,
+        parse_line_range = standard_line_range_parser,
         name = "gitlab",
         regex = "/.+/([^/]+)/%-/blob/(.+)",
         ssh_str = "git@gitlab.com",
@@ -94,6 +119,7 @@ local GIT_PROVIDERS = {
             return "?position=source-" .. start_line .. ".1-" .. end_line + 1 .. ".1"
         end,
         name = "onedev", -- completely self hosted
+        parse_line_range = function(url) end,
         regex = "/.+/([^/]+)/~files/(.+)",
         ssh_str = nil,
         url = nil,

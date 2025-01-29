@@ -32,30 +32,6 @@ local function parse_url_remainder(remainder)
     return branch_or_commit, cleaned_file_path
 end
 
-local function parse_line_range(url)
-    -- Given a url, parse the optional line range from the end of the URL itself.
-    -- These may looks like #L5-L11 or #L5-11, or may not be present at all.
-    local start_line = nil
-    local end_line = nil
-
-    -- TODO: Is this robust enough?
-    if string.find(url, "#L", 0, true) ~= nil then
-        start_line = url:match("#L(%d+)")
-        if string.find(url, "-", 0, true) ~= nil then
-            end_line = url:match("#L%d+%-L?(%d+)$")
-        end
-    end
-
-    if start_line ~= nil then
-        if end_line == nil then
-            end_line = start_line
-        end
-        start_line = tonumber(start_line)
-        end_line = tonumber(end_line)
-    end
-    return start_line, end_line
-end
-
 local function parse_git_provider_url(url, githost)
     local repo, remainder = url:match(git_providers[githost].regex)
     local branch_or_commit, file_path = parse_url_remainder(remainder)
@@ -67,7 +43,7 @@ function M.parse_githost_url(url)
     local githost = git_utils.determine_git_host()
 
     local repo, branch_or_commit, file_path = parse_git_provider_url(url, githost)
-    local start_line, end_line = parse_line_range(url)
+    local start_line, end_line = git_providers[githost].parse_line_range(url)
 
     if not repo or not branch_or_commit or not file_path then
         cli.log_error("Could not successfully parse githost url!")
