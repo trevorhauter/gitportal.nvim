@@ -61,6 +61,7 @@ function TestParseGitHostUrl:setUp()
         if
             param == "376596caaa683e6f607c45d6fe1b6834070c517a"
             or param == "7e14d7545918b9167dd65bea8da454d2e389df5b"
+            or param == "3130016177a84bf5e0f36c7c70ad434dca121d4b"
         then
             return "asdefjkl;asdfjkl;"
         end
@@ -265,6 +266,45 @@ end
 
 -- ****
 -- End forgejo tests
+-- ****
+
+-- ****
+-- START onedev tests
+-- ****
+local onedev_single_line_info = { url = "?position=source-45.1-45.14-1", start_line = 45 }
+local onedev_line_range_info = { url = "?position=source-50.1-55.14-1", start_line = 50, end_line = 55 }
+
+function TestParseGitHostUrl:test_self_host_onedev_url_https()
+    config.options.git_platform = nil
+    self.origin_url = "http://localhost:6610/advanced-app"
+    config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
+    local base_url =
+        "http://localhost:6610/advanced-app/~files/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"
+    local expected_result = {
+        repo = "advanced-app",
+        branch_or_commit = "3130016177a84bf5e0f36c7c70ad434dca121d4b",
+        file_path = "components/main.jsx",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, onedev_single_line_info, onedev_line_range_info)
+end
+
+--function TestParseGitHostUrl:test_self_host_forgejo_url_ssh()
+--self.origin_url = "git@localhost:trevorhauter/advanced-app.git"
+--config.options.git_provider_map = { ["git@localhost:trevorhauter/advanced-app.git"] = "forgejo" }
+--local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
+--local expected_result = {
+--repo = "advanced-app",
+--branch_or_commit = "main",
+--file_path = "components/test.py",
+--start_line = nil,
+--end_line = nil,
+--}
+--test_githost_url(base_url, expected_result, forgejo_single_line_info, forgejo_line_range_info)
+--end
+-- ****
+-- End onedev tests
 -- ****
 
 -- ****

@@ -8,8 +8,7 @@
 -- }
 
 local function standard_line_range_parser(url)
-    local start_line = nil
-    local end_line = nil
+    local start_line, end_line = nil, nil
 
     -- TODO: Is this robust enough?
     if string.find(url, "#L", 0, true) ~= nil then
@@ -119,7 +118,17 @@ local GIT_PROVIDERS = {
             return "?position=source-" .. start_line .. ".1-" .. end_line + 1 .. ".1"
         end,
         name = "onedev", -- completely self hosted
-        parse_line_range = function(url) end,
+        parse_line_range = function(url)
+            local first_line, second_line = nil, nil
+            if string.find(url, "position=source", 0, true) ~= nil then
+                first_line, second_line = url:match("position=source%-(%d+)%.%d+%-(%d+)%.")
+            end
+            if first_line ~= nil and second_line ~= nil then
+                first_line = tonumber(first_line)
+                second_line = tonumber(second_line)
+            end
+            return first_line, second_line
+        end,
         regex = "/.+/([^/]+)/~files/(.+)",
         ssh_str = nil,
         url = nil,
