@@ -113,16 +113,17 @@ function M.parse_origin_url(origin_url)
     end
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
-    if temp_url == origin_url and string.find(origin_url, "@", 0, true) then
+    if temp_url == origin_url then
         -- use case 1, self hosted ssh url begins with git@ssh
         if string.find(origin_url, "git@ssh", 0, true) then
             origin_url = origin_url:gsub("git@ssh%.", "https://")
-            origin_url = origin_url:gsub("%.com:", ".com/")
+        elseif string.find(origin_url, "ssh://", 0, true) then
+            origin_url = origin_url:gsub("ssh://", "https://")
         else
             -- Otherwise, just convert the ssh to a URL like normal
             origin_url = origin_url:gsub("git@", "https://")
-            origin_url = origin_url:gsub("%.com:", ".com/")
         end
+        origin_url = origin_url:gsub("%.com:", ".com/")
     end
 
     return origin_url
