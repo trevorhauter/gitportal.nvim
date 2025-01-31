@@ -75,7 +75,7 @@ local GIT_PROVIDERS = {
         end,
         name = "github",
         parse_line_range = standard_line_range_parser,
-        regex = "github.com/[^/]+/([^/]+)/blob/(.+)",
+        regex = "/.+/[^/]+/([^/]+)/blob/(.+)",
         ssh_str = "git@github.com",
         url = "https://github.com/",
     },

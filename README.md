@@ -120,7 +120,7 @@ The following command is created upon setup that takes several arguments.
 ## ꩜ Supported git web hosts
 Git host                        | Supported          | Self host support 
 --------------------------------|--------------------|---------------------------
-[GitHub](https://github.com/)   | :white_check_mark: | :x: Please open issue for support
+[GitHub](https://github.com/)   | :white_check_mark: | :white_check_mark:
 [GitLab](https://gitlab.com/)   | :white_check_mark: | :white_check_mark:
 [Forgejo](https://forgejo.org/) | N/A     | :white_check_mark:
 
