@@ -53,6 +53,12 @@ function M.branch_or_commit_exists(branch_or_commit)
     return cli.run_command("git show-ref --heads " .. branch_or_commit)
 end
 
+function M.is_commit_hash(branch_or_commit)
+    local pattern = "^" .. string.rep("%x", 40) .. "$"
+    local match = branch_or_commit:match(pattern)
+    return match ~= nil and match ~= ""
+end
+
 function M.get_git_file_path()
     -- Gets a path of the file relative the the base git directory.
     -- Get the full path of the current file

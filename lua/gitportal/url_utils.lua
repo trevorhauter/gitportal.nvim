@@ -5,7 +5,7 @@ local lua_utils = require("gitportal.lua_utils")
 
 local M = {}
 
-local function parse_url_remainder(remainder)
+local function parse_url_remainder(remainder, githost)
     -- At this point we have something like
     -- main/lua/gitportal/cli.lua#L45-L55 or master/public/index.html?ref_type=heads#L5-11
     -- This is everything after /blob/. Problem is, branches can have a '/' in them, so we need to carefully
@@ -23,6 +23,10 @@ local function parse_url_remainder(remainder)
             -- Remaining parts are the file path
             file_path = table.concat(url_parts, "/", i + 1)
             break
+        elseif githost == git_providers.onedev.name and git_utils.is_commit_hash(branch_or_commit) then
+            -- edge case for onedev urls that ALWAYS have commit hash in them
+            file_path = table.concat(url_parts, "/", i + 1)
+            break
         end
     end
 
@@ -34,7 +38,7 @@ end
 
 local function parse_git_provider_url(url, githost)
     local repo, remainder = url:match(git_providers[githost].regex)
-    local branch_or_commit, file_path = parse_url_remainder(remainder)
+    local branch_or_commit, file_path = parse_url_remainder(remainder, githost)
 
     return repo, branch_or_commit, file_path
 end
