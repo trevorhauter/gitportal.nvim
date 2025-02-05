@@ -85,6 +85,17 @@ function TestGit:test_get_git_base_directory()
     lu.assertEquals(git.get_git_base_directory(), "gitportal.nvim")
 end
 
+function TestGit:test_is_commit_hash()
+    -- valid commit hash
+    lu.assertEquals(true, git.is_commit_hash("7e14d7545918b9167dd65bea8da454d2e389df5b"))
+    -- invalid, contains a /
+    lu.assertEquals(false, git.is_commit_hash("7e14d7545918b9167dd/5bea8da454d2e389df5b"))
+    -- invalid, too long
+    lu.assertEquals(false, git.is_commit_hash("7e14d7545918b9167dd55bea8da454d2e389df5b1"))
+    -- invalid, too short!
+    lu.assertEquals(false, git.is_commit_hash("7e1918b9167dd55bea8da454d2e389df5b1"))
+end
+
 function TestGit:test_get_git_file_path()
     lu.assertEquals(git.get_git_file_path(), "lua/gitportal/cli.lua")
 end
