@@ -125,8 +125,6 @@ Git host                        | Supported          | Self host support
 [GitLab](https://gitlab.com/)   | :white_check_mark: | :white_check_mark:
 [Onedev](https://onedev.io/) | N/A     | :white_check_mark:
 
-No configuration is required to use one git host or another. Self host, ssh, it doesn't matter, `GitPortal` will take care of that work for you!
-
 We are working hard to add more hosts for git, including self hosted options. If you'd like to use a host not yet listed, please check out our [enhancement issues](https://github.com/trevorhauter/gitportal.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) to see if an issue is present. If you don't see an issue created for your desired host, please create one!
 
 ## ꩜ Comparison against other popular git browsing plugins
