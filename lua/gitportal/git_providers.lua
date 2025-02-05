@@ -89,7 +89,7 @@ local GIT_PROVIDERS = {
         end,
         generate_url_params = function(start_line, end_line)
             if start_line == end_line then
-                return "#" .. start_line
+                return "#L" .. start_line
             else
                 return "#L" .. start_line .. "-" .. end_line
             end
