@@ -1,28 +1,11 @@
 local cli = require("gitportal.cli")
 local config = require("gitportal.config")
+local git_providers = require("gitportal.git_providers")
 local nv_utils = require("gitportal.nv_utils")
 
 local git_root_patterns = { ".git" }
 
 local M = {}
-
-M.GIT_HOSTS = {
-    github = {
-        name = "github",
-        ssh_str = "git@github.com",
-        url = "https://github.com/",
-    },
-    gitlab = {
-        name = "gitlab",
-        ssh_str = "git@gitlab.com",
-        url = "https://gitlab.com/",
-    },
-    forgejo = {
-        name = "forgejo", -- forgejo is completely self hosted!
-        ssh_str = nil,
-        url = nil,
-    },
-}
 
 function M.get_git_root_dir()
     -- Get the git root dir
@@ -56,7 +39,7 @@ function M.determine_git_host()
         end
     end
 
-    for host, host_info in pairs(M.GIT_HOSTS) do
+    for host, host_info in pairs(git_providers) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host
         end
@@ -68,6 +51,12 @@ end
 
 function M.branch_or_commit_exists(branch_or_commit)
     return cli.run_command("git show-ref --heads " .. branch_or_commit)
+end
+
+function M.is_commit_hash(branch_or_commit)
+    local pattern = "^" .. string.rep("%x", 40) .. "$"
+    local match = branch_or_commit:match(pattern)
+    return match ~= nil and match ~= ""
 end
 
 function M.get_git_file_path()
@@ -123,23 +112,24 @@ function M.parse_origin_url(origin_url)
 
     local temp_url = origin_url
     -- For any of the non-self-hosted git hosts, trim here
-    for _, host_info in pairs(M.GIT_HOSTS) do
+    for _, host_info in pairs(git_providers) do
         if host_info.ssh_str ~= nil and host_info.url ~= nil then
             origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
         end
     end
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
-    if temp_url == origin_url and string.find(origin_url, "@", 0, true) then
+    if temp_url == origin_url then
         -- use case 1, self hosted ssh url begins with git@ssh
         if string.find(origin_url, "git@ssh", 0, true) then
             origin_url = origin_url:gsub("git@ssh%.", "https://")
-            origin_url = origin_url:gsub("%.com:", ".com/")
+        elseif string.find(origin_url, "ssh://", 0, true) then
+            origin_url = origin_url:gsub("ssh://", "https://")
         else
             -- Otherwise, just convert the ssh to a URL like normal
             origin_url = origin_url:gsub("git@", "https://")
-            origin_url = origin_url:gsub("%.com:", ".com/")
         end
+        origin_url = origin_url:gsub("%.com:", ".com/")
     end
 
     return origin_url
@@ -156,40 +146,6 @@ local function get_base_git_host_url()
     end
 
     return origin_url
-end
-
-function M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
-    local permalink_map = {
-        [M.GIT_HOSTS.github.name] = remote_url .. "/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [M.GIT_HOSTS.gitlab.name] = remote_url .. "/-/blob/" .. branch_or_commit.name .. "/" .. git_path,
-        [M.GIT_HOSTS.forgejo.name] = remote_url
-            .. "/src/"
-            .. branch_or_commit.type
-            .. "/"
-            .. branch_or_commit.name
-            .. "/"
-            .. git_path,
-    }
-
-    return permalink_map[git_host]
-end
-
-function M.create_url_params(start_line, end_line, git_host)
-    local line_range_map = {
-        [M.GIT_HOSTS.github.name] = "#L" .. start_line .. "-L" .. end_line,
-        [M.GIT_HOSTS.gitlab.name] = "#L" .. start_line .. "-" .. end_line,
-        [M.GIT_HOSTS.forgejo.name] = "#L" .. start_line .. "-L" .. end_line,
-    }
-
-    if start_line and end_line then
-        if start_line == end_line then
-            return "#L" .. start_line
-        else
-            return line_range_map[git_host]
-        end
-    end
-
-    return ""
 end
 
 function M.checkout_branch_or_commit(branch_or_commit)
@@ -247,11 +203,11 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = M.assemble_permalink(remote_url, branch_or_commit, git_path, git_host)
+    local permalink = git_providers[git_host].assemble_permalink(remote_url, branch_or_commit, git_path)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
-        permalink = permalink .. M.create_url_params(start_line, end_line, git_host)
+        permalink = permalink .. git_providers[git_host].generate_url_params(start_line, end_line)
     end
 
     if permalink == nil then
