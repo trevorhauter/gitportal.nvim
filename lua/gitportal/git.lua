@@ -7,6 +7,17 @@ local git_root_patterns = { ".git" }
 
 local M = {}
 
+local function get_cwd()
+    local buf_name = vim.api.nvim_buf_get_name(0)
+    if buf_name and buf_name ~= "" then
+        -- If a buffer is open, return the path of the current buffer
+        return buf_name
+    else
+        -- If no buffer is open, return the current working directory
+        return vim.fn.getcwd()
+    end
+end
+
 function M.get_git_root_dir()
     -- Get the git root dir
     return vim.fs.root(0, git_root_patterns)
@@ -62,7 +73,7 @@ end
 function M.get_git_file_path()
     -- Gets a path of the file relative the the base git directory.
     -- Get the full path of the current file
-    local current_file_path = vim.api.nvim_buf_get_name(0)
+    local current_file_path = get_cwd()
     local git_root_dir = M.get_git_root_dir()
     local git_path = current_file_path:sub(#git_root_dir + 2) -- Have to add one so we don't repeat last char
     return git_path
@@ -219,7 +230,7 @@ end
 
 function M.open_file_from_git_url(parsed_url)
     -- First, ensure we are in the same repo as the link
-    local current_location = vim.api.nvim_buf_get_name(0)
+    local current_location = get_cwd()
 
     if string.find(current_location, parsed_url.repo, 0, true) == nil then
         -- If we run into this issue, it's possible that the folder containing the repo and the
