@@ -237,10 +237,10 @@ function M.open_file_from_git_url(parsed_url)
     if start_pos then
         -- Slice the string to include everything up to and including the repo_name
         absolute_file_path = current_location:sub(1, end_pos) .. "/" .. parsed_url.file_path
-    end
-
-    if absolute_file_path == nil then
-        cli.log_error("ERROR! File path could not be determined!")
+    else
+        cli.log_error(
+            "Failed to determine file path. Current location: " .. current_location .. " Repo: " .. parsed_url.repo
+        )
     end
 
     if parsed_url.start_line ~= nil then
