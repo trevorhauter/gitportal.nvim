@@ -38,14 +38,23 @@ function M.determine_git_host()
         return nil
     end
 
+    -- See if the user has specified the provider for this repository
+    local provider
     if config.options.git_provider_map ~= nil then
-        for url, host in pairs(config.options.git_provider_map) do
+        for url, contents in pairs(config.options.git_provider_map) do
+            if type(contents) == "string" then
+                provider = contents
+            elseif type(contents) == "table" then
+                provider = contents.provider
+            end
             if string.find(origin_url, url, 0, true) then
-                return host
+                return provider
             end
         end
     end
 
+    -- No match was found in provider_map. So try to derive the git provider from
+    -- the origin URL
     for host, host_info in pairs(git_providers) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host
