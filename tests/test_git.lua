@@ -23,7 +23,6 @@ function TestGit:setUp()
     self.commit = "64ad8be39a26d41c81a30513dc2b7f9816f7f7ae"
     self.active_branch_or_commit = nil
     self.current_git_host = nil
-    config.options.git_platform = nil
 
     -- ****
     -- Mock functions for tests
@@ -132,13 +131,6 @@ function TestGit:test_determine_git_host()
     self.current_git_host = git_providers.gitlab.name
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
-end
-
-function TestGit:test_determine_git_host_platform_config()
-    config.options.git_platform = "random"
-    self.current_git_host = "nonsense"
-    local git_host = git.determine_git_host()
-    lu.assertEquals(git_host, "random")
 end
 
 function TestGit:test_determine_git_host_provider_map()
