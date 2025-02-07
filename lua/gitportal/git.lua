@@ -192,15 +192,6 @@ function M.checkout_branch_or_commit(branch_or_commit)
 end
 
 function M.get_git_url_for_current_file()
-    -- Creates a url for the current file in github. General formula follows...
-    --[[
-    Example url: https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua#L1-L2
-    remote url: https://github.com/trevorhauter/gitportal.nvim
-    blob: blob
-    branch_or_commit: main | 7b6d66e0098678af63189b96f0d6f12e8ee961c3
-    file_path: lua/gitportal/cli.lua
-    Line highlights: #L1 | #L1-L2
-  --]]
     if M.can_open_current_file() == false then
         return nil
     end
