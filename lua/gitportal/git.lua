@@ -32,6 +32,16 @@ function M.get_origin_url()
     return cli.run_command("git config --get remote.origin.url")
 end
 
+function M.get_provider_from_map(origin_url)
+    if config.options.git_provider_map ~= nil then
+        for url, contents in pairs(config.options.git_provider_map) do
+            if string.find(origin_url, url, 0, true) then
+                return contents
+            end
+        end
+    end
+end
+
 function M.determine_git_host()
     local origin_url = M.get_origin_url()
     if origin_url == nil then
@@ -41,14 +51,12 @@ function M.determine_git_host()
     -- See if the user has specified the provider for this repository
     local provider
     if config.options.git_provider_map ~= nil then
-        for url, contents in pairs(config.options.git_provider_map) do
-            if type(contents) == "string" then
-                provider = contents
-            elseif type(contents) == "table" then
-                provider = contents.provider
-            end
-            if string.find(origin_url, url, 0, true) then
+        provider = M.get_provider_from_map(origin_url)
+        if provider then
+            if type(provider) == "string" then
                 return provider
+            elseif type(provider) == "table" then
+                return provider.provider
             end
         end
     end
@@ -152,16 +160,25 @@ function M.parse_origin_url(origin_url)
 end
 
 local function get_base_git_host_url()
-    -- Get the base github url for a repo...
-    -- Ex: https://github.com/trevorhauter/gitportal.nvim
+    local base_git_host_url
+    if config.options.git_provider_map ~= nil then
+        local provider_info = M.get_provider_from_map(M.get_origin_url())
+        if provider_info and type(provider_info) == "table" then
+            base_git_host_url = provider_info.base_url
+        end
+    end
+    if base_git_host_url ~= nil then
+        return base_git_host_url
+    end
+
     local origin_url = M.get_origin_url()
     if origin_url then
-        origin_url = M.parse_origin_url(origin_url)
+        base_git_host_url = M.parse_origin_url(origin_url)
     else
         cli.log_error("Failed to find remote origin url")
     end
 
-    return origin_url
+    return base_git_host_url
 end
 
 function M.checkout_branch_or_commit(branch_or_commit)
