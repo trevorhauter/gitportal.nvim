@@ -195,6 +195,35 @@ function TestGit:test_get_provider_info_from_map()
     lu.assertEquals(provider_info.base_url, "https://merp.com")
 end
 
+function TestGit:test_parse_origin_url()
+    local scenario_map = {
+        {
+            origin_url = "https://www.github.com.git  ",
+            result = "https://www.github.com",
+        },
+        {
+            origin_url = "git@gitlab.com:gitportal/gitlab-test.git",
+            result = "https://gitlab.com/gitportal/gitlab-test",
+        },
+        {
+            origin_url = "git@ssh.merp.com.git ",
+            result = "https://merp.com",
+        },
+        {
+            origin_url = "ssh://localhost:6611/advanced-app",
+            result = "https://localhost:6611/advanced-app",
+        },
+        {
+            origin_url = "git@selfhost.com:advanced-app",
+            result = "https://selfhost.com/advanced-app",
+        },
+    }
+
+    for _, scenario in ipairs(scenario_map) do
+        lu.assertEquals(git.parse_origin_url(scenario.origin_url), scenario.result)
+    end
+end
+
 -- ****
 -- END TESTS
 -- ****

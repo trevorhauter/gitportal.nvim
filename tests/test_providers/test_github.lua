@@ -1,4 +1,5 @@
 local git_providers = require("gitportal.git_providers")
+local git_utils = require("gitportal.git")
 local lu = require("luaunit")
 
 local complete_url = "https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua"
@@ -26,6 +27,10 @@ function TestGitHub:test_string_attributes()
     lu.assertEquals(provider.name, "github")
     lu.assertEquals(provider.ssh_str, "git@github.com")
     lu.assertEquals(provider.url, "https://github.com/")
+end
+
+function TestGitHub:test_origin_url_parsing()
+    lu.assertEquals(git_utils.parse_origin_url(provider.ssh_str), "https://github.com")
 end
 
 function TestGitHub:test_single_line_parsing()
