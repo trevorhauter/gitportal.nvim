@@ -32,7 +32,7 @@ function M.get_origin_url()
     return cli.run_command("git config --get remote.origin.url")
 end
 
-function M.get_provider_from_map(origin_url)
+function M.get_provider_info_from_map(origin_url)
     if config.options.git_provider_map ~= nil then
         for url, contents in pairs(config.options.git_provider_map) do
             if string.find(origin_url, url, 0, true) then
@@ -40,6 +40,7 @@ function M.get_provider_from_map(origin_url)
             end
         end
     end
+    return nil
 end
 
 function M.determine_git_host()
@@ -51,7 +52,7 @@ function M.determine_git_host()
     -- See if the user has specified the provider for this repository
     local provider
     if config.options.git_provider_map ~= nil then
-        provider = M.get_provider_from_map(origin_url)
+        provider = M.get_provider_info_from_map(origin_url)
         if provider then
             if type(provider) == "string" then
                 return provider
@@ -162,7 +163,7 @@ end
 local function get_base_git_host_url()
     local base_git_host_url
     if config.options.git_provider_map ~= nil then
-        local provider_info = M.get_provider_from_map(M.get_origin_url())
+        local provider_info = M.get_provider_info_from_map(M.get_origin_url())
         if provider_info and type(provider_info) == "table" then
             base_git_host_url = provider_info.base_url
         end
