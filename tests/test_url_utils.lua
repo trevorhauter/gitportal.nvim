@@ -186,19 +186,6 @@ function TestParseGitHostUrl:test_self_host_gitlab_url()
     test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
 end
 
-function TestParseGitHostUrl:test_self_host_gitlab_url_platform()
-    config.options.git_platform = "gitlab"
-    local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
-    local expected_result = {
-        repo = "REPO",
-        branch_or_commit = "master",
-        file_path = "public/index.html",
-        start_line = nil,
-        end_line = nil,
-    }
-    test_githost_url(base_url, expected_result, gitlab_single_line_info, gitlab_line_range_info)
-end
-
 function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
     self.origin_url = "https://dev.company_name.com"
     config.options.git_provider_map = { ["https://dev.company_name.com"] = "gitlab" }
@@ -275,7 +262,6 @@ local onedev_single_line_info = { url = "?position=source-45.1-45.14-1", start_l
 local onedev_line_range_info = { url = "?position=source-50.1-55.14-1", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_self_host_onedev_url_https()
-    config.options.git_platform = nil
     self.origin_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
@@ -293,7 +279,6 @@ end
 function TestParseGitHostUrl:test_self_host_onedev_url_https_random_commit()
     -- Onedev always has a commit in the url, oftentimes the user is on a branch.
     -- Onedev has an edge case built in that will recognize and account for this
-    config.options.git_platform = nil
     self.origin_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
@@ -310,7 +295,6 @@ end
 
 function TestParseGitHostUrl:test_self_host_onedev_url_ssh()
     self.origin_url = "ssh://localhost:6610/advanced-app"
-    config.options.git_platform = nil
     config.options.git_provider_map = { ["ssh://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
         "http://localhost:6610/advanced-app/~files/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"

@@ -32,24 +32,38 @@ function M.get_origin_url()
     return cli.run_command("git config --get remote.origin.url")
 end
 
-function M.determine_git_host()
-    if config.options.git_platform ~= nil then
-        return config.options.git_platform
+function M.get_provider_info_from_map(origin_url)
+    if config.options.git_provider_map ~= nil then
+        for url, contents in pairs(config.options.git_provider_map) do
+            if string.find(origin_url, url, 0, true) then
+                return contents
+            end
+        end
     end
+    return nil
+end
 
+function M.determine_git_host()
     local origin_url = M.get_origin_url()
     if origin_url == nil then
         return nil
     end
 
+    -- See if the user has specified the provider for this repository
+    local provider
     if config.options.git_provider_map ~= nil then
-        for url, host in pairs(config.options.git_provider_map) do
-            if string.find(origin_url, url, 0, true) then
-                return host
+        provider = M.get_provider_info_from_map(origin_url)
+        if provider then
+            if type(provider) == "string" then
+                return provider
+            elseif type(provider) == "table" then
+                return provider.provider
             end
         end
     end
 
+    -- No match was found in provider_map. So try to derive the git provider from
+    -- the origin URL
     for host, host_info in pairs(git_providers) do
         if string.find(origin_url, host_info.name, 0, true) then
             return host
@@ -117,7 +131,7 @@ end
 
 function M.parse_origin_url(origin_url)
     -- remove any trailing spaces or line breaks from the end of the line
-    origin_url = origin_url:gsub("%s$", "")
+    origin_url = origin_url:gsub("%s+$", "")
     -- Trim any appending .git from the url, including new line
     origin_url = origin_url:gsub("%.git$", "")
 
@@ -146,17 +160,26 @@ function M.parse_origin_url(origin_url)
     return origin_url
 end
 
-local function get_base_git_host_url()
-    -- Get the base github url for a repo...
-    -- Ex: https://github.com/trevorhauter/gitportal.nvim
+function M.get_base_git_host_url()
+    local base_git_host_url
+    if config.options.git_provider_map ~= nil then
+        local provider_info = M.get_provider_info_from_map(M.get_origin_url())
+        if provider_info and type(provider_info) == "table" then
+            base_git_host_url = provider_info.base_url
+        end
+    end
+    if base_git_host_url ~= nil then
+        return base_git_host_url
+    end
+
     local origin_url = M.get_origin_url()
     if origin_url then
-        origin_url = M.parse_origin_url(origin_url)
+        base_git_host_url = M.parse_origin_url(origin_url)
     else
         cli.log_error("Failed to find remote origin url")
     end
 
-    return origin_url
+    return base_git_host_url
 end
 
 function M.checkout_branch_or_commit(branch_or_commit)
@@ -187,20 +210,11 @@ function M.checkout_branch_or_commit(branch_or_commit)
 end
 
 function M.get_git_url_for_current_file()
-    -- Creates a url for the current file in github. General formula follows...
-    --[[
-    Example url: https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua#L1-L2
-    remote url: https://github.com/trevorhauter/gitportal.nvim
-    blob: blob
-    branch_or_commit: main | 7b6d66e0098678af63189b96f0d6f12e8ee961c3
-    file_path: lua/gitportal/cli.lua
-    Line highlights: #L1 | #L1-L2
-  --]]
     if M.can_open_current_file() == false then
         return nil
     end
 
-    local remote_url = get_base_git_host_url()
+    local remote_url = M.get_base_git_host_url()
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host()

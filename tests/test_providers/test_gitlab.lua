@@ -1,4 +1,5 @@
 local git_providers = require("gitportal.git_providers")
+local git_utils = require("gitportal.git")
 local lu = require("luaunit")
 
 local complete_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html"
@@ -26,6 +27,10 @@ function TestGitLab:test_string_attributes()
     lu.assertEquals(provider.name, "gitlab")
     lu.assertEquals(provider.ssh_str, "git@gitlab.com")
     lu.assertEquals(provider.url, "https://gitlab.com/")
+end
+
+function TestGitLab:test_origin_url_parsing()
+    lu.assertEquals(git_utils.parse_origin_url(provider.ssh_str), "https://gitlab.com")
 end
 
 function TestGitLab:test_single_line_parsing()

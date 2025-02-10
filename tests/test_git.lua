@@ -23,7 +23,6 @@ function TestGit:setUp()
     self.commit = "64ad8be39a26d41c81a30513dc2b7f9816f7f7ae"
     self.active_branch_or_commit = nil
     self.current_git_host = nil
-    config.options.git_platform = nil
 
     -- ****
     -- Mock functions for tests
@@ -134,14 +133,7 @@ function TestGit:test_determine_git_host()
     lu.assertEquals(git_host, self.current_git_host)
 end
 
-function TestGit:test_determine_git_host_platform_config()
-    config.options.git_platform = "random"
-    self.current_git_host = "nonsense"
-    local git_host = git.determine_git_host()
-    lu.assertEquals(git_host, "random")
-end
-
-function TestGit:test_determine_git_host_provider_map()
+function TestGit:test_determine_git_host_provider_map_old()
     config.options.git_provider_map = {
         ["https://www.coolcompany.com"] = "github",
         ["https://merp.com/gitportal/gitlab-test.git"] = "gitlab",
@@ -150,7 +142,6 @@ function TestGit:test_determine_git_host_provider_map()
     self.current_git_host = "https://www.coolcompany.com/gitportal/test.git"
     local git_host = git.determine_git_host()
     lu.assertEquals(git_host, "github")
-    -- complete the rest of the tests for the 2 remaining entries in the git_provider_map
 
     self.current_git_host = "https://merp.com/gitportal/gitlab-test.git"
     git_host = git.determine_git_host()
@@ -159,6 +150,94 @@ function TestGit:test_determine_git_host_provider_map()
     self.current_git_host = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
     git_host = git.determine_git_host()
     lu.assertEquals(git_host, "random")
+end
+
+function TestGit:test_determine_git_host_provider_map_new()
+    config.options.git_provider_map = {
+        ["https://www.coolcompany.com"] = { provider = "github" },
+        ["https://merp.com/gitportal/gitlab-test.git"] = { provider = "gitlab" },
+        ["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = { provider = "random" },
+    }
+    self.current_git_host = "https://www.coolcompany.com/gitportal/test.git"
+    local git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "github")
+
+    self.current_git_host = "https://merp.com/gitportal/gitlab-test.git"
+    git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "gitlab")
+
+    self.current_git_host = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
+    git_host = git.determine_git_host()
+    lu.assertEquals(git_host, "random")
+end
+
+function TestGit:test_get_provider_info_from_map()
+    config.options.git_provider_map = {
+        ["https://www.coolcompany.com"] = { provider = "github", base_url = nil },
+        ["https://merp.com/gitportal/gitlab-test.git"] = { provider = "merp", base_url = "https://merp.com" },
+    }
+    local origin_url
+    local provider_info
+
+    -- origin url does not match any items in the map
+    origin_url = "www.random.net"
+    provider_info = git.get_provider_info_from_map(origin_url)
+    lu.assertEquals(provider_info, nil)
+
+    origin_url = "https://www.coolcompany.com/gitportal/test.git"
+    provider_info = git.get_provider_info_from_map(origin_url)
+    lu.assertEquals(provider_info.provider, "github")
+    lu.assertEquals(provider_info.base_url, nil)
+
+    origin_url = "https://merp.com/gitportal/gitlab-test.git"
+    provider_info = git.get_provider_info_from_map(origin_url)
+    lu.assertEquals(provider_info.provider, "merp")
+    lu.assertEquals(provider_info.base_url, "https://merp.com")
+end
+
+function TestGit:test_parse_origin_url()
+    local scenario_map = {
+        {
+            origin_url = "https://www.github.com.git  ",
+            result = "https://www.github.com",
+        },
+        {
+            origin_url = "git@gitlab.com:gitportal/gitlab-test.git",
+            result = "https://gitlab.com/gitportal/gitlab-test",
+        },
+        {
+            origin_url = "git@ssh.merp.com.git ",
+            result = "https://merp.com",
+        },
+        {
+            origin_url = "ssh://localhost:6611/advanced-app",
+            result = "https://localhost:6611/advanced-app",
+        },
+        {
+            origin_url = "git@selfhost.com:advanced-app",
+            result = "https://selfhost.com/advanced-app",
+        },
+    }
+
+    for _, scenario in ipairs(scenario_map) do
+        lu.assertEquals(git.parse_origin_url(scenario.origin_url), scenario.result)
+
+        self.current_git_host = scenario.origin_url
+        -- test the base git host url here too!
+        lu.assertEquals(git.get_base_git_host_url(), scenario.result)
+    end
+end
+
+function TestGit:test_get_base_git_host_url_provider_map()
+    config.options.git_provider_map = {
+        ["https://www.coolcompany.com"] = { provider = "github", base_url = "random.org" },
+    }
+
+    self.current_git_host = "https://www.coolcompany.com"
+    lu.assertEquals(git.get_base_git_host_url(), "random.org")
+
+    self.current_git_host = "git@gitlab.com:gitportal/gitlab-test.git"
+    lu.assertEquals(git.get_base_git_host_url(), "https://gitlab.com/gitportal/gitlab-test")
 end
 
 -- ****
