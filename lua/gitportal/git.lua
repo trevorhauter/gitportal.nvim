@@ -160,7 +160,7 @@ function M.parse_origin_url(origin_url)
     return origin_url
 end
 
-local function get_base_git_host_url()
+function M.get_base_git_host_url()
     local base_git_host_url
     if config.options.git_provider_map ~= nil then
         local provider_info = M.get_provider_info_from_map(M.get_origin_url())
@@ -214,7 +214,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local remote_url = get_base_git_host_url()
+    local remote_url = M.get_base_git_host_url()
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host()

@@ -221,7 +221,23 @@ function TestGit:test_parse_origin_url()
 
     for _, scenario in ipairs(scenario_map) do
         lu.assertEquals(git.parse_origin_url(scenario.origin_url), scenario.result)
+
+        self.current_git_host = scenario.origin_url
+        -- test the base git host url here too!
+        lu.assertEquals(git.get_base_git_host_url(), scenario.result)
     end
+end
+
+function TestGit:test_get_base_git_host_url_provider_map()
+    config.options.git_provider_map = {
+        ["https://www.coolcompany.com"] = { provider = "github", base_url = "random.org" },
+    }
+
+    self.current_git_host = "https://www.coolcompany.com"
+    lu.assertEquals(git.get_base_git_host_url(), "random.org")
+
+    self.current_git_host = "git@gitlab.com:gitportal/gitlab-test.git"
+    lu.assertEquals(git.get_base_git_host_url(), "https://gitlab.com/gitportal/gitlab-test")
 end
 
 -- ****
