@@ -69,8 +69,9 @@ If you wish to keep these defaults, no configuration is required. To customize t
     browser_command = nil, -- (override only if necessary, not recommended)
 
     -- Map of origin urls to git providers 
-    -- (default: automatically determined by GitPortal, recommended for self hosted instances)
-    git_provider_map = nil, -- {["origin_url"] = { provider = "github", base_url = "https://customdomain.dev"}}
+    -- (default: automatically determined by GitPortal, required for self hosted instances)
+    -- {["origin_url"] = { provider = "gitlab", base_url = "https://customdomain.dev"}}
+    git_provider_map = nil,
 }
 ```
 
