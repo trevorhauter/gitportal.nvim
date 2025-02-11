@@ -70,7 +70,7 @@ If you wish to keep these defaults, no configuration is required. To customize t
 
     -- Map of origin urls to git providers 
     -- (default: automatically determined by GitPortal, required for self hosted instances)
-    -- {["origin_url"] = { provider = "gitlab", base_url = "https://customdomain.dev"}}
+    -- Ex. {["origin_url"] = { provider = "gitlab", base_url = "https://customdomain.dev"}}
     git_provider_map = nil,
 }
 ```
