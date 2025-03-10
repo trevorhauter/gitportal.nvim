@@ -24,6 +24,44 @@ end
 local GIT_PROVIDERS = {
 
     -- ****
+    -- BITBUCKET
+    -- ****
+    bitbucket = {
+        assemble_permalink = function(remote_url, branch_or_commit, git_path)
+            remote_url = remote_url:gsub("https://.-bitbucket%.org", "https://bitbucket.org", 1)
+            return table.concat({ remote_url, "/src/", branch_or_commit.name, "/", git_path })
+        end,
+        generate_url_params = function(start_line, end_line)
+            if start_line == end_line then
+                return "#lines-" .. start_line
+            else
+                return "#lines-" .. start_line .. ":" .. end_line
+            end
+        end,
+        name = "bitbucket",
+        parse_line_range = function(url)
+            local start_line, end_line = nil, nil
+            if string.find(url, "#lines", 0, true) ~= nil then
+                start_line = url:match("#lines%-(%d+)")
+                if string.find(url, ":", 0, true) ~= nil then
+                    end_line = url:match("#lines%-(%d+):(%d+)$")
+                end
+            end
+
+            if start_line ~= nil then
+                if end_line == nil then
+                    end_line = start_line
+                end
+                start_line = tonumber(start_line)
+                end_line = tonumber(end_line)
+            end
+            return start_line, end_line
+        end,
+        regex = "/.+/[^/]+/([^/]+)/src/(.+)",
+        ssh_str = "git@bitbucket.org",
+        url = "https://bitbucket.org/",
+    },
+    -- ****
     -- FORGEJO
     -- ****
     forgejo = {

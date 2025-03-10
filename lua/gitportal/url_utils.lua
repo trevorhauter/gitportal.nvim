@@ -23,7 +23,7 @@ local function parse_url_remainder(remainder, githost)
             -- Remaining parts are the file path
             file_path = table.concat(url_parts, "/", i + 1)
             break
-        elseif githost == git_providers.onedev.name and git_utils.is_commit_hash(branch_or_commit) then
+        elseif git_utils.is_commit_hash(branch_or_commit) then
             -- edge case for onedev urls that ALWAYS have commit hash in them
             file_path = table.concat(url_parts, "/", i + 1)
             break
