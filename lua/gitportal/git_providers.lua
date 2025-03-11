@@ -44,7 +44,7 @@ local GIT_PROVIDERS = {
             if string.find(url, "#lines", 0, true) ~= nil then
                 start_line = url:match("#lines%-(%d+)")
                 if string.find(url, ":", 0, true) ~= nil then
-                    end_line = url:match("#lines%-(%d+):(%d+)$")
+                    end_line = url:match("#lines%-%d+:(%d+)$")
                 end
             end
 
