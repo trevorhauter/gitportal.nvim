@@ -277,8 +277,6 @@ function TestParseGitHostUrl:test_self_host_onedev_url_https()
 end
 
 function TestParseGitHostUrl:test_self_host_onedev_url_https_random_commit()
-    -- Onedev always has a commit in the url, oftentimes the user is on a branch.
-    -- Onedev has an edge case built in that will recognize and account for this
     self.origin_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
@@ -309,6 +307,58 @@ function TestParseGitHostUrl:test_self_host_onedev_url_ssh()
 end
 -- ****
 -- End onedev tests
+-- ****
+
+-- ****
+-- START bitbucket tests
+-- ****
+local bitbucket_single_line_info = { url = "#lines-45", start_line = 45 }
+local bitbucket_line_range_info = { url = "#lines-50:55", start_line = 50, end_line = 55 }
+
+function TestParseGitHostUrl:test_self_host_bitbucket_url_https()
+    self.origin_url = "http://localhost:6610/advanced-app"
+    config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "bitbucket" }
+    local base_url =
+        "http://localhost:6610/company/advanced-app/src/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"
+    local expected_result = {
+        repo = "advanced-app",
+        branch_or_commit = "3130016177a84bf5e0f36c7c70ad434dca121d4b",
+        file_path = "components/main.jsx",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, bitbucket_single_line_info, bitbucket_line_range_info)
+end
+
+function TestParseGitHostUrl:test_bitbucket_url_https()
+    self.origin_url = "https://trevor35@bitbucket.org/gitportal/gitportal.git"
+    local base_url =
+        "https://bitbucket.org/gitportal/gitportal/src/3aab4c7d747b58bcb14abd7b408a7b8636ebec83/components/test.jsx"
+    local expected_result = {
+        repo = "gitportal",
+        branch_or_commit = "3aab4c7d747b58bcb14abd7b408a7b8636ebec83",
+        file_path = "components/test.jsx",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, bitbucket_single_line_info, bitbucket_line_range_info)
+end
+
+function TestParseGitHostUrl:test_bitbucket_url_ssh()
+    self.origin_url = "git@bitbucket.org:gitportal/gitportal.git"
+    local base_url = "https://bitbucket.org/gitportal/gitportal/src/main/components/test.jsx"
+    local expected_result = {
+        repo = "gitportal",
+        branch_or_commit = "main",
+        file_path = "components/test.jsx",
+        start_line = nil,
+        end_line = nil,
+    }
+    test_githost_url(base_url, expected_result, bitbucket_single_line_info, bitbucket_line_range_info)
+end
+
+-- ****
+-- End bitbucket tests
 -- ****
 
 -- ****
