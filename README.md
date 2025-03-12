@@ -118,13 +118,14 @@ The following command is created upon setup that takes several arguments.
 - `:GitPortal open_link` -- Opens a githost link in neovim, switching to the branch/commit depending on options.
 - `:GitPortal copy_link_to_clipboard` -- Generates a permalink to the current file and copies it to your system clipboard.   
 
-## ꩜ Supported git web hosts
-Git host                        | Supported          | Self host support 
---------------------------------|--------------------|---------------------------
-[Forgejo](https://forgejo.org/) | N/A     | :white_check_mark:
-[GitHub](https://github.com/)   | :white_check_mark: | :white_check_mark:
-[GitLab](https://gitlab.com/)   | :white_check_mark: | :white_check_mark:
-[Onedev](https://onedev.io/) | N/A     | :white_check_mark:
+## ꩜ Supported git providers
+Git host                           | Supported          | Self host support 
+------------------------------------|--------------------|---------------------------
+[Bitbucket](https://bitbucket.org/) | :white_check_mark: | :white_check_mark:
+[Forgejo](https://forgejo.org/)     | N/A                | :white_check_mark:
+[GitHub](https://github.com/)       | :white_check_mark: | :white_check_mark:
+[GitLab](https://gitlab.com/)       | :white_check_mark: | :white_check_mark:
+[Onedev](https://onedev.io/)        | N/A                | :white_check_mark:
 
 We are working hard to add more hosts for git, including self hosted options. If you'd like to use a host not yet listed, please check out our [enhancement issues](https://github.com/trevorhauter/gitportal.nvim/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement) to see if an issue is present. If you don't see an issue created for your desired host, please create one!
 
