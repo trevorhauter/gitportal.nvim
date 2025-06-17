@@ -154,7 +154,7 @@ function M.parse_origin_url(origin_url)
             -- Otherwise, just convert the ssh to a URL like normal
             origin_url = origin_url:gsub("git@", "https://")
         end
-        origin_url = origin_url:gsub("%.com:", ".com/")
+        origin_url = origin_url:gsub("([%w%.%-]+%.[a-z]+):", "%1/")
     end
 
     return origin_url
