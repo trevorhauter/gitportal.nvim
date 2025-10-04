@@ -62,6 +62,9 @@ If you wish to keep these defaults, no configuration is required. To customize t
     -- Permalink generation | Include current line in URL regardless of current mode
     always_include_current_line = false, -- bool
 
+    -- Permalink generation | Always use the commit hash; otherwise use current branch/commit
+    always_use_commit_hash_in_url = false, -- bool
+
     -- Branch/commit handling when opening links in neovim
     switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
 

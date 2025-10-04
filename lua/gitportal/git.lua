@@ -112,7 +112,7 @@ function M.get_branch_or_commit()
     local branch_or_commit = cli.run_command("git rev-parse --abbrev-ref HEAD")
     local revision_type = "branch"
 
-    if branch_or_commit == "HEAD\n" then
+    if branch_or_commit == "HEAD\n" or config.options.always_use_commit_hash_in_url == true then
         branch_or_commit = cli.run_command("git rev-parse HEAD")
         revision_type = "commit"
     end
