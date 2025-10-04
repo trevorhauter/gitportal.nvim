@@ -51,11 +51,18 @@ function TestGit:setUp()
             return "HEAD\n"
         end
 
-        if param == "git rev-parse --abbrev-ref HEAD" and self.active_branch_or_commit == self.branch then
+        if
+            param == "git rev-parse --abbrev-ref HEAD"
+            and self.active_branch_or_commit == self.branch
+            and config.options.always_use_commit_hash_in_url == false
+        then
             return self.branch
         end
 
-        if param == "git rev-parse HEAD" and self.active_branch_or_commit == self.commit then
+        if
+            param == "git rev-parse HEAD" and self.active_branch_or_commit == self.commit
+            or config.options.always_use_commit_hash_in_url == true
+        then
             return self.commit
         end
     end
@@ -111,7 +118,19 @@ function TestGit:test_get_branch_or_commit()
     lu.assertEquals(result.name, self.branch)
     lu.assertEquals(result.type, "branch")
 
+    config.options.always_use_commit_hash_in_url = true
+
+    result = git.get_branch_or_commit()
+
+    if result == nil then
+        error("git.get_branch_or_commit() returned nil")
+    end
+
+    lu.assertEquals(result.name, self.commit)
+    lu.assertEquals(result.type, "commit")
+
     self.active_branch_or_commit = self.commit
+    config.options.always_use_commit_hash_in_url = false
 
     result = git.get_branch_or_commit()
 
