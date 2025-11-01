@@ -4,5 +4,5 @@ We really appreciate any and all contributions! If you're looking for something 
 
 ## Pull requests (PRs)
 1. Update the `README.md` with any additions or changes to existing functionality.
-1. Add new test coverage where possible
-1. If you are unsure how to add test coverage, or are having any trouble at all, contact @trevorhauter
+1. Add new test coverage where possible.
+1. If you are unsure how to add test coverage, or are having any trouble at all, contact @trevorhauter.
