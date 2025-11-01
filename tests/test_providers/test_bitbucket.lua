@@ -29,8 +29,8 @@ function TestBitbucket:test_string_attributes()
     lu.assertEquals(provider.url, "https://bitbucket.org/")
 end
 
-function TestBitbucket:test_origin_url_parsing()
-    lu.assertEquals(git_utils.parse_origin_url(provider.ssh_str), "https://bitbucket.org")
+function TestBitbucket:test_remote_url_parsing()
+    lu.assertEquals(git_utils.parse_remote_url(provider.ssh_str), "https://bitbucket.org")
 end
 
 function TestBitbucket:test_single_line_parsing()

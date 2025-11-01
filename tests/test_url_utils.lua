@@ -46,7 +46,7 @@ function TestParseGitHostUrl:setUp()
     -- Backup the function that will be mocked
     self.backup_branch_or_commit_exists = git_helper.branch_or_commit_exists
     self.backup_options = config.options
-    self.backup_origin_url = git_helper.get_origin_url
+    self.backup_remote_url = git_helper.get_remote_url
 
     -- Mock functions for tests
     -- mock git_helper.branch_or_commit_exists
@@ -72,8 +72,8 @@ function TestParseGitHostUrl:setUp()
     end
 
     ---@diagnostic disable-next-line: duplicate-set-field
-    git_helper.get_origin_url = function()
-        return self.origin_url
+    git_helper.get_remote_url = function()
+        return self.remote_url
     end
 end
 
@@ -85,7 +85,7 @@ local github_single_line_info = { url = "#L45", start_line = 45 }
 local github_line_range_info = { url = "#L50-L55", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_github_url_with_branch()
-    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
+    self.remote_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/main/lua/gitportal/cli.lua"
     local expected_result = {
         repo = "gitportal.nvim",
@@ -98,7 +98,7 @@ function TestParseGitHostUrl:test_github_url_with_branch()
 end
 
 function TestParseGitHostUrl:test_github_url_with_commit()
-    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
+    self.remote_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     local base_url =
         "https://github.com/trevorhauter/gitportal.nvim/blob/376596caaa683e6f607c45d6fe1b6834070c517a/lua/gitportal/cli.lua"
     local expected_result = {
@@ -112,7 +112,7 @@ function TestParseGitHostUrl:test_github_url_with_commit()
 end
 
 function TestParseGitHostUrl:test_github_url_with_difficult_branch_name()
-    self.origin_url = "https://github.com/trevorhauter/gitportal.nvim.git"
+    self.remote_url = "https://github.com/trevorhauter/gitportal.nvim.git"
     -- In this case, the branch name is "githost/gitlab"
     local base_url = "https://github.com/trevorhauter/gitportal.nvim/blob/githost/gitlab/tests/run_tests.lua"
     local expected_result = {
@@ -133,7 +133,7 @@ local gitlab_single_line_info = { url = "#L6", start_line = 6 }
 local gitlab_line_range_info = { url = "#L5-11", start_line = 5, end_line = 11 }
 
 function TestParseGitHostUrl:test_gitlab_url_with_branch()
-    self.origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
+    self.remote_url = "https://gitlab.com/gitportal/gitlab-test.git"
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html"
     local expected_result = {
         repo = "gitlab-test",
@@ -146,7 +146,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_branch()
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_commit()
-    self.origin_url = "https://gitlab.com/gitportal/gitlab-test.git"
+    self.remote_url = "https://gitlab.com/gitportal/gitlab-test.git"
     local base_url =
         "https://gitlab.com/gitportal/gitlab-test/-/blob/7e14d7545918b9167dd65bea8da454d2e389df5b/public/index.html"
     local expected_result = {
@@ -160,7 +160,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_commit()
 end
 
 function TestParseGitHostUrl:test_gitlab_url_with_query_param()
-    self.origin_url = "git@gitlab.com/gitportal/gitlab-test.git"
+    self.remote_url = "git@gitlab.com/gitportal/gitlab-test.git"
     local base_url = "https://gitlab.com/gitportal/gitlab-test/-/blob/master/public/index.html?ref_type=heads"
     local expected_result = {
         repo = "gitlab-test",
@@ -173,7 +173,7 @@ function TestParseGitHostUrl:test_gitlab_url_with_query_param()
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url()
-    self.origin_url = "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell.git"
+    self.remote_url = "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell.git"
     local base_url =
         "https://gitlab-ee.agil.company.com.ar/orgname/frontend/app-shell/-/blob/feature/mfError/src/hooks/useSessionTimer.js?ref_type=heads"
     local expected_result = {
@@ -187,7 +187,7 @@ function TestParseGitHostUrl:test_self_host_gitlab_url()
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
-    self.origin_url = "https://dev.company_name.com"
+    self.remote_url = "https://dev.company_name.com"
     config.options.git_provider_map = { ["https://dev.company_name.com"] = "gitlab" }
     local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
     local expected_result = {
@@ -201,7 +201,7 @@ function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map()
 end
 
 function TestParseGitHostUrl:test_self_host_gitlab_url_provider_map_ssh()
-    self.origin_url = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
+    self.remote_url = "git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"
     config.options.git_provider_map = { ["git@dev.COMPANY_NAME.com:random_word/random_word_2/REPO.git"] = "gitlab" }
     local base_url = "https://dev.company_name.com/random_word/random_word_2/REPO/-/blob/master/public/index.html"
     local expected_result = {
@@ -224,7 +224,7 @@ local forgejo_single_line_info = { url = "#L45", start_line = 45 }
 local forgejo_line_range_info = { url = "#L50-L55", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_self_host_forgejo_url_https()
-    self.origin_url = "http://localhost:3000/trevorhauter/advanced-app.git"
+    self.remote_url = "http://localhost:3000/trevorhauter/advanced-app.git"
     config.options.git_provider_map = { ["http://localhost:3000/trevorhauter/advanced-app.git"] = "forgejo" }
     local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
     local expected_result = {
@@ -238,7 +238,7 @@ function TestParseGitHostUrl:test_self_host_forgejo_url_https()
 end
 
 function TestParseGitHostUrl:test_self_host_forgejo_url_ssh()
-    self.origin_url = "git@localhost:trevorhauter/advanced-app.git"
+    self.remote_url = "git@localhost:trevorhauter/advanced-app.git"
     config.options.git_provider_map = { ["git@localhost:trevorhauter/advanced-app.git"] = "forgejo" }
     local base_url = "http://localhost:3000/trevorhauter/advanced-app/src/branch/main/components/test.py"
     local expected_result = {
@@ -262,7 +262,7 @@ local onedev_single_line_info = { url = "?position=source-45.1-45.14-1", start_l
 local onedev_line_range_info = { url = "?position=source-50.1-55.14-1", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_self_host_onedev_url_https()
-    self.origin_url = "http://localhost:6610/advanced-app"
+    self.remote_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
         "http://localhost:6610/advanced-app/~files/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"
@@ -277,7 +277,7 @@ function TestParseGitHostUrl:test_self_host_onedev_url_https()
 end
 
 function TestParseGitHostUrl:test_self_host_onedev_url_https_random_commit()
-    self.origin_url = "http://localhost:6610/advanced-app"
+    self.remote_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
         "http://localhost:6610/advanced-app/~files/3130016177a84bf5e0f36c7c70ad434dca129999/components/main.jsx"
@@ -292,7 +292,7 @@ function TestParseGitHostUrl:test_self_host_onedev_url_https_random_commit()
 end
 
 function TestParseGitHostUrl:test_self_host_onedev_url_ssh()
-    self.origin_url = "ssh://localhost:6610/advanced-app"
+    self.remote_url = "ssh://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["ssh://localhost:6610/advanced-app"] = "onedev" }
     local base_url =
         "http://localhost:6610/advanced-app/~files/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"
@@ -316,7 +316,7 @@ local bitbucket_single_line_info = { url = "#lines-45", start_line = 45 }
 local bitbucket_line_range_info = { url = "#lines-50:55", start_line = 50, end_line = 55 }
 
 function TestParseGitHostUrl:test_self_host_bitbucket_url_https()
-    self.origin_url = "http://localhost:6610/advanced-app"
+    self.remote_url = "http://localhost:6610/advanced-app"
     config.options.git_provider_map = { ["http://localhost:6610/advanced-app"] = "bitbucket" }
     local base_url =
         "http://localhost:6610/company/advanced-app/src/3130016177a84bf5e0f36c7c70ad434dca121d4b/components/main.jsx"
@@ -331,7 +331,7 @@ function TestParseGitHostUrl:test_self_host_bitbucket_url_https()
 end
 
 function TestParseGitHostUrl:test_bitbucket_url_https()
-    self.origin_url = "https://trevor35@bitbucket.org/gitportal/gitportal.git"
+    self.remote_url = "https://trevor35@bitbucket.org/gitportal/gitportal.git"
     local base_url =
         "https://bitbucket.org/gitportal/gitportal/src/3aab4c7d747b58bcb14abd7b408a7b8636ebec83/components/test.jsx"
     local expected_result = {
@@ -345,7 +345,7 @@ function TestParseGitHostUrl:test_bitbucket_url_https()
 end
 
 function TestParseGitHostUrl:test_bitbucket_url_ssh()
-    self.origin_url = "git@bitbucket.org:gitportal/gitportal.git"
+    self.remote_url = "git@bitbucket.org:gitportal/gitportal.git"
     local base_url = "https://bitbucket.org/gitportal/gitportal/src/main/components/test.jsx"
     local expected_result = {
         repo = "gitportal",
@@ -368,5 +368,5 @@ function TestParseGitHostUrl:tearDown()
     -- Restore mocked function
     git_helper.branch_or_commit_exists = self.backup_branch_or_commit_exists
     config.options = self.backup_options
-    git_helper.get_origin_url = self.backup_origin_url
+    git_helper.get_remote_url = self.backup_remote_url
 end
