@@ -28,8 +28,8 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
-function M.get_origin_url()
-    return cli.run_command("git config --get remote.origin.url")
+function M.get_remote_url()
+    return cli.run_command("git config --get remote." .. config.options.default_remote .. ".url")
 end
 
 function M.get_provider_info_from_map(origin_url)
