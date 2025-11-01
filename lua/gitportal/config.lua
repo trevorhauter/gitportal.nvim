@@ -9,6 +9,7 @@ local default = {
     switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
     browser_command = nil, -- String of the command used on command line to open link in browser
     git_provider_map = nil, -- Map of urls to their git providers
+    default_remote = "origin",
 }
 
 M.options = default
