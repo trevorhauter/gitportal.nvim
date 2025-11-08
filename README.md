@@ -56,7 +56,7 @@ Plug 'trevorhauter/gitportal.nvim'
 ## ꩜ Options
 **`GitPortal`** comes with the following options by default.
 
-If you wish to keep these defaults, no configuration is required. To customize them, all you have to do is call `setup` with your overrides. An example can be seen in my setup below. You can read more about the default options on the [wiki](https://github.com/trevorhauter/gitportal.nvim/wiki/Options).
+If you wish to keep these defaults, no configuration is required. To customize them, all you have to do is call `setup` with your overrides. An example can be seen in the basic setup below. You can read more about the default options on the [wiki](https://github.com/trevorhauter/gitportal.nvim/wiki/Options).
 ```lua
 {
     -- Permalink generation | Include current line in URL regardless of current mode
