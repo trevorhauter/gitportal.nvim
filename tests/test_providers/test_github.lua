@@ -29,8 +29,8 @@ function TestGitHub:test_string_attributes()
     lu.assertEquals(provider.url, "https://github.com/")
 end
 
-function TestGitHub:test_origin_url_parsing()
-    lu.assertEquals(git_utils.parse_origin_url(provider.ssh_str), "https://github.com")
+function TestGitHub:test_remote_url_parsing()
+    lu.assertEquals(git_utils.parse_remote_url(provider.ssh_str), "https://github.com")
 end
 
 function TestGitHub:test_single_line_parsing()

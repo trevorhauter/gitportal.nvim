@@ -28,14 +28,14 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
-function M.get_origin_url()
-    return cli.run_command("git config --get remote.origin.url")
+function M.get_remote_url()
+    return cli.run_command("git config --get remote." .. config.options.default_remote .. ".url")
 end
 
-function M.get_provider_info_from_map(origin_url)
+function M.get_provider_info_from_map(remote_url)
     if config.options.git_provider_map ~= nil then
         for url, contents in pairs(config.options.git_provider_map) do
-            if string.find(origin_url, url, 0, true) then
+            if string.find(remote_url, url, 0, true) then
                 return contents
             end
         end
@@ -44,15 +44,15 @@ function M.get_provider_info_from_map(origin_url)
 end
 
 function M.determine_git_host()
-    local origin_url = M.get_origin_url()
-    if origin_url == nil then
+    local remote_url = M.get_remote_url()
+    if remote_url == nil then
         return nil
     end
 
     -- See if the user has specified the provider for this repository
     local provider
     if config.options.git_provider_map ~= nil then
-        provider = M.get_provider_info_from_map(origin_url)
+        provider = M.get_provider_info_from_map(remote_url)
         if provider then
             if type(provider) == "string" then
                 return provider
@@ -63,9 +63,9 @@ function M.determine_git_host()
     end
 
     -- No match was found in provider_map. So try to derive the git provider from
-    -- the origin URL
+    -- the remote URL
     for host, host_info in pairs(git_providers) do
-        if string.find(origin_url, host_info.name, 0, true) then
+        if string.find(remote_url, host_info.name, 0, true) then
             return host
         end
     end
@@ -129,41 +129,41 @@ function M.get_branch_or_commit()
     }
 end
 
-function M.parse_origin_url(origin_url)
+function M.parse_remote_url(remote_url)
     -- remove any trailing spaces or line breaks from the end of the line
-    origin_url = origin_url:gsub("%s+$", "")
+    remote_url = remote_url:gsub("%s+$", "")
     -- Trim any appending .git from the url, including new line
-    origin_url = origin_url:gsub("%.git$", "")
+    remote_url = remote_url:gsub("%.git$", "")
 
-    local temp_url = origin_url
+    local temp_url = remote_url
     -- For any of the non-self-hosted git hosts, trim here
     for _, host_info in pairs(git_providers) do
         if host_info.ssh_str ~= nil and host_info.url ~= nil then
-            origin_url = origin_url:gsub(host_info.ssh_str .. ":", host_info.url)
+            remote_url = remote_url:gsub(host_info.ssh_str .. ":", host_info.url)
         end
     end
 
     -- We didn't find a match in the traditional githosts, let's parse self hosted urls here!
-    if temp_url == origin_url then
+    if temp_url == remote_url then
         -- use case 1, self hosted ssh url begins with git@ssh
-        if string.find(origin_url, "git@ssh", 0, true) then
-            origin_url = origin_url:gsub("git@ssh%.", "https://")
-        elseif string.find(origin_url, "ssh://", 0, true) then
-            origin_url = origin_url:gsub("ssh://", "https://")
+        if string.find(remote_url, "git@ssh", 0, true) then
+            remote_url = remote_url:gsub("git@ssh%.", "https://")
+        elseif string.find(remote_url, "ssh://", 0, true) then
+            remote_url = remote_url:gsub("ssh://", "https://")
         else
             -- Otherwise, just convert the ssh to a URL like normal
-            origin_url = origin_url:gsub("git@", "https://")
+            remote_url = remote_url:gsub("git@", "https://")
         end
-        origin_url = origin_url:gsub("%.com:", ".com/")
+        remote_url = remote_url:gsub("%.com:", ".com/")
     end
 
-    return origin_url
+    return remote_url
 end
 
 function M.get_base_git_host_url()
     local base_git_host_url
     if config.options.git_provider_map ~= nil then
-        local provider_info = M.get_provider_info_from_map(M.get_origin_url())
+        local provider_info = M.get_provider_info_from_map(M.get_remote_url())
         if provider_info and type(provider_info) == "table" then
             base_git_host_url = provider_info.base_url
         end
@@ -172,11 +172,11 @@ function M.get_base_git_host_url()
         return base_git_host_url
     end
 
-    local origin_url = M.get_origin_url()
-    if origin_url then
-        base_git_host_url = M.parse_origin_url(origin_url)
+    local remote_url = M.get_remote_url()
+    if remote_url then
+        base_git_host_url = M.parse_remote_url(remote_url)
     else
-        cli.log_error("Failed to find remote origin url")
+        cli.log_error("Failed to find remote url")
     end
 
     return base_git_host_url

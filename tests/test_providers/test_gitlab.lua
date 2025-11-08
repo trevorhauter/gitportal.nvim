@@ -29,8 +29,8 @@ function TestGitLab:test_string_attributes()
     lu.assertEquals(provider.url, "https://gitlab.com/")
 end
 
-function TestGitLab:test_origin_url_parsing()
-    lu.assertEquals(git_utils.parse_origin_url(provider.ssh_str), "https://gitlab.com")
+function TestGitLab:test_remote_url_parsing()
+    lu.assertEquals(git_utils.parse_remote_url(provider.ssh_str), "https://gitlab.com")
 end
 
 function TestGitLab:test_single_line_parsing()

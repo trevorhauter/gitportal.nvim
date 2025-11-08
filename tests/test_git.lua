@@ -15,7 +15,7 @@ function TestGit:setUp()
     self.backup_vim = _G.vim
     self.backup_get_git_root_dir = git.get_git_root_dir
     self.backup_run_command = cli.run_command
-    self.backup_get_origin_url = git.get_origin_url
+    self.backup_get_remote_url = git.get_remote_url
     self.backup_options = config.options
 
     local mock_git_root_dir = "/Users/trevorhauter/Code/gitportal.nvim"
@@ -68,7 +68,7 @@ function TestGit:setUp()
     end
 
     ---@diagnostic disable-next-line: duplicate-set-field
-    git.get_origin_url = function()
+    git.get_remote_url = function()
         if self.current_git_host == git_providers.github.name then
             return git_providers.github.url
         elseif self.current_git_host == git_providers.gitlab.name then
@@ -195,53 +195,53 @@ function TestGit:test_get_provider_info_from_map()
         ["https://www.coolcompany.com"] = { provider = "github", base_url = nil },
         ["https://merp.com/gitportal/gitlab-test.git"] = { provider = "merp", base_url = "https://merp.com" },
     }
-    local origin_url
+    local remote_url
     local provider_info
 
-    -- origin url does not match any items in the map
-    origin_url = "www.random.net"
-    provider_info = git.get_provider_info_from_map(origin_url)
+    -- remote url does not match any items in the map
+    remote_url = "www.random.net"
+    provider_info = git.get_provider_info_from_map(remote_url)
     lu.assertEquals(provider_info, nil)
 
-    origin_url = "https://www.coolcompany.com/gitportal/test.git"
-    provider_info = git.get_provider_info_from_map(origin_url)
+    remote_url = "https://www.coolcompany.com/gitportal/test.git"
+    provider_info = git.get_provider_info_from_map(remote_url)
     lu.assertEquals(provider_info.provider, "github")
     lu.assertEquals(provider_info.base_url, nil)
 
-    origin_url = "https://merp.com/gitportal/gitlab-test.git"
-    provider_info = git.get_provider_info_from_map(origin_url)
+    remote_url = "https://merp.com/gitportal/gitlab-test.git"
+    provider_info = git.get_provider_info_from_map(remote_url)
     lu.assertEquals(provider_info.provider, "merp")
     lu.assertEquals(provider_info.base_url, "https://merp.com")
 end
 
-function TestGit:test_parse_origin_url()
+function TestGit:test_parse_remote_url()
     local scenario_map = {
         {
-            origin_url = "https://www.github.com.git  ",
+            remote_url = "https://www.github.com.git  ",
             result = "https://www.github.com",
         },
         {
-            origin_url = "git@gitlab.com:gitportal/gitlab-test.git",
+            remote_url = "git@gitlab.com:gitportal/gitlab-test.git",
             result = "https://gitlab.com/gitportal/gitlab-test",
         },
         {
-            origin_url = "git@ssh.merp.com.git ",
+            remote_url = "git@ssh.merp.com.git ",
             result = "https://merp.com",
         },
         {
-            origin_url = "ssh://localhost:6611/advanced-app",
+            remote_url = "ssh://localhost:6611/advanced-app",
             result = "https://localhost:6611/advanced-app",
         },
         {
-            origin_url = "git@selfhost.com:advanced-app",
+            remote_url = "git@selfhost.com:advanced-app",
             result = "https://selfhost.com/advanced-app",
         },
     }
 
     for _, scenario in ipairs(scenario_map) do
-        lu.assertEquals(git.parse_origin_url(scenario.origin_url), scenario.result)
+        lu.assertEquals(git.parse_remote_url(scenario.remote_url), scenario.result)
 
-        self.current_git_host = scenario.origin_url
+        self.current_git_host = scenario.remote_url
         -- test the base git host url here too!
         lu.assertEquals(git.get_base_git_host_url(), scenario.result)
     end
@@ -268,6 +268,6 @@ function TestGit:tearDown()
     git.get_git_root_dir = self.backup_get_git_root_dir
     _G.vim = self.backup_vim
     cli.run_command = self.backup_run_command
-    git.get_origin_url = self.backup_get_origin_url
+    git.get_remote_url = self.backup_get_remote_url
     config.options = self.backup_options
 end

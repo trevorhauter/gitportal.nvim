@@ -6,9 +6,10 @@ local M = {}
 local default = {
     always_include_current_line = false,
     always_use_commit_hash_in_url = false,
-    switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
     browser_command = nil, -- String of the command used on command line to open link in browser
+    default_remote = "origin",
     git_provider_map = nil, -- Map of urls to their git providers
+    switch_branch_or_commit_upon_ingestion = "always", -- Can be "always", "ask_first", or "never"
 }
 
 M.options = default

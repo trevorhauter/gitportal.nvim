@@ -65,16 +65,19 @@ If you wish to keep these defaults, no configuration is required. To customize t
     -- Permalink generation | Always use the commit hash; otherwise use current branch/commit
     always_use_commit_hash_in_url = false, -- bool
 
-    -- Branch/commit handling when opening links in neovim
-    switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
-
     -- Custom browser command (default: automatically determined by GitPortal)
     browser_command = nil, -- (override only if necessary, not recommended)
 
-    -- Map of origin urls to git providers 
+    -- Remote to use when generating links (applies globally)
+    default_remote = "origin"
+
+    -- Map of remote urls to git providers 
     -- (default: automatically determined by GitPortal, required for self hosted instances)
-    -- Ex. {["origin_url"] = { provider = "gitlab", base_url = "https://customdomain.dev"}}
+    -- Ex. {["remote_url"] = { provider = "gitlab", base_url = "https://customdomain.dev"}}
     git_provider_map = nil,
+
+    -- Branch/commit handling when opening links in neovim
+    switch_branch_or_commit_upon_ingestion = "always", -- "always" | "ask_first" | "never"
 }
 ```
 
