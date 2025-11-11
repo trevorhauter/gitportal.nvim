@@ -28,8 +28,8 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
-function M.get_remote_url()
-    return cli.run_command("git config --get remote." .. config.options.default_remote .. ".url")
+function M.get_remote_url(remote)
+    return cli.run_command("git config --get remote." .. remote .. ".url")
 end
 
 function M.get_provider_info_from_map(remote_url)
@@ -43,8 +43,8 @@ function M.get_provider_info_from_map(remote_url)
     return nil
 end
 
-function M.determine_git_host()
-    local remote_url = M.get_remote_url()
+function M.determine_git_host(remote)
+    local remote_url = M.get_remote_url(remote)
     if remote_url == nil then
         return nil
     end
@@ -160,19 +160,21 @@ function M.parse_remote_url(remote_url)
     return remote_url
 end
 
-function M.get_base_git_host_url()
+function M.get_base_git_host_url(remote)
     local base_git_host_url
+    local remote_url = M.get_remote_url(remote)
+
     if config.options.git_provider_map ~= nil then
-        local provider_info = M.get_provider_info_from_map(M.get_remote_url())
+        local provider_info = M.get_provider_info_from_map(remote_url)
         if provider_info and type(provider_info) == "table" then
             base_git_host_url = provider_info.base_url
         end
     end
+
     if base_git_host_url ~= nil then
         return base_git_host_url
     end
 
-    local remote_url = M.get_remote_url()
     if remote_url then
         base_git_host_url = M.parse_remote_url(remote_url)
     else
@@ -209,15 +211,15 @@ function M.checkout_branch_or_commit(branch_or_commit)
     cli.log_error("Couldn't switch to branch or commit. Config value of '" .. switch_config .. "' is invalid.")
 end
 
-function M.get_git_url_for_current_file()
+function M.get_git_url_for_current_file(remote)
     if M.can_open_current_file() == false then
         return nil
     end
 
-    local remote_url = M.get_base_git_host_url()
+    local base_url = M.get_base_git_host_url(remote)
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
-    local git_host = M.determine_git_host()
+    local git_host = M.determine_git_host(remote)
 
     if branch_or_commit == nil then
         cli.log_error("Couldn't find the current branch or commit!")
@@ -228,7 +230,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = git_providers[git_host].assemble_permalink(remote_url, branch_or_commit, git_path)
+    local permalink = git_providers[git_host].assemble_permalink(base_url, branch_or_commit, git_path)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()

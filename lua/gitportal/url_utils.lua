@@ -43,8 +43,8 @@ local function parse_git_provider_url(url, githost)
     return repo, branch_or_commit, file_path
 end
 
-function M.parse_githost_url(url)
-    local githost = git_utils.determine_git_host()
+function M.parse_githost_url(url, remote)
+    local githost = git_utils.determine_git_host(remote)
 
     local repo, branch_or_commit, file_path = parse_git_provider_url(url, githost)
     local start_line, end_line = git_providers[githost].parse_line_range(url)

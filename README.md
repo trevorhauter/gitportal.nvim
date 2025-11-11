@@ -14,7 +14,7 @@
 * [Options](#-options)
 * [Setup](#-basic-setup)
 * [Commands](#-commands)
-* [Supported hosts](#-supported-git-web-hosts)
+* [Supported hosts](#-supported-git-providers)
 * [How this plugin stacks up against others](#-comparison-against-other-popular-git-browsing-plugins)
 
 ## ꩜ Use cases
@@ -107,6 +107,15 @@ vim.keymap.set("n", "<leader>ig", gitportal.open_file_in_neovim)
 -- When in visual mode, selected lines are included in the permalink.
 vim.keymap.set("n", "<leader>gc", gitportal.copy_link_to_clipboard)
 vim.keymap.set("v", "<leader>gc", gitportal.copy_link_to_clipboard)
+```
+
+### Advanced setup
+If you use multiple remotes, you can pass a specific remote to any of gitportals core functions (`open_file_in_browser`, `open_file_in_neovim`, `copy_link_to_clipboard`) and it will use that remote for link generation/ingestion over the default remote setting.
+```lua
+-- works w/ open_file_in_browser, copy_link_to_clipboard & open_file_in_neovim
+vim.keymap.set("n", "<leader>gh", function()
+    gitportal.open_file_in_browser({ remote = "another_remote" })
+end)
 ```
 
 ## ꩜ Commands
