@@ -43,8 +43,8 @@ function M.get_provider_info_from_map(remote_url)
     return nil
 end
 
-function M.determine_git_host()
-    local remote_url = M.get_remote_url()
+function M.determine_git_host(remote)
+    local remote_url = M.get_remote_url(remote)
     if remote_url == nil then
         return nil
     end
@@ -163,12 +163,14 @@ end
 function M.get_base_git_host_url(remote)
     local base_git_host_url
     local remote_url = M.get_remote_url(remote)
+
     if config.options.git_provider_map ~= nil then
         local provider_info = M.get_provider_info_from_map(remote_url)
         if provider_info and type(provider_info) == "table" then
             base_git_host_url = provider_info.base_url
         end
     end
+
     if base_git_host_url ~= nil then
         return base_git_host_url
     end
@@ -217,7 +219,7 @@ function M.get_git_url_for_current_file(remote)
     local base_url = M.get_base_git_host_url(remote)
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
-    local git_host = M.determine_git_host()
+    local git_host = M.determine_git_host(remote)
 
     if branch_or_commit == nil then
         cli.log_error("Couldn't find the current branch or commit!")
