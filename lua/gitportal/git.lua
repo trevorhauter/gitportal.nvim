@@ -214,7 +214,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local remote_url = M.get_base_git_host_url()
+    local base_url = M.get_base_git_host_url()
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host()
@@ -228,7 +228,7 @@ function M.get_git_url_for_current_file()
         return nil
     end
 
-    local permalink = git_providers[git_host].assemble_permalink(remote_url, branch_or_commit, git_path)
+    local permalink = git_providers[git_host].assemble_permalink(base_url, branch_or_commit, git_path)
 
     if vim.fn.mode() ~= "n" or config.options.always_include_current_line == true then
         local start_line, end_line = nv_utils.get_visual_selection_lines()
