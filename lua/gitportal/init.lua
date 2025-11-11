@@ -11,8 +11,9 @@ function M.setup(options)
 end
 
 -- CORE FUNCTIONS
-function M.open_file_in_browser(remote)
-    remote = remote or config.options.default_remote
+function M.open_file_in_browser(options)
+    options = options or {}
+    local remote = options["remote"] or config.options.default_remote
     local git_url = git_utils.get_git_url_for_current_file(remote)
 
     if git_url ~= nil then
@@ -25,8 +26,9 @@ function M.open_file_in_browser(remote)
     end
 end
 
-function M.open_file_in_neovim(remote)
-    remote = remote or config.options.default_remote
+function M.open_file_in_neovim(options)
+    options = options or {}
+    local remote = options["remote"] or config.options.default_remote
     local url = vim.fn.input("Git host link > ")
 
     if url ~= nil then
@@ -37,8 +39,9 @@ function M.open_file_in_neovim(remote)
     end
 end
 
-function M.copy_link_to_clipboard()
-    local remote = config.options.default_remote
+function M.copy_link_to_clipboard(options)
+    options = options or {}
+    local remote = options["remote"] or config.options.default_remote
     local git_url = git_utils.get_git_url_for_current_file(remote)
 
     if git_url ~= nil then
