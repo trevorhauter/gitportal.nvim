@@ -11,8 +11,9 @@ function M.setup(options)
 end
 
 -- CORE FUNCTIONS
-function M.open_file_in_browser()
-    local git_url = git_utils.get_git_url_for_current_file()
+function M.open_file_in_browser(remote)
+    remote = remote or config.options.default_remote
+    local git_url = git_utils.get_git_url_for_current_file(remote)
     if git_url ~= nil then
         if string.find(git_url, "http", 0, true) == nil then
             cli.log_error("Malformed link detected!")
@@ -33,8 +34,9 @@ function M.open_file_in_neovim()
     end
 end
 
-function M.copy_link_to_clipboard()
-    local git_url = git_utils.get_git_url_for_current_file()
+function M.copy_link_to_clipboard(remote)
+    remote = remote or config.options.default_remote
+    local git_url = git_utils.get_git_url_for_current_file(remote)
     if git_url ~= nil then
         if string.find(git_url, "http", 0, true) == nil then
             cli.log_error("Malformed link detected!")

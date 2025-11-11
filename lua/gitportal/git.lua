@@ -28,8 +28,8 @@ function M.get_git_base_directory()
     return M.get_git_root_dir():match("([^/]+)$")
 end
 
-function M.get_remote_url()
-    return cli.run_command("git config --get remote." .. config.options.default_remote .. ".url")
+function M.get_remote_url(remote)
+    return cli.run_command("git config --get remote." .. remote .. ".url")
 end
 
 function M.get_provider_info_from_map(remote_url)
@@ -160,10 +160,11 @@ function M.parse_remote_url(remote_url)
     return remote_url
 end
 
-function M.get_base_git_host_url()
+function M.get_base_git_host_url(remote)
     local base_git_host_url
+    local remote_url = M.get_remote_url(remote)
     if config.options.git_provider_map ~= nil then
-        local provider_info = M.get_provider_info_from_map(M.get_remote_url())
+        local provider_info = M.get_provider_info_from_map(remote_url)
         if provider_info and type(provider_info) == "table" then
             base_git_host_url = provider_info.base_url
         end
@@ -172,7 +173,6 @@ function M.get_base_git_host_url()
         return base_git_host_url
     end
 
-    local remote_url = M.get_remote_url()
     if remote_url then
         base_git_host_url = M.parse_remote_url(remote_url)
     else
@@ -209,12 +209,12 @@ function M.checkout_branch_or_commit(branch_or_commit)
     cli.log_error("Couldn't switch to branch or commit. Config value of '" .. switch_config .. "' is invalid.")
 end
 
-function M.get_git_url_for_current_file()
+function M.get_git_url_for_current_file(remote)
     if M.can_open_current_file() == false then
         return nil
     end
 
-    local base_url = M.get_base_git_host_url()
+    local base_url = M.get_base_git_host_url(remote)
     local branch_or_commit = M.get_branch_or_commit()
     local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host()
