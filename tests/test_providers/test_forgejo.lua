@@ -22,10 +22,11 @@ function TestForgejo:test_url_params()
     lu.assertEquals("#L5-L15", line_range_param)
 end
 
-function TestForgejo:test_string_attributes()
+function TestForgejo:test_attributes()
     lu.assertEquals(provider.name, "forgejo")
     lu.assertEquals(provider.ssh_str, nil)
     lu.assertEquals(provider.url, nil)
+    lu.assertEquals(provider.always_use_commit_hash_in_url, false)
 end
 
 function TestForgejo:test_single_line_parsing()

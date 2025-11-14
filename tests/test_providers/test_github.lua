@@ -23,10 +23,11 @@ function TestGitHub:test_url_params()
     lu.assertEquals("#L5-L15", line_range_param)
 end
 
-function TestGitHub:test_string_attributes()
+function TestGitHub:test_attributes()
     lu.assertEquals(provider.name, "github")
     lu.assertEquals(provider.ssh_str, "git@github.com")
     lu.assertEquals(provider.url, "https://github.com/")
+    lu.assertEquals(provider.always_use_commit_hash_in_url, false)
 end
 
 function TestGitHub:test_remote_url_parsing()
