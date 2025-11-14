@@ -108,11 +108,15 @@ function M.can_open_current_file()
     return true
 end
 
-function M.get_branch_or_commit()
+function M.get_branch_or_commit(git_host)
     local branch_or_commit = cli.run_command("git rev-parse --abbrev-ref HEAD")
     local revision_type = "branch"
 
-    if branch_or_commit == "HEAD\n" or config.options.always_use_commit_hash_in_url == true then
+    if
+        branch_or_commit == "HEAD\n"
+        or config.options.always_use_commit_hash_in_url == true
+        or git_providers[git_host].always_use_commit_hash_in_url == true
+    then
         branch_or_commit = cli.run_command("git rev-parse HEAD")
         revision_type = "commit"
     end
@@ -217,9 +221,9 @@ function M.get_git_url_for_current_file(remote)
     end
 
     local base_url = M.get_base_git_host_url(remote)
-    local branch_or_commit = M.get_branch_or_commit()
-    local git_path = M.get_git_file_path()
     local git_host = M.determine_git_host(remote)
+    local branch_or_commit = M.get_branch_or_commit(git_host)
+    local git_path = M.get_git_file_path()
 
     if branch_or_commit == nil then
         cli.log_error("Couldn't find the current branch or commit!")
