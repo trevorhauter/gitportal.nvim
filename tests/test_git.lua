@@ -107,9 +107,10 @@ function TestGit:test_get_git_file_path()
 end
 
 function TestGit:test_get_branch_or_commit()
+    self.current_git_host = git_providers.github.name
     self.active_branch_or_commit = self.branch
 
-    local result = git.get_branch_or_commit()
+    local result = git.get_branch_or_commit(self.current_git_host)
 
     if result == nil then
         error("git.get_branch_or_commit() returned nil")
@@ -120,7 +121,7 @@ function TestGit:test_get_branch_or_commit()
 
     config.options.always_use_commit_hash_in_url = true
 
-    result = git.get_branch_or_commit()
+    result = git.get_branch_or_commit(self.current_git_host)
 
     if result == nil then
         error("git.get_branch_or_commit() returned nil")
@@ -132,7 +133,7 @@ function TestGit:test_get_branch_or_commit()
     self.active_branch_or_commit = self.commit
     config.options.always_use_commit_hash_in_url = false
 
-    result = git.get_branch_or_commit()
+    result = git.get_branch_or_commit(self.current_git_host)
 
     if not result then
         error("git.get_branch_or_commit() returned nil")

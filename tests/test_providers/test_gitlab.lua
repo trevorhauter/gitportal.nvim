@@ -23,10 +23,11 @@ function TestGitLab:test_url_params()
     lu.assertEquals("#L5-15", line_range_param)
 end
 
-function TestGitLab:test_string_attributes()
+function TestGitLab:test_attributes()
     lu.assertEquals(provider.name, "gitlab")
     lu.assertEquals(provider.ssh_str, "git@gitlab.com")
     lu.assertEquals(provider.url, "https://gitlab.com/")
+    lu.assertEquals(provider.always_use_commit_hash_in_url, false)
 end
 
 function TestGitLab:test_remote_url_parsing()

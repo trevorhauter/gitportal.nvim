@@ -23,10 +23,11 @@ function TestBitbucket:test_url_params()
     lu.assertEquals("#lines-5:15", line_range_param)
 end
 
-function TestBitbucket:test_string_attributes()
+function TestBitbucket:test_attributes()
     lu.assertEquals(provider.name, "bitbucket")
     lu.assertEquals(provider.ssh_str, "git@bitbucket.org")
     lu.assertEquals(provider.url, "https://bitbucket.org/")
+    lu.assertEquals(provider.always_use_commit_hash_in_url, true)
 end
 
 function TestBitbucket:test_remote_url_parsing()

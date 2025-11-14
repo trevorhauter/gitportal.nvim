@@ -23,10 +23,11 @@ function TestOneDev:test_url_params()
     lu.assertEquals("?position=source-5.1-16.1", line_range_param)
 end
 
-function TestOneDev:test_string_attributes()
+function TestOneDev:test_attributes()
     lu.assertEquals(provider.name, "onedev")
     lu.assertEquals(provider.ssh_str, nil)
     lu.assertEquals(provider.url, nil)
+    lu.assertEquals(provider.always_use_commit_hash_in_url, false)
 end
 
 function TestOneDev:test_single_line_parsing()

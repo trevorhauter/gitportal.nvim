@@ -57,6 +57,8 @@ local GIT_PROVIDERS = {
             end
             return start_line, end_line
         end,
+        -- bitbuck URLs ALWAYS use current commit hash
+        always_use_commit_hash_in_url = true,
         regex = "/.+/[^/]+/([^/]+)/src/(.+)",
         ssh_str = "git@bitbucket.org",
         url = "https://bitbucket.org/",
@@ -83,6 +85,7 @@ local GIT_PROVIDERS = {
                 return "#L" .. start_line .. "-L" .. end_line
             end
         end,
+        always_use_commit_hash_in_url = false,
         name = "forgejo", -- completely self hosted
         parse_line_range = standard_line_range_parser,
         regex = "/.+/([^/]+)/src/%a+/(.+)",
@@ -104,6 +107,7 @@ local GIT_PROVIDERS = {
                 return "#L" .. start_line .. "-L" .. end_line
             end
         end,
+        always_use_commit_hash_in_url = false,
         name = "github",
         parse_line_range = standard_line_range_parser,
         regex = "/.+/[^/]+/([^/]+)/blob/(.+)",
@@ -126,6 +130,7 @@ local GIT_PROVIDERS = {
             end
         end,
         parse_line_range = standard_line_range_parser,
+        always_use_commit_hash_in_url = false,
         name = "gitlab",
         regex = "/.+/([^/]+)/%-/blob/(.+)",
         ssh_str = "git@gitlab.com",
@@ -160,6 +165,7 @@ local GIT_PROVIDERS = {
             end
             return first_line, second_line
         end,
+        always_use_commit_hash_in_url = false,
         regex = "/.+/([^/]+)/~files/(.+)",
         ssh_str = nil,
         url = nil,
